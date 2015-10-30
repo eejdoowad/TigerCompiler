@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Tiger Compiler</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>out</name>
+			<type>2</type>
+			<locationURI>TIGER_ROOT/out</locationURI>
+		</link>
+		<link>
+			<name>resources</name>
+			<type>2</type>
+			<locationURI>TIGER_ROOT/resources</locationURI>
+		</link>
+		<link>
+			<name>src</name>
+			<type>2</type>
+			<locationURI>TIGER_ROOT/src</locationURI>
+		</link>
+		<link>
+			<name>testcases</name>
+			<type>2</type>
+			<locationURI>TIGER_ROOT/testcases</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>TIGER_ROOT</name>
+			<value>$%7BPARENT-2-PROJECT_LOC%7D</value>
+		</variable>
+	</variableList>
+</projectDescription>
