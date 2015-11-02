@@ -1,3 +1,7 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.ArrayList;
 // Temp: keeping track of Phase II additions:
 // 1. Symbol Table
 // 2. AST and associated classes
@@ -29,12 +33,54 @@
 // The SymbolTable is implemented as
 
 public class SymbolTable {
+    // Stack of symbol tables for each scope that is currently in use
+    private Deque<HashMap<String, SemanticSymbol>> scopeStack;
 
-//    beginScope();
-//    endScope();
-//    put();
-//    get();
+    // List of symbol tables that have their scopes finalized
+    private ArrayList<HashMap<String, SemanticSymbol>> finalizedScopes;
 
+    public SymbolTable() {
+        // Init stack and scope graveyard
+        scopeStack = new ArrayDeque<>();
+        finalizedScopes = new ArrayList<>();
+
+        // Create the global symbol table and push to top of stack
+        HashMap<String, SemanticSymbol> globalTable = new HashMap<>();
+        scopeStack.addFirst(globalTable);
+    }
+
+    // Enters a new scope
+    public void beginScope() {
+        HashMap<String, SemanticSymbol> newScope = new HashMap<>();
+        scopeStack.addFirst(newScope);
+    }
+
+    // Leaves a scope
+    public void endScope() {
+        if (scopeStack.size() <= 1) {
+            System.out.println("Error: Attempting to pop global scope");
+            return;
+        }
+
+        // Add top of stack to finalized list of symbol tables
+        finalizedScopes.add(scopeStack.removeFirst());
+    }
+
+    // Adds a symbol in the current scope
+    public void put(String name, SemanticSymbol symbol) {
+        scopeStack.peekFirst().put(name, symbol);
+    }
+
+    // Performs a lookup of a symbol in all the active scopes
+    public SemanticSymbol get(String name) {
+        for (HashMap<String, SemanticSymbol> scope : scopeStack) {
+            SemanticSymbol symbol = scope.get(name);
+            if (symbol != null) {
+                return symbol;
+            }
+        }
+        return null;
+    }
 }
 
 
