@@ -1,4 +1,7 @@
 package AST;
 
-public class Expr extends Node {
+public abstract class Expr extends Node {
+
+    public String type; // probably want to change this
+
 }

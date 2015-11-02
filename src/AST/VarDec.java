@@ -1,7 +1,9 @@
 package AST;
 
-/**
- * Created by sd on 11/2/15.
- */
+import java.util.ArrayList;
+
 public class VarDec extends Node {
+
+    public ArrayList<String> IDs = new ArrayList<String>();
+    public String type;
 }

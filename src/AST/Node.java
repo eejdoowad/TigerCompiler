@@ -50,7 +50,7 @@ package AST;
 
 // Debate... where do you insert Types, leaning to in var and expr nodes
 
-public class Node {
+public abstract class Node {
 
     public Node(){
 

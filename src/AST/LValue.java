@@ -1,4 +1,5 @@
 package AST;
 
-public class LValue extends Expr {
+public abstract class LValue extends Expr {
+
 }
