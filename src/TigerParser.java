@@ -64,6 +64,7 @@ public class TigerParser {
             if      (curSymbol instanceof Terminal) processTerminal((Terminal) curSymbol);
             else if (curSymbol instanceof NonTerminal) processNonTerminal((NonTerminal)curSymbol);
             else if (curSymbol instanceof Epsilon) processEpsilon((Epsilon)curSymbol);
+            else if (curSymbol instanceof ActionSymbol) processActionSymbol((ActionSymbol) curSymbol);
             else { System.out.println("WTH is the symbol?"); System.exit(1); }
         }
         System.out.println("\n" + ((parseSuccess && scanner.success) ? "successful" : "unsuccessful") + " parse");
@@ -127,6 +128,18 @@ public class TigerParser {
         parseStack.pop();
     }
 
+    // processes an Action Symbol at the top of the parse stack
+    // 1. Pops Action Symbol from top of parse stack
+    private void processActionSymbol(ActionSymbol curActionSymbol){
+        if (Config.DEBUG && (Config.DEBUG_PARSER2 || Config.DEBUG_SEMACTS)){
+            System.out.println("ACTION SYMBOL: " + curActionSymbol);
+        }
+
+        SemanticAction(curActionSymbol);
+
+        parseStack.pop();
+    }
+
     private void error(){
         if (Config.DEBUG && Config.DEBUG_PARSER1){
             System.out.println("Parser error (line " + scanner.getLineNumber() +
@@ -148,5 +161,77 @@ public class TigerParser {
     @SuppressWarnings("unchecked")
 	private void recoverState(){
         parseStack = (Stack<Symbol>)errorStack.clone();
+    }
+
+
+
+    // this is going to take a while...
+    void SemanticAction(ActionSymbol action){
+        switch (action.type){
+            case P_PROG_P_DECS:
+                System.out.println("HOLA");
+                break;
+            case A_DECS_P_STATS:
+
+                break;
+            case A_STATS:
+
+                break;
+            case P_TYPES:
+
+                break;
+            case A_TYPES_P_VARS:
+
+                break;
+            case A_VARS_P_FUNS:
+
+                break;
+            case A_FUNS:
+
+                break;
+            case P_VAR:
+
+                break;
+            case B_VARID:
+
+                break;
+            case B_CONSTINIT:
+
+                break;
+            case P_ASSIGNSTAT :
+
+                break;
+            // eh.. review
+            case P_TYPE:
+
+                break;
+            case P_NEWTYPE:
+
+                break;
+            case P_ADDTYPE:
+
+                break;
+            case P_NEWTYPEID:
+
+                break;
+            case P_NEWTYPEDIM:
+
+                break;
+            case P_IF:
+
+                break;
+            case A_IF:
+
+                break;
+            case P_ID:
+
+                break;
+            case P_ASSIGN:
+
+                break;
+            case B_CONST:
+
+                break;
+        }
     }
 }

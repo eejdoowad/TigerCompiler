@@ -14,12 +14,14 @@ public class Grammar {
     public NonTerminals nonTerminals;
     public Terminals terminals;
     public Epsilon epsilon;
+    public ActionSymbols actionSymbols;
 
     public Grammar(){
 
         nonTerminals = new NonTerminals();
-        epsilon = new Epsilon();
-        terminals = new Terminals(); // terminals are hard coded
+        terminals = new Terminals();            // terminals are hard coded
+        epsilon = new Epsilon();                // as is epsilon
+        actionSymbols = new ActionSymbols();    // as are action symbols
         rules = new ArrayList<Production>();
 
         init();
@@ -57,9 +59,12 @@ public class Grammar {
                     derivation.add(nonTerminals.getBySymbol(symbol));
                 } else if (terminals.containsBySymbol(symbol)){
                     derivation.add(terminals.getBySymbol(symbol));
-                } else {
-                    System.out.println("Something went wrong generating productions");
-                    System.exit(1);
+                } else if (actionSymbols.containsBySymbol(symbol)) {
+                    derivation.add(actionSymbols.getBySymbol(symbol));
+                }
+                else {
+                        System.out.println("Something went wrong generating productions on symbol " + symbol);
+                        System.exit(1);
                 }
             }
 

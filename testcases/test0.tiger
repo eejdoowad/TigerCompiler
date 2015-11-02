@@ -1,0 +1,5 @@
+let
+        var a : int;
+in
+        a := 1;
+end

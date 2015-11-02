@@ -7,6 +7,7 @@
 //     1. NonTerminal
 //     2. Terminal
 //     3. Epsilon
+//     4. ActionSymbol
 
 // Epsilon is separated from Terminal because the parser treats them differently
 
@@ -16,6 +17,8 @@
 //        it off the stack
 //     3. If a NonTerminal is at the top of the parse stack, the parser uses the
 //        parsetable to determine the rule to use to replace the NonTerminal
+//     4. If an ActionSymbol is at the top of the stack, the parser manipulates
+//        the SemanticRecord and SymbolTable according to the action type
 
 public abstract class Symbol {
     public String symbol; // The string users interpret as the symbol
