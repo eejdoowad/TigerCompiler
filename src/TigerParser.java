@@ -1,4 +1,5 @@
 import java.util.*;
+import AST.*;
 
 // Yeah... the parser
 // Does what you expect it to
@@ -17,6 +18,7 @@ public class TigerParser {
     private ParseTable parseTable;
     private Stack<Symbol> parseStack;
     private Token nextToken; // the next token returned by
+    private Stack<AST.Node> SR;
 
     // Starts true, set to false if the parser encounters an error
     private boolean parseSuccess;
@@ -36,6 +38,9 @@ public class TigerParser {
 
         // Set up Parse Stack
         parseStack = new Stack<Symbol>();
+
+        // Set up Semantic Record
+        SR = new Stack<AST.Node>();
 
         if (Config.DEBUG && Config.DEBUG_INIT){
             System.out.println("Parser initialized");
@@ -168,53 +173,41 @@ public class TigerParser {
     // this is going to take a while...
     void SemanticAction(ActionSymbol action){
         switch (action.type){
-            case P_PROG_P_DECS:
-                System.out.println("HOLA");
+            case START:
+                System.out.println("SA: Pushing Program onto SR");
+                SR.push(new AST.Program());
                 break;
-            case A_DECS_P_STATS:
-
+            case END:
+                System.out.println("SA: END");
                 break;
-            case A_STATS:
-
+            case P_TYPEDEC:
+                System.out.println("SA: Push TypeDec");
                 break;
-            case P_TYPES:
-
-                break;
-            case A_TYPES_P_VARS:
-
-                break;
-            case A_VARS_P_FUNS:
-
-                break;
-            case A_FUNS:
-
-                break;
-            case P_VAR:
-
-                break;
-            case B_VARID:
-
-                break;
-            case B_CONSTINIT:
-
-                break;
-            case P_ASSIGNSTAT :
-
-                break;
-            // eh.. review
-            case P_TYPE:
-
-                break;
-            case P_NEWTYPE:
-
+            case B_NEWTYPE:
+                System.out.println("SA: Build NewType");
                 break;
             case P_ADDTYPE:
 
                 break;
-            case P_NEWTYPEID:
+            case P_NEWTYPEDIM:
 
                 break;
-            case P_NEWTYPEDIM:
+            case P_VARDEC:
+                System.out.println("SA: Push VarDec");
+                SR.push(new AST.VarDec());
+                break;
+            case A_VARDEC:
+                System.out.println("SA: Attach VarDec");
+                AST.VarDec varDec = (AST.VarDec)SR.pop();
+                ((AST.Program)SR.peek()).varDecs.add(varDec);
+                break;
+            case B_VARID:
+                ((VarDec)SR.peek()).IDs.add(new ID());
+                break;
+            case B_CONSTINIT:
+                ((AST.VarDec)SR.peek()).type = new ID();
+                break;
+            case P_ASSIGNSTAT :
 
                 break;
             case P_IF:

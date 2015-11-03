@@ -1,18 +1,18 @@
-tiger-program -> LET #p-prog-p-decs declaration-segment #a-decs-p-stats IN stat-seq #a-stats END
-declaration-segment -> #p-types type-declaration-list #a-types-p-vars var-declaration-list #a-vars-p-funs funct-declaration-list #a-funs
+tiger-program -> #start LET declaration-segment IN stat-seq END #end
+declaration-segment -> type-declaration-list var-declaration-list funct-declaration-list
 type-declaration-list -> EPSILON
 type-declaration-list -> type-declaration type-declaration-list
 var-declaration-list -> EPSILON
 var-declaration-list -> var-declaration var-declaration-list
 funct-declaration-list -> EPSILON
 funct-declaration-list -> funct-declaration funct-declaration-list
-type-declaration -> #p-type TYPE ID #p-newtypeID EQ type SEMI #p-addtype
-type -> type-id #p-newtype
-type -> ARRAY LBRACK INTLIT #p-newtypedim RBRACK OF type-id #p-newtype
+type-declaration -> #p-typeDec TYPE ID #b-newType EQ type SEMI #p-addType
+type -> type-id #b-newType
+type -> ARRAY LBRACK INTLIT #p-newTypeDim RBRACK OF type-id #b-newType
 type -> ID
 type-id -> INT
 type-id -> FLOAT
-var-declaration -> VAR #p-var id-list COLON type optional-init SEMI
+var-declaration -> #p-varDec VAR id-list COLON type optional-init SEMI #a-varDec
 id-list -> ID #b-varid id-list-tail
 id-list-tail -> COMMA ID #b-varid id-list-tail
 id-list-tail -> EPSILON

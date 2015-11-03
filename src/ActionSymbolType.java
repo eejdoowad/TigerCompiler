@@ -1,24 +1,24 @@
 
 
 public enum ActionSymbolType {
-    P_PROG_P_DECS ("#p-prog-p-decs"),
-    A_DECS_P_STATS ("#a-decs-p-stats"),
-    A_STATS ("#a-stats"),
-    P_TYPES ("#p-types"),
-    A_TYPES_P_VARS ("#a-types-p-vars"),
-    A_VARS_P_FUNS ("#a-vars-p-funs"),
-    A_FUNS ("#a-funs"),
-    P_VAR("#p-var"),
+    START ("#start"),
+    END ("#end"),
+
+
+    // eh.. review
+    P_TYPEDEC ("#p-typeDec"),
+    B_NEWTYPE ("#b-newType"),
+    P_ADDTYPE ("#p-addType"),
+    P_NEWTYPEID ("#p-newTypeID"),
+    P_NEWTYPEDIM ("#p-newTypeDim"),
+
+
+    P_VARDEC("#p-varDec"),
+    A_VARDEC("#a-varDec"),
     B_VARID("#b-varid"),
     B_CONSTINIT ("#b-constinit"),
     P_ASSIGNSTAT ("#p-assignstat"),
 
-    // eh.. review
-    P_TYPE ("#p-type"),
-    P_NEWTYPE ("#p-newtype"),
-    P_ADDTYPE ("#p-addtype"),
-    P_NEWTYPEID ("#p-newtypeID"),
-    P_NEWTYPEDIM ("#p-newtypedim"),
 
     P_IF ("#p-if"),
     A_IF ("#a-if"),
