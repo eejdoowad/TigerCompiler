@@ -1,10 +1,12 @@
 let
         type cat = int;
+        type dog = cat;
         type int_arr = array [100] of int;
         var a : int;
         var b, c : float;
         var d : array [100] of int;
         var e : int := 7;
+        var f : cat := 7;
 in
         a := 1;
 end

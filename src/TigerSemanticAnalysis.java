@@ -79,27 +79,63 @@ public class TigerSemanticAnalysis {
         semanticStack.addFirst(node);
     }
 
-    public void semaTypeDec(){
+    public void semaTypeDeclaration(){
         ID exisitingType = (ID)semanticStack.removeFirst();
         ID newType = (ID)semanticStack.removeFirst();
 
-        // Your symbol table and semantic checking stuff goes here
-//        SemanticSymbol typeSymbol = symbolTable.get(type.name);
-//        if (typeSymbol == null) {
-//            error("Semantic Error: " + type.name + " does not name a valid type");
-//            return;
-//        }
-//        if (typeSymbol.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
-//            error("Semantic Error: " + type.name + " does not name a valid type");
-//            return;
-//        }
+        // Make sure new type is not already defined
+        if (symbolTable.get(newType.name) != null) {
+            error("Semantic error: " + newType.name + " is already defined");
+            return;
+        }
 
-
-
-
+        // Create new type declaration node
         TypeDec node = new TypeDec();
-//        node.existingType = ();
-//        node.newType = ();
+
+        // Case 1: new type is an array with a temporary type already made
+        if (exisitingType.name.charAt(0) == '$') {
+            // Look it up, rename it
+            SemanticSymbol type = symbolTable.get(exisitingType.name);
+            if (type == null) {
+                error("Semantic error: lookup of temporary " + exisitingType.name + " failed");
+                return;
+            }
+            symbolTable.rename(type, newType.name);
+            node.newType = type;
+        } else if (exisitingType.name.equals("int")) {
+            // Case 2: new type is an int
+            SemanticSymbol type = new SemanticSymbol(newType.name, SemanticSymbol.SymbolClass.TypeDecleration);
+            type.setSymbolType(SemanticSymbol.SymbolType.SymbolInt);
+            type.setArraySize(1);
+            symbolTable.put(newType.name, type);
+            node.newType = type;
+        } else if (exisitingType.name.equals("float")) {
+            // Case 3: new type is a float
+            SemanticSymbol type = new SemanticSymbol(newType.name, SemanticSymbol.SymbolClass.TypeDecleration);
+            type.setSymbolType(SemanticSymbol.SymbolType.SymbolFloat);
+            type.setArraySize(1);
+            symbolTable.put(newType.name, type);
+            node.newType = type;
+        } else {
+            // Case 4: new type is an alias of another custom type
+            SemanticSymbol lookup = symbolTable.get(exisitingType.name);
+            if (lookup == null) {
+                error("Semantic error: " + exisitingType.name + " is not a defined type");
+                return;
+            }
+            if (lookup.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
+                error("Semantic error: " + exisitingType.name + " is not a defined type");
+                return;
+            }
+
+            // Create the new type to alias the lookuped type
+            SemanticSymbol type = new SemanticSymbol(newType.name, SemanticSymbol.SymbolClass.TypeDecleration);
+            type.setSymbolType(lookup);
+            type.setArraySize(1);
+            symbolTable.put(newType.name, type);
+            node.newType = type;
+        }
+
         semanticStack.addFirst(node);
     }
 

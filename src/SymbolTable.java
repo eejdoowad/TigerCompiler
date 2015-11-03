@@ -95,6 +95,28 @@ public class SymbolTable {
         }
         return symbol;
     }
+
+    // Renames a symbol in the symbol table. Useful for when temporaries are assigned a name
+    // Symbols internal name is only replaced when symbol is found
+    // Returns true on success, false otherwise
+    public boolean rename(SemanticSymbol symbol, String newName) {
+        // Find the scope the symbol is in
+        HashMap<String, SemanticSymbol> table = null;
+        for (HashMap<String, SemanticSymbol> scope : scopeStack) {
+            SemanticSymbol temp = scope.get(symbol.getName());
+            if (temp != null && temp == symbol) {
+                table = scope;
+                break;
+            }
+        }
+        if (table != null) {
+            table.remove(symbol.getName());
+            table.put(newName, symbol);
+            symbol.setName(newName);
+            return true;
+        }
+        return false;
+    }
 }
 
 

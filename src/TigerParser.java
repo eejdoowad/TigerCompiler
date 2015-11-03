@@ -220,7 +220,7 @@ public class TigerParser {
                 analyzer.semaVarDeclaration();
                 break;
             case SEMA_TYPE_DEC:
-                analyzer.semaTypeDec();
+                analyzer.semaTypeDeclaration();
                 break;
 
             case SEMA_ATTACH_TYPEDEC:

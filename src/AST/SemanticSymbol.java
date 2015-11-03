@@ -43,6 +43,10 @@ public class SemanticSymbol {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public SymbolClass getSymbolClass() {
         return symClass;
     }
