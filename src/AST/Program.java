@@ -1,10 +1,13 @@
 package AST;
 
+// So this is the root node
+
+import java.util.ArrayList;
 
 public class Program extends Node {
 
-    public TypeDecs typeDecs;
-    public VarDecs varDecs;
-    public FunDecs funDecs;
+    public ArrayList<TypeDec> typeDecs = new ArrayList<TypeDec>();
+    public ArrayList<VarDec> varDecs = new ArrayList<VarDec>();
+    public ArrayList<FunDec> funDecs = new ArrayList<FunDec>();
 
 }
