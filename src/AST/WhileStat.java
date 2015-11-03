@@ -1,7 +1,10 @@
 package AST;
 
-/**
- * Created by sd on 11/2/15.
- */
+import java.util.ArrayList;
+
 public class WhileStat extends Stat {
+
+    public Expr cond;
+    public ArrayList<Stat> stats = new ArrayList<Stat>();
+
 }

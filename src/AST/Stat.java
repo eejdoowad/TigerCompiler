@@ -1,4 +1,4 @@
 package AST;
 
-public class Stat extends Node {
+public abstract class Stat extends Node {
 }

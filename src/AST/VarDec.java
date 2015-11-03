@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class VarDec extends Node {
 
-    public ArrayList<String> IDs = new ArrayList<String>();
-    public String type;
+    public ArrayList<SemanticSymbol> vars = new ArrayList<>();
+    public SemanticSymbol type;
+    public Const init;
 }

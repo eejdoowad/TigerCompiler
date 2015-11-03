@@ -169,19 +169,19 @@ public class TigerScanner {
             mlexeme = lexeme.toString();
             if (DFAAccept[state-1] == TokenType.ID) {
                 if (keywordMap.containsKey(lexeme.toString())) {
-                    return new Token(keywordMap.get(lexeme.toString()), 0, 0);
+                    return new Token(keywordMap.get(lexeme.toString()), 0, 0, mlexeme);
                 } else {
-                    return new Token(TokenType.ID, 0, 0);
+                    return new Token(TokenType.ID, 0, 0, mlexeme);
                 }
             } else {
-                return new Token(DFAAccept[state-1], 0, 0);
+                return new Token(DFAAccept[state-1], 0, 0, mlexeme);
             }
         } else {
             mlexeme = "";
             if (reachedEnd) {
-                return new Token(TokenType.ENDOFFILE, 0, 0);
+                return new Token(TokenType.ENDOFFILE, 0, 0, mlexeme);
             } else {
-                return new Token(TokenType.NOACCEPT, 0, 0);
+                return new Token(TokenType.NOACCEPT, 0, 0, mlexeme);
             }
         }
     }

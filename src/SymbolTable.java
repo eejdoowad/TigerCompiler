@@ -1,3 +1,5 @@
+import AST.SemanticSymbol;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -47,6 +49,16 @@ public class SymbolTable {
         // Create the global symbol table and push to top of stack
         HashMap<String, SemanticSymbol> globalTable = new HashMap<>();
         scopeStack.addFirst(globalTable);
+
+        // Create int and float types
+        SemanticSymbol intSymbol = new SemanticSymbol("int", SemanticSymbol.SymbolClass.TypeDecleration);
+        intSymbol.setSymbolType(SemanticSymbol.SymbolType.SymbolInt);
+        intSymbol.setArraySize(1);
+        SemanticSymbol floatSymbol = new SemanticSymbol("float", SemanticSymbol.SymbolClass.TypeDecleration);
+        floatSymbol.setSymbolType(SemanticSymbol.SymbolType.SymbolFloat);
+        floatSymbol.setArraySize(1);
+        put("int", intSymbol);
+        put("float", floatSymbol);
     }
 
     // Enters a new scope

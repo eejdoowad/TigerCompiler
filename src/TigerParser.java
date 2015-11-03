@@ -1,4 +1,5 @@
 import java.util.*;
+import AST.*;
 
 // Yeah... the parser
 // Does what you expect it to
@@ -17,6 +18,12 @@ public class TigerParser {
     private ParseTable parseTable;
     private Stack<Symbol> parseStack;
     private Token nextToken; // the next token returned by
+    private Stack<AST.Node> SR;
+    private TigerSemanticAnalysis analyzer;
+
+    // Stack that ID or LIT tokens popped off the parse stack are pushed to
+    // to be processed by the semantic analyzer
+    private Deque<Token> tokenStack;
 
     // Starts true, set to false if the parser encounters an error
     private boolean parseSuccess;
@@ -36,6 +43,15 @@ public class TigerParser {
 
         // Set up Parse Stack
         parseStack = new Stack<Symbol>();
+
+        // Set up Semantic Record
+        SR = new Stack<AST.Node>();
+
+        // Set up semantic analyzer
+        analyzer = new TigerSemanticAnalysis();
+
+        // Set up token stack
+        tokenStack = new ArrayDeque<>();
 
         if (Config.DEBUG && Config.DEBUG_INIT){
             System.out.println("Parser initialized");
@@ -84,6 +100,13 @@ public class TigerParser {
             }
             parseStack.pop();
             if (nextToken.type.isSequencePoint()) saveState();
+            if (nextToken.type == TokenType.ID ||
+                    nextToken.type == TokenType.INTLIT ||
+                    nextToken.type == TokenType.FLOATLIT ||
+                    nextToken.type == TokenType.KINT ||
+                    nextToken.type == TokenType.KFLOAT) {
+                tokenStack.addFirst(nextToken);
+            }
             nextToken = scanner.nextToken();
 
 
@@ -168,53 +191,57 @@ public class TigerParser {
     // this is going to take a while...
     void SemanticAction(ActionSymbol action){
         switch (action.type){
-            case P_PROG_P_DECS:
-                System.out.println("HOLA");
+            case START:
+                System.out.println("SA: Pushing Program onto SR");
+                analyzer.semaProgramStart();
                 break;
-            case A_DECS_P_STATS:
-
+            case END:
+                System.out.println("SA: END");
                 break;
-            case A_STATS:
-
+            case SEMA_INT_LIT:
+                Token intlit = tokenStack.removeFirst();
+                analyzer.semaIntLit(intlit.lexeme);
                 break;
-            case P_TYPES:
-
+            case SEMA_FLOAT_LIT:
+                Token floatlit = tokenStack.removeFirst();
+                analyzer.semaFloatLit(floatlit.lexeme);
                 break;
-            case A_TYPES_P_VARS:
-
+            case SEMA_IDENTIFIER:
+                Token ident = tokenStack.removeFirst();
+                analyzer.semaIdentifier(ident.lexeme);
                 break;
-            case A_VARS_P_FUNS:
-
+            case SEMA_ARRAY_TYPE:
+                analyzer.semaArrayType();
                 break;
-            case A_FUNS:
-
+            case SEMA_VAR_DEC:
+                analyzer.semaVarDeclaration();
                 break;
-            case P_VAR:
-
+            case P_TYPEDEC:
+                System.out.println("SA: Push TypeDec");
                 break;
-            case B_VARID:
-
-                break;
-            case B_CONSTINIT:
-
-                break;
-            case P_ASSIGNSTAT :
-
-                break;
-            // eh.. review
-            case P_TYPE:
-
-                break;
-            case P_NEWTYPE:
-
+            case B_NEWTYPE:
+                System.out.println("SA: Build NewType");
                 break;
             case P_ADDTYPE:
 
                 break;
-            case P_NEWTYPEID:
+            case P_NEWTYPEDIM:
 
                 break;
-            case P_NEWTYPEDIM:
+            case P_VARDEC:
+                System.out.println("SA: Push VarDec");
+                SR.push(new AST.VarDec());
+                break;
+            case A_VARDEC:
+                System.out.println("SA: Attach VarDec");
+                AST.VarDec varDec = (AST.VarDec)SR.pop();
+                ((AST.Program)SR.peek()).varDecs.add(varDec);
+                break;
+            case B_VARID:
+                break;
+            case B_CONSTINIT:
+                break;
+            case P_ASSIGNSTAT :
 
                 break;
             case P_IF:

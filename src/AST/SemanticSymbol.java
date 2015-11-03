@@ -1,3 +1,5 @@
+package AST;
+
 /**
  * Base class for a semantic symbol that can be entered into the
  * symbol table
@@ -34,6 +36,17 @@ public class SemanticSymbol {
     // Reference to semantic symbol if a custom alias
     private SemanticSymbol typeSymbol;
 
+    // Array size
+    private int arraySize = 1;
+
+    public String getName() {
+        return name;
+    }
+
+    public SymbolClass getSymbolClass() {
+        return symClass;
+    }
+
     public void setSymbolType(SymbolType type) {
         this.type = type;
     }
@@ -49,5 +62,13 @@ public class SemanticSymbol {
 
     public SemanticSymbol getSymbolTypeReference() {
         return typeSymbol;
+    }
+
+    public void setArraySize(int size) {
+        arraySize = size;
+    }
+
+    public int getArraySize() {
+        return arraySize;
     }
 }

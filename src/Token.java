@@ -13,11 +13,13 @@ public class Token {
     public TokenType type;
     public int line;
     public int number;
+    public String lexeme;
 
-    public Token(TokenType type, int line, int number) {
+    public Token(TokenType type, int line, int number, String lexeme) {
         this.type = type;
         this.line = line;
         this.number = number;
+        this.lexeme = lexeme;
     }
 
     public String toString(){

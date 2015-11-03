@@ -1,6 +1,6 @@
 package AST;
 
-public class ID extends LValue{
+public class ID extends Node{
 
     public String name;
 }
