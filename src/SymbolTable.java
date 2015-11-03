@@ -72,14 +72,16 @@ public class SymbolTable {
     }
 
     // Performs a lookup of a symbol in all the active scopes
+    // Returns the symbol closest to the current scope
     public SemanticSymbol get(String name) {
+        SemanticSymbol symbol = null;
         for (HashMap<String, SemanticSymbol> scope : scopeStack) {
-            SemanticSymbol symbol = scope.get(name);
-            if (symbol != null) {
-                return symbol;
+            SemanticSymbol temp = scope.get(name);
+            if (temp != null) {
+                symbol = temp;
             }
         }
-        return null;
+        return symbol;
     }
 }
 
