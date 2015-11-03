@@ -2,7 +2,7 @@ package AST;
 
 public class TypeDec extends Node {
 
-    ID newType;
-    ID existingType;
-    IntLit dim; // will be Null on NonArray Types
+    public SemanticSymbol newType;
+    public SemanticSymbol existingType;
+
 }
