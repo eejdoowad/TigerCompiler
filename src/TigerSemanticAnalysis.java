@@ -79,6 +79,30 @@ public class TigerSemanticAnalysis {
         semanticStack.addFirst(node);
     }
 
+    public void semaTypeDec(){
+        ID exisitingType = (ID)semanticStack.removeFirst();
+        ID newType = (ID)semanticStack.removeFirst();
+
+        // Your symbol table and semantic checking stuff goes here
+//        SemanticSymbol typeSymbol = symbolTable.get(type.name);
+//        if (typeSymbol == null) {
+//            error("Semantic Error: " + type.name + " does not name a valid type");
+//            return;
+//        }
+//        if (typeSymbol.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
+//            error("Semantic Error: " + type.name + " does not name a valid type");
+//            return;
+//        }
+
+
+
+
+        TypeDec node = new TypeDec();
+//        node.existingType = ();
+//        node.newType = ();
+        semanticStack.addFirst(node);
+    }
+
     public void semaVarDeclaration() {
         Node top = semanticStack.removeFirst();
         Const initializer = null;
@@ -93,7 +117,7 @@ public class TigerSemanticAnalysis {
         }
 
         while (semanticStack.peekFirst() instanceof ID) {
-            varNames.add((ID)semanticStack.removeFirst());
+            varNames.add(0, (ID)semanticStack.removeFirst()); // add to front
         }
 
         // Perform a type lookup
@@ -188,5 +212,17 @@ public class TigerSemanticAnalysis {
         ID reference = new ID();
         reference.name = tempName;
         semanticStack.addFirst(reference);
+    }
+
+    public void semaAttachTypeDec(){
+        root.typeDecs.add((AST.TypeDec) semanticStack.pop());
+    }
+
+    public void semaAttachVarDec(){
+        root.varDecs.add((AST.VarDec)semanticStack.pop());
+    }
+
+    public void semaAttachFunDec(){
+        root.funDecs.add((AST.FunDec)semanticStack.pop());
     }
 }

@@ -197,7 +197,9 @@ public class TigerParser {
                 break;
             case END:
                 System.out.println("SA: END");
+                analyzer.semaProgramEnd();
                 break;
+
             case SEMA_INT_LIT:
                 Token intlit = tokenStack.removeFirst();
                 analyzer.semaIntLit(intlit.lexeme);
@@ -213,14 +215,29 @@ public class TigerParser {
             case SEMA_ARRAY_TYPE:
                 analyzer.semaArrayType();
                 break;
+
             case SEMA_VAR_DEC:
                 analyzer.semaVarDeclaration();
                 break;
+            case SEMA_TYPE_DEC:
+                analyzer.semaTypeDec();
+                break;
+
+            case SEMA_ATTACH_TYPEDEC:
+                analyzer.semaAttachTypeDec();
+                break;
+            case SEMA_ATTACH_VARDEC:
+                analyzer.semaAttachVarDec();
+                break;
+            case SEMA_ATTACH_FUNDEC:
+                analyzer.semaAttachFunDec();
+                break;
+
             case P_TYPEDEC:
-                System.out.println("SA: Push TypeDec");
+                //System.out.println("SA: Push TypeDec");
                 break;
             case B_NEWTYPE:
-                System.out.println("SA: Build NewType");
+                //System.out.println("SA: Build NewType");
                 break;
             case P_ADDTYPE:
 
@@ -229,13 +246,13 @@ public class TigerParser {
 
                 break;
             case P_VARDEC:
-                System.out.println("SA: Push VarDec");
-                SR.push(new AST.VarDec());
+                //System.out.println("SA: Push VarDec");
+                //SR.push(new AST.VarDec());
                 break;
             case A_VARDEC:
-                System.out.println("SA: Attach VarDec");
-                AST.VarDec varDec = (AST.VarDec)SR.pop();
-                ((AST.Program)SR.peek()).varDecs.add(varDec);
+                //System.out.println("SA: Attach VarDec");
+               // AST.VarDec varDec = (AST.VarDec)SR.pop();
+                //((AST.Program)SR.peek()).varDecs.add(varDec);
                 break;
             case B_VARID:
                 break;

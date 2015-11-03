@@ -4,12 +4,25 @@ public enum ActionSymbolType {
     START ("#start"),
     END ("#end"),
 
-    // New semantic action identifiers
+
     SEMA_VAR_DEC ("#semaVarDec"),
+    SEMA_TYPE_DEC("#semaTypeDec"),
+
+    // New semantic action identifiers
     SEMA_IDENTIFIER ("#semaIdentifier"),
     SEMA_INT_LIT ("#semaIntLit"),
     SEMA_FLOAT_LIT ("#semaFloatLit"),
     SEMA_ARRAY_TYPE ("#semaArrayType"),
+
+    // Sufyan SEMA additions... might as well attach them to root
+    SEMA_ATTACH_TYPEDEC("#semaAttachTypeDec"),
+    SEMA_ATTACH_VARDEC("#semaAttachVarDec"),
+    SEMA_ATTACH_FUNDEC("#semaAttachFunDec"),
+
+
+
+
+
 
     // eh.. review
     P_TYPEDEC ("#p-typeDec"),

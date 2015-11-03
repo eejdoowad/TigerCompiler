@@ -1,12 +1,12 @@
-tiger-program -> #start LET declaration-segment IN stat-seq END #end
+tiger-program -> #start LET declaration-segment IN stat-seq #end END
 declaration-segment -> type-declaration-list var-declaration-list funct-declaration-list
 type-declaration-list -> EPSILON
-type-declaration-list -> type-declaration type-declaration-list
+type-declaration-list -> type-declaration #semaAttachTypeDec type-declaration-list
 var-declaration-list -> EPSILON
-var-declaration-list -> var-declaration var-declaration-list
+var-declaration-list -> var-declaration #semaAttachVarDec var-declaration-list
 funct-declaration-list -> EPSILON
-funct-declaration-list -> funct-declaration funct-declaration-list
-type-declaration -> #p-typeDec TYPE ID #b-newType EQ type SEMI #p-addType
+funct-declaration-list -> funct-declaration #semaAttachFunDec funct-declaration-list
+type-declaration -> TYPE ID #semaIdentifier EQ type SEMI #semaTypeDec
 type -> type-id
 type -> ARRAY LBRACK INTLIT #semaIntLit RBRACK OF type-id #semaArrayType
 type -> ID #semaIdentifier
