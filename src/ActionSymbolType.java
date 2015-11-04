@@ -19,10 +19,9 @@ public enum ActionSymbolType {
     SEMA_ATTACH_VARDEC("#semaAttachVarDec"),
     SEMA_ATTACH_FUNDEC("#semaAttachFunDec"),
 
-
-
-
-
+    SEMA_VAR_REF ("#semaVarRef"),
+    SEMA_VAR_REF_INDEX ("#semaVarRefIndex"),
+    SEMA_ASSIGN ("#semaAssign"),
 
     // eh.. review
     P_TYPEDEC ("#p-typeDec"),

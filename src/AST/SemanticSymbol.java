@@ -64,6 +64,15 @@ public class SemanticSymbol {
         return type;
     }
 
+    // Returns the primitive that this symbol is derived from
+    public SymbolType getInferredPrimitive() {
+        SemanticSymbol iter = this;
+        while (iter.type == SymbolType.SymbolCustom) {
+            iter = iter.typeSymbol;
+        }
+        return iter.type;
+    }
+
     public SemanticSymbol getSymbolTypeReference() {
         return typeSymbol;
     }

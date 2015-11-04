@@ -1,6 +1,5 @@
 import AST.*;
 import AST.Node;
-import jdk.nashorn.internal.ir.*;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -52,7 +51,12 @@ public class TigerSemanticAnalysis {
     }
 
     public Program semaProgramEnd() {
-        // TODO: Attach remaining nodes on stack to root node
+        while (!semanticStack.isEmpty()) {
+            Node node = semanticStack.removeLast();
+            if (node instanceof Stat) {
+                root.stats.add((Stat)node);
+            }
+        }
         return root;
     }
 
@@ -62,6 +66,7 @@ public class TigerSemanticAnalysis {
         int value = Integer.parseInt(lit);
         AST.IntLit node = new IntLit();
         node.val = value;
+        node.type = symbolTable.get("int");
         semanticStack.addFirst(node);
     }
 
@@ -70,6 +75,7 @@ public class TigerSemanticAnalysis {
         float value = Float.parseFloat(lit);
         AST.FloatLit node = new FloatLit();
         node.val = value;
+        node.type = symbolTable.get("float");
         semanticStack.addFirst(node);
     }
 
@@ -260,5 +266,62 @@ public class TigerSemanticAnalysis {
 
     public void semaAttachFunDec(){
         root.funDecs.add((AST.FunDec)semanticStack.pop());
+    }
+
+    public void semaVariableReference(String name) {
+        SemanticSymbol lookup = symbolTable.get(name);
+        if (lookup == null || lookup.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
+            error("Semantic error: " + name + " is not a declared variable");
+            return;
+        }
+
+        VarReference node = new VarReference();
+        node.reference = lookup;
+        node.index = null;
+        node.type = lookup.getSymbolTypeReference();
+        semanticStack.addFirst(node);
+    }
+
+    // Returns whether one type can be implicitly converted to another
+    private boolean semaCanConvertType(SemanticSymbol src, SemanticSymbol dst) {
+        if (src != dst) {
+            if (src.getName().equals("float") && dst.getName().equals("int")) {
+                error("Semantic error: cannot convert float to int");
+                return false;
+            }
+            if (src.getName().equals("int")) {
+                if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolInt) {
+                    error("Semantic error: cannot assign int to type " + dst.getName());
+                    return false;
+                }
+            } else if (src.getName().equals("float")) {
+                if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolFloat) {
+                    error("Semantic error: cannot assign float to type " + dst.getName());
+                    return false;
+                }
+            } else {
+                error("Semantic error: " + src.getName() + " and " + dst.getName() + " are incompatible types");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void semaAssign() {
+        // TODO: Handle if variable is an array
+        Expr assignment = (Expr)semanticStack.removeFirst();
+        ID variableID = (ID)semanticStack.removeFirst();
+        SemanticSymbol variable = symbolTable.get(variableID.name);
+        if (variable == null || variable.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
+            error("Semantic error: " + variableID.name + " is not a declared variable");
+            return;
+        }
+        if (!semaCanConvertType(variable.getSymbolTypeReference(), assignment.type)) {
+            return;
+        }
+        AssignStat node = new AssignStat();
+        node.left = variable;
+        node.right = assignment;
+        semanticStack.addFirst(node);
     }
 }

@@ -36,13 +36,13 @@ stat -> WHILE expr DO stat-seq ENDDO SEMI
 stat -> FOR ID ASSIGN expr TO expr DO stat-seq ENDDO SEMI
 stat -> BREAK SEMI
 stat -> RETURN expr SEMI
-stat -> ID #p-ID stat-id-tail SEMI
-stat-id-tail -> #p-assign ASSIGN stat-assign-tail
+stat -> ID #semaIdentifier stat-id-tail SEMI
+stat-id-tail -> ASSIGN stat-assign-tail #semaAssign
 stat-id-tail -> #p-assign LBRACK expr RBRACK ASSIGN stat-assign-tail
 stat-id-tail -> LPAREN expr-list RPAREN
 stat-assign-tail -> LPAREN term0 RPAREN term5' term4' term3' term2' term1' term0'
 stat-assign-tail -> const #b-const term5' term4' term3' term2' term1' term0'
-stat-assign-tail -> ID stat-assign-id-tail
+stat-assign-tail -> ID #semaVarRef stat-assign-id-tail
 stat-assign-id-tail -> LPAREN expr-list RPAREN
 stat-assign-id-tail -> opt-index term5' term4' term3' term2' term1' term0'
 stat-if-tail -> ENDIF
@@ -74,8 +74,8 @@ term5' -> DIV term6 term5'
 term5' -> EPSILON
 term6 -> LPAREN term0 RPAREN
 term6 -> const
-term6 -> ID opt-index
-opt-index -> LBRACK expr RBRACK
+term6 -> ID #semaVarRef opt-index
+opt-index -> LBRACK expr RBRACK #semaVarRefIndex
 opt-index -> EPSILON
 expr-list -> EPSILON
 expr-list -> expr expr-list-tail

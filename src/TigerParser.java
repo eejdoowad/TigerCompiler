@@ -197,7 +197,7 @@ public class TigerParser {
                 break;
             case END:
                 System.out.println("SA: END");
-                analyzer.semaProgramEnd();
+                Program program = analyzer.semaProgramEnd();
                 break;
 
             case SEMA_INT_LIT:
@@ -231,6 +231,12 @@ public class TigerParser {
                 break;
             case SEMA_ATTACH_FUNDEC:
                 analyzer.semaAttachFunDec();
+                break;
+            case SEMA_VAR_REF:
+                analyzer.semaVariableReference(tokenStack.removeFirst().lexeme);
+                break;
+            case SEMA_ASSIGN:
+                analyzer.semaAssign();
                 break;
 
             case P_TYPEDEC:
