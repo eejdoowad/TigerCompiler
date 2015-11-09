@@ -93,6 +93,6 @@ public class SemanticSymbol {
     }
 
     public boolean isArray(){
-        return arraySize > 0;
+        return getArraySize() > 0;
     }
 }
