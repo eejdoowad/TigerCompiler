@@ -38,7 +38,7 @@ stat -> BREAK SEMI
 stat -> RETURN expr SEMI
 stat -> ID #semaIdentifier stat-id-tail SEMI
 stat-id-tail -> ASSIGN stat-assign-tail #semaAssign
-stat-id-tail -> #p-assign LBRACK expr RBRACK ASSIGN stat-assign-tail
+stat-id-tail -> LBRACK expr RBRACK ASSIGN stat-assign-tail #semaAssign
 stat-id-tail -> LPAREN expr-list RPAREN
 stat-assign-tail -> LPAREN term0 RPAREN term5' term4' term3' term2' term1' term0'
 stat-assign-tail -> const term5' term4' term3' term2' term1' term0'
@@ -76,7 +76,7 @@ term6 -> LPAREN term0 RPAREN
 term6 -> const
 term6 -> ID #semaVarRef opt-index
 opt-index -> LBRACK expr RBRACK #semaVarRefIndex
-opt-index -> EPSILON
+opt-index -> EPSILON #semaVarRefArrayCheck
 expr-list -> EPSILON
 expr-list -> expr expr-list-tail
 expr-list-tail -> COMMA expr expr-list-tail

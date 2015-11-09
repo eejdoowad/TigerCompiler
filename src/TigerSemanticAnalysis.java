@@ -1,6 +1,7 @@
 import AST.*;
 import AST.Node;
 
+import javax.lang.model.element.VariableElement;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -305,6 +306,15 @@ public class TigerSemanticAnalysis {
         variable.index = index;
     }
 
+    // Ensures topmost variable reference is not an array
+    public void semaVariableReferenceArrayCheck() {
+        VarReference var = (VarReference)semanticStack.peekFirst();
+        if (var.type.getArraySize() > 1) {
+            error("Semantic error: " + var.reference.getName() + " is an array but is not indexed into");
+            return;
+        }
+    }
+
     // Returns whether one type can be implicitly converted to another
     private boolean semaCanConvertType(SemanticSymbol src, SemanticSymbol dst) {
         if (src != dst) {
@@ -332,22 +342,47 @@ public class TigerSemanticAnalysis {
 
     public void semaAssign() {
         Expr assignment = (Expr)semanticStack.removeFirst();
+        Expr index = null;
+        if (semanticStack.peekFirst() instanceof Expr) {
+            index = (Expr) semanticStack.removeFirst();
+        }
         ID variableID = (ID)semanticStack.removeFirst();
         SemanticSymbol variable = symbolTable.get(variableID.name);
         if (variable == null || variable.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
             error("Semantic error: " + variableID.name + " is not a declared variable");
             return;
         }
-        if (variable.getArraySize() <= 1) {
+        if (variable.getSymbolTypeReference().getArraySize() > 1 && index == null) {
             error("Semantic error: " + variableID.name + " requires an array reference before assignment");
             return;
         }
-        if (!semaCanConvertType(variable.getSymbolTypeReference(), assignment.type)) {
+        if (variable.getSymbolTypeReference().getArraySize() <= 1 && index != null) {
+            error("Semantic error: " + variableID.name + " is not of an array type");
+            return;
+        }
+
+        SemanticSymbol baseType = variable.getSymbolTypeReference();
+        if (index != null) {
+            if (!index.type.getName().equals("int")) {
+                error("Semantic error: Array index must be of type int");
+                return;
+            }
+            if (variable.getSymbolTypeReference().getSymbolType() == SemanticSymbol.SymbolType.SymbolInt) {
+                baseType = symbolTable.get("int");
+            } else if (variable.getSymbolTypeReference().getSymbolType() == SemanticSymbol.SymbolType.SymbolFloat) {
+                baseType = symbolTable.get("float");
+            } else {
+                baseType = variable.getSymbolTypeReference().getSymbolTypeReference();
+            }
+        }
+
+        if (!semaCanConvertType(assignment.type, baseType)) {
             return;
         }
         AssignStat node = new AssignStat();
         node.left = variable;
         node.right = assignment;
+        node.index = index;
         semanticStack.addFirst(node);
     }
 

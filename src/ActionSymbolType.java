@@ -21,6 +21,7 @@ public enum ActionSymbolType {
 
     SEMA_VAR_REF ("#semaVarRef"),
     SEMA_VAR_REF_INDEX ("#semaVarRefIndex"),
+    SEMA_VAR_REF_ARRAY_CHECK ("#semaVarRefArrayCheck"),
     SEMA_ASSIGN ("#semaAssign"),
 
     // Logical binops

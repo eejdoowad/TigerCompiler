@@ -4,12 +4,16 @@ let
         type int_arr = array [100] of int;
         var a : int;
         var b : int;
+        var doge : dog;
+        var meow : cat;
         var c : float;
-        var d : array [100] of int;
+        var d : int_arr;
         var e : int := 7;
         var f : cat := 7;
 in
         a := 1;
         b := 2;
         a := (a + 3) * 2;
+        d[a] := d[3];
+        d[d[3]] := b;
 end
