@@ -41,7 +41,7 @@ stat-id-tail -> ASSIGN stat-assign-tail #semaAssign
 stat-id-tail -> #p-assign LBRACK expr RBRACK ASSIGN stat-assign-tail
 stat-id-tail -> LPAREN expr-list RPAREN
 stat-assign-tail -> LPAREN term0 RPAREN term5' term4' term3' term2' term1' term0'
-stat-assign-tail -> const #b-const term5' term4' term3' term2' term1' term0'
+stat-assign-tail -> const term5' term4' term3' term2' term1' term0'
 stat-assign-tail -> ID #semaVarRef stat-assign-id-tail
 stat-assign-id-tail -> LPAREN expr-list RPAREN
 stat-assign-id-tail -> opt-index term5' term4' term3' term2' term1' term0'
@@ -49,28 +49,28 @@ stat-if-tail -> ENDIF
 stat-if-tail -> ELSE stat-seq ENDIF
 expr -> term0
 term0 -> term1 term0'
-term0' -> OR term1 term0'
+term0' -> OR term1 #semaOr term0'
 term0' -> EPSILON
 term1 -> term2 term1'
-term1' -> AND term2 term1'
+term1' -> AND term2 #semaAnd term1'
 term1' -> EPSILON
 term2 -> term3 term2'
-term2' -> GREATER term3 term2'
-term2' -> LESSER term3 term2'
-term2' -> GREATEREQ term3 term2'
-term2' -> LESSEREQ term3 term2'
+term2' -> GREATER term3 #semaGreater term2'
+term2' -> LESSER term3 #semaLesser term2'
+term2' -> GREATEREQ term3 #semaGreaterEq term2'
+term2' -> LESSEREQ term3 #semaLesserEq term2'
 term2' -> EPSILON
 term3 -> term4 term3'
-term3' -> EQ term4 term3'
-term3' -> NEQ term4 term3'
+term3' -> EQ term4 #semaEq term3'
+term3' -> NEQ term4 #semaNeq term3'
 term3' -> EPSILON
 term4 -> term5 term4'
-term4' -> PLUS term5 term4'
-term4' -> MINUS term5 term4'
+term4' -> PLUS term5 #semaPlus term4'
+term4' -> MINUS term5 #semaMinus term4'
 term4' -> EPSILON
 term5 -> term6 term5'
-term5' -> MULT term6 term5'
-term5' -> DIV term6 term5'
+term5' -> MULT term6 #semaMult term5'
+term5' -> DIV term6 #semaDiv term5'
 term5' -> EPSILON
 term6 -> LPAREN term0 RPAREN
 term6 -> const

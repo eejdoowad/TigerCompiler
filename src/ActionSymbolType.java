@@ -23,6 +23,24 @@ public enum ActionSymbolType {
     SEMA_VAR_REF_INDEX ("#semaVarRefIndex"),
     SEMA_ASSIGN ("#semaAssign"),
 
+    // Logical binops
+    SEMA_OR ("#semaOr"),
+    SEMA_AND ("#semaAnd"),
+
+    // Conditional binops
+    SEMA_GREATER ("#semaGreater"),
+    SEMA_LESSER ("#semaLesser"),
+    SEMA_GREATEREQ ("#semaGreaterEq"),
+    SEMA_LESSEREQ ("#semaLesserEq"),
+    SEMA_EQ ("#semaEq"),
+    SEMA_NEQ ("#semaNeq"),
+
+    // Arithmetic binops
+    SEMA_PLUS ("#semaPlus"),
+    SEMA_MINUS ("#semaMinus"),
+    SEMA_MULT ("#semaMult"),
+    SEMA_DIV ("#semaDiv"),
+
     // eh.. review
     P_TYPEDEC ("#p-typeDec"),
     B_NEWTYPE ("#b-newType"),

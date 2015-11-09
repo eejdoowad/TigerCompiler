@@ -238,6 +238,18 @@ public class TigerParser {
             case SEMA_ASSIGN:
                 analyzer.semaAssign();
                 break;
+            case SEMA_PLUS:
+                analyzer.semaArithmeticBinOp(new AST.Add());
+                break;
+            case SEMA_MINUS:
+                analyzer.semaArithmeticBinOp(new AST.Sub());
+                break;
+            case SEMA_MULT:
+                analyzer.semaArithmeticBinOp(new AST.Mult());
+                break;
+            case SEMA_DIV:
+                analyzer.semaArithmeticBinOp(new AST.Div());
+                break;
 
             case P_TYPEDEC:
                 //System.out.println("SA: Push TypeDec");

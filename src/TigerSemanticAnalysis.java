@@ -4,6 +4,7 @@ import AST.Node;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.concurrent.Exchanger;
 
 // Performs semantic analysis via inputs from the parser and outputs
 // an AST upon successful analysis
@@ -322,6 +323,49 @@ public class TigerSemanticAnalysis {
         AssignStat node = new AssignStat();
         node.left = variable;
         node.right = assignment;
+        semanticStack.addFirst(node);
+    }
+
+    // Returns whether one type can be implicitly converted to another without giving an error
+    private boolean semaCanConvertTypeNoError(SemanticSymbol src, SemanticSymbol dst) {
+        if (src != dst) {
+            if (src.getName().equals("float") && dst.getName().equals("int")) {
+                return false;
+            }
+            if (src.getName().equals("int")) {
+                if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolInt) {
+                    return false;
+                }
+            } else if (src.getName().equals("float")) {
+                if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolFloat) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void semaArithmeticBinOp(ArithmeticBinOp node) {
+        // get the left and right
+        Expr right = (Expr)semanticStack.removeFirst();
+        Expr left = (Expr)semanticStack.removeFirst();
+
+        // Test whether one can be converted to the other implicitly
+        if (semaCanConvertTypeNoError(left.type, right.type)) {
+            node.left = left;
+            node.right = right;
+            node.type = left.type;
+        } else if (semaCanConvertTypeNoError(right.type, left.type)) {
+            node.left = right;
+            node.right = left;
+            node.type = right.type;
+        } else {
+            error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName());
+            return;
+        }
+
         semanticStack.addFirst(node);
     }
 }
