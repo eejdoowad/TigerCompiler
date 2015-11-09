@@ -8,19 +8,22 @@ import java.util.ArrayList;
 public class IRGenerator {
 
     // AST representation output by parser
-    Program program;
+    public Program program;
 
     // IROC representation output by IRGenerator
     public ArrayList<IR> instructions = new ArrayList<>();
 
 
-    public void emit(IR instruction){
-        instructions.add(instruction);
+    public IRGenerator(Program program){
+        this.program = program;
     }
 
     // generates IR code using the AST
     public void generate(){
-        IRGenVisitor x;
+        IRGenVisitor g;
+        g.program = program;
+        g.instructions = instructions;
+        program.accept(g);
     }
 
     public String toString(){

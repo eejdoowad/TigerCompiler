@@ -1,6 +1,21 @@
 package AST;
 
+import IR.*;
+
+import java.util.ArrayList;
+
 public class IRGenVisitor implements Visitor {
+
+    // AST representation output by parser
+    public Program program;
+    // IROC representation output by IRGenerator
+    public ArrayList<IR> instructions = new ArrayList<>();
+    public void emit(IR instruction){
+        instructions.add(instruction);
+    }
+
+
+
 
     public void visit(Program n){
         for (TypeDec d : n.typeDecs){
@@ -24,12 +39,11 @@ public class IRGenVisitor implements Visitor {
     public void visit(VarDec n){
         if (n.init != null){
             for (SemanticSymbol var : n.vars){
-                if (var.getArraySize() == 1){
-
+                if (var.isArray()){
+                    emit(new array_assign());
                 }
-
                 else {
-
+                    emit(new assign());
                 }
             }
         }
