@@ -91,4 +91,8 @@ public class SemanticSymbol {
         }
         return size;
     }
+
+    public boolean isArray(){
+        return arraySize > 0;
+    }
 }
