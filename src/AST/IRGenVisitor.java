@@ -37,12 +37,28 @@ public class IRGenVisitor implements Visitor {
     // generate assignments for initialized values
     public void visit(VarDec n){
         if (n.init != null){
+
+            Operand right;
+            if (n.type.isIntPrimitive()){
+                right = new IntImmediate(((AST.IntLit)n.init).val);
+            }
+            else if (n.type.isFloatPrimitive()){
+                right = new FloatImmediate(((AST.FloatLit)n.init).val);
+            }
+            else {
+                System.out.println("!!!!!!!!!! WHAT ARE YOU");
+                System.exit(1);
+                right = new FloatImmediate(0.123456789f); // silence warning
+            }
+
             for (SemanticSymbol var : n.vars){
                 if (var.isArray()){
+                    System.out.println("MISSING ARRAY_ASSIGN: FIX SEMANALYSIS");
                     //emit(new array_assign());
                 }
                 else {
-                    //emit(new assign());
+                    NamedVar left = new NamedVar(var.getName());
+                    emit(new assign(left, right));
                 }
             }
         }
