@@ -222,8 +222,18 @@ public class IRGenVisitor implements Visitor {
     }
     public void visit(VarReference n){
         debugPrompt("VarReference");
-
-        context.setRetVal(new NamedVar(n.reference.getName()));
+        // normal non-array access
+        if (n.index == null){
+            context.setRetVal(new NamedVar(n.reference.getName()));
+        }
+        else {
+            n.index.accept(this);
+            Operand index = context.getRetVal();
+            TempVar left = new TempVar();
+            NamedVar array = new NamedVar(n.reference.getName());
+            emit(new array_load(left, array, index));
+            context.setRetVal(left);
+        }
     }
     public void visit(IntLit n){
         debugPrompt("IntLit");
