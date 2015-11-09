@@ -32,9 +32,9 @@ stat-seq -> stat stat-seq-tail
 stat-seq-tail -> stat stat-seq-tail
 stat-seq-tail -> EPSILON
 stat -> IF expr #semaIfStart THEN stat-seq #semaIfBlock stat-if-tail SEMI
-stat -> WHILE expr DO stat-seq ENDDO SEMI
-stat -> FOR ID ASSIGN expr TO expr DO stat-seq ENDDO SEMI
-stat -> BREAK SEMI
+stat -> WHILE expr #semaWhileStart DO stat-seq #semaWhileBlock ENDDO SEMI
+stat -> FOR ID #semaIdentifier ASSIGN expr TO expr #semaForStart DO stat-seq #semaForBlock ENDDO SEMI
+stat -> BREAK SEMI #semaBreak
 stat -> RETURN expr SEMI
 stat -> ID #semaIdentifier stat-id-tail SEMI
 stat-id-tail -> ASSIGN stat-assign-tail #semaAssign

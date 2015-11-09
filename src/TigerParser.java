@@ -293,6 +293,21 @@ public class TigerParser {
             case SEMA_ELSE_BLOCK:
                 analyzer.semaElseBlock();
                 break;
+            case SEMA_WHILE_START:
+                analyzer.semaWhileStart();
+                break;
+            case SEMA_WHILE_BLOCK:
+                analyzer.semaWhileBlock();
+                break;
+            case SEMA_FOR_START:
+                analyzer.semaForStart();
+                break;
+            case SEMA_FOR_BLOCK:
+                analyzer.semaForBlock();
+                break;
+            case SEMA_BREAK:
+                analyzer.semaBreak();
+                break;
         }
     }
 }

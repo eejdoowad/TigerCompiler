@@ -25,4 +25,10 @@ in
                 b := 4;
             endif;
         endif;
+        while (a <> 1) do
+            a := 1;
+        enddo;
+        for a := 1 to 5 do
+            d[a] := 1;
+        enddo;
 end

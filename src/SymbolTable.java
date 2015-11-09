@@ -53,10 +53,10 @@ public class SymbolTable {
         // Create int and float types
         SemanticSymbol intSymbol = new SemanticSymbol("int", SemanticSymbol.SymbolClass.TypeDecleration);
         intSymbol.setSymbolType(SemanticSymbol.SymbolType.SymbolInt);
-        intSymbol.setArraySize(1);
+        intSymbol.setArraySize(0);
         SemanticSymbol floatSymbol = new SemanticSymbol("float", SemanticSymbol.SymbolClass.TypeDecleration);
         floatSymbol.setSymbolType(SemanticSymbol.SymbolType.SymbolFloat);
-        floatSymbol.setArraySize(1);
+        floatSymbol.setArraySize(0);
         put("int", intSymbol);
         put("float", floatSymbol);
     }

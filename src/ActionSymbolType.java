@@ -48,6 +48,17 @@ public enum ActionSymbolType {
     SEMA_ELSE_START ("#semaElseStart"),
     SEMA_ELSE_BLOCK ("#semaElseBlock"),
 
+    // While statement actions
+    SEMA_WHILE_START ("#semaWhileStart"),
+    SEMA_WHILE_BLOCK ("#semaWhileBlock"),
+
+    // For statement actions
+    SEMA_FOR_START ("#semaForStart"),
+    SEMA_FOR_BLOCK ("#semaForBlock"),
+
+    // Break
+    SEMA_BREAK ("#semaBreak"),
+
     // eh.. review
     P_TYPEDEC ("#p-typeDec"),
     B_NEWTYPE ("#b-newType"),

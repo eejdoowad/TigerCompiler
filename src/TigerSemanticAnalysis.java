@@ -29,7 +29,11 @@ public class TigerSemanticAnalysis {
     private int tempIncrement = 0;
 
     // Set to true if semantic error occurs
-    boolean semanticError = false;
+    private boolean semanticError = false;
+
+    // Counter incremented every time a loop is entered and decremented when one is left
+    // Used to determine if a break is legal.
+    private int loopCounter = 0;
 
     public TigerSemanticAnalysis() {
         root = null;
@@ -115,14 +119,14 @@ public class TigerSemanticAnalysis {
             // Case 2: new type is an int
             SemanticSymbol type = new SemanticSymbol(newType.name, SemanticSymbol.SymbolClass.TypeDecleration);
             type.setSymbolType(SemanticSymbol.SymbolType.SymbolInt);
-            type.setArraySize(1);
+            type.setArraySize(0);
             symbolTable.put(newType.name, type);
             node.newType = type;
         } else if (exisitingType.name.equals("float")) {
             // Case 3: new type is a float
             SemanticSymbol type = new SemanticSymbol(newType.name, SemanticSymbol.SymbolClass.TypeDecleration);
             type.setSymbolType(SemanticSymbol.SymbolType.SymbolFloat);
-            type.setArraySize(1);
+            type.setArraySize(0);
             symbolTable.put(newType.name, type);
             node.newType = type;
         } else {
@@ -140,7 +144,7 @@ public class TigerSemanticAnalysis {
             // Create the new type to alias the lookuped type
             SemanticSymbol type = new SemanticSymbol(newType.name, SemanticSymbol.SymbolClass.TypeDecleration);
             type.setSymbolType(lookup);
-            type.setArraySize(1);
+            type.setArraySize(0);
             symbolTable.put(newType.name, type);
             node.newType = type;
         }
@@ -542,5 +546,110 @@ public class TigerSemanticAnalysis {
             node.falseStats.add(stat);
         }
         node.finalized = true;
+    }
+
+    public void semaWhileStart() {
+        Expr cond = (Expr)semanticStack.removeFirst();
+
+        // condition must be an integer type
+        if (!cond.type.getName().equals("int")) {
+            error("Semantic error: condition must be an integer");
+            return;
+        }
+
+        // Increment loop counter
+        loopCounter++;
+
+        // Build the node
+        WhileStat node = new WhileStat();
+        node.cond = cond;
+        node.finalized = false;
+        semanticStack.addFirst(node);
+    }
+
+    public void semaWhileBlock() {
+        Deque<Stat> statements = new ArrayDeque<>();
+        while (!semanticStack.isEmpty()) {
+            Stat statement = (Stat)semanticStack.peekFirst();
+            if (statement instanceof WhileStat) {
+                if (!((WhileStat)statement).finalized) {
+                    break;
+                }
+            }
+            statements.addFirst((Stat)semanticStack.removeFirst());
+        }
+
+        // Decrement loop counter
+        loopCounter--;
+
+        // Add the statements
+        WhileStat node = (WhileStat)semanticStack.peekFirst();
+        for (Stat stat : statements) {
+            node.stats.add(stat);
+        }
+        node.finalized = true;
+    }
+
+    public void semaForStart() {
+        Expr to = (Expr)semanticStack.removeFirst();
+        Expr from = (Expr)semanticStack.removeFirst();
+        ID varID = (ID)semanticStack.removeFirst();
+
+        // Perform a lookup first
+        SemanticSymbol variable = symbolTable.get(varID.name);
+        if (variable == null || variable.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
+            error("Symantic error: " + varID.name + " is not a defined variable");
+            return;
+        }
+
+        // Type check
+        if (!semaCanConvertType(to.type, variable.getSymbolTypeReference()) ||
+                !semaCanConvertType(from.type, variable.getSymbolTypeReference())) {
+            return;
+        }
+
+        // Loop counter is incremented
+        loopCounter++;
+
+        // Build the for statement
+        ForStat node = new ForStat();
+        node.start = from;
+        node.end = to;
+        node.var = variable;
+        node.finalized = false;
+        semanticStack.addFirst(node);
+    }
+
+    public void semaForBlock() {
+        Deque<Stat> statements = new ArrayDeque<>();
+        while (!semanticStack.isEmpty()) {
+            Stat statement = (Stat)semanticStack.peekFirst();
+            if (statement instanceof ForStat) {
+                if (!((ForStat)statement).finalized) {
+                    break;
+                }
+            }
+            statements.addFirst((Stat)semanticStack.removeFirst());
+        }
+
+        // Decrement loop counter
+        loopCounter--;
+
+        // Add the statements
+        ForStat node = (ForStat) semanticStack.peekFirst();
+        for (Stat stat : statements) {
+            node.stats.add(stat);
+        }
+        node.finalized = true;
+    }
+
+    public void semaBreak() {
+        if (loopCounter <= 0) {
+            error("Semantic error: break statement must be inside a loop");
+            return;
+        }
+
+        BreakStat node = new BreakStat();
+        semanticStack.addFirst(node);
     }
 }

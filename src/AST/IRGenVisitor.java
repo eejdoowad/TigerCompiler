@@ -40,10 +40,10 @@ public class IRGenVisitor implements Visitor {
         if (n.init != null){
             for (SemanticSymbol var : n.vars){
                 if (var.isArray()){
-                    emit(new array_assign());
+                    //emit(new array_assign());
                 }
                 else {
-                    emit(new assign());
+                    //emit(new assign());
                 }
             }
         }

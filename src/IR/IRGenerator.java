@@ -20,7 +20,7 @@ public class IRGenerator {
 
     // generates IR code using the AST
     public void generate(){
-        IRGenVisitor g;
+        IRGenVisitor g = new IRGenVisitor();
         g.program = program;
         g.instructions = instructions;
         program.accept(g);
