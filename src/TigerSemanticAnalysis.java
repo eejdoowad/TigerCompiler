@@ -359,10 +359,6 @@ public class TigerSemanticAnalysis {
             error("Semantic error: " + variableID.name + " is not a declared variable");
             return;
         }
-        if (variable.getSymbolTypeReference().getArraySize() > 0 && index == null) {
-            error("Semantic error: " + variableID.name + " requires an array reference before assignment");
-            return;
-        }
         if (variable.getSymbolTypeReference().getArraySize() <= 0 && index != null) {
             error("Semantic error: " + variableID.name + " is not of an array type");
             return;
@@ -374,6 +370,9 @@ public class TigerSemanticAnalysis {
                 error("Semantic error: Array index must be of type int");
                 return;
             }
+        }
+        // If type is an array, get the base type for type checking
+        if (baseType.getArraySize() > 0 || index != null) {
             if (variable.getSymbolTypeReference().getSymbolType() == SemanticSymbol.SymbolType.SymbolInt) {
                 baseType = symbolTable.get("int");
             } else if (variable.getSymbolTypeReference().getSymbolType() == SemanticSymbol.SymbolType.SymbolFloat) {
