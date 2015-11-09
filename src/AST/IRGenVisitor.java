@@ -27,7 +27,9 @@ class IRGenVisitorContext {
         }
         else{
             System.out.println("GET RETVAL");
-            return retVal;
+            Operand localRetVal = retVal;
+            retVal = null;
+            return localRetVal;
         }
     }
 }
@@ -220,7 +222,8 @@ public class IRGenVisitor implements Visitor {
     }
     public void visit(VarReference n){
         debugPrompt("VarReference");
-        //
+
+        context.setRetVal(new NamedVar(n.reference.getName()));
     }
     public void visit(IntLit n){
         debugPrompt("IntLit");
@@ -247,23 +250,63 @@ public class IRGenVisitor implements Visitor {
     public void visit(Sub n){
         debugPrompt("Sub");
 
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        TempVar result = new TempVar();
+        emit(new sub(left, right, result));
+        context.setRetVal(result);
     }
     public void visit(Mult n){
         debugPrompt("Mult");
 
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        TempVar result = new TempVar();
+        emit(new mult(left, right, result));
+        context.setRetVal(result);
     }
     public void visit(Div n){
         debugPrompt("Div");
 
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        TempVar result = new TempVar();
+        emit(new div(left, right, result));
+        context.setRetVal(result);
     }
 
     public void visit(And n){
         debugPrompt("And");
 
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        TempVar result = new TempVar();
+        emit(new and(left, right, result));
+        context.setRetVal(result);
     }
     public void visit(Or n){
         debugPrompt("Or");
 
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        TempVar result = new TempVar();
+        emit(new or(left, right, result));
+        context.setRetVal(result);
     }
 
     public void visit(Eq n){

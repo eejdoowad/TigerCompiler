@@ -16,11 +16,11 @@ let
             return addend1 + addend2;
         end;
 in
-        d := 1;
-        a := 1 + 2;
-        b := 2;
-        add(a, b);
-        add(a, b);
+        /* d := 1; */
+        a := 1337;
+        b := 1 + 2 + 3;
+        /* add(a, b);
+        add(a, b); */
         a := (a + 3) * 2;
         d[a] := d[3];
         d[d[3]] := b;
