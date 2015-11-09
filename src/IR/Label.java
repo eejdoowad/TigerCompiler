@@ -27,6 +27,6 @@ public class Label extends IR {
     }
 
     public String toString(){
-        return name;
+        return name + ":";
     }
 }

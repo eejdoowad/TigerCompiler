@@ -7,7 +7,7 @@ let
         var doge : dog;
         var meow : cat;
         var c : float;
-        var d : int_arr;
+        var d : int_arr := 42;
         var e : int := 7;
         var f : cat := 7;
 
@@ -15,8 +15,10 @@ let
             return addend1 + addend2;
         end;
 in
+        d := 1;
         a := 1;
         b := 2;
+        add(a, b);
         add(a, b);
         a := (a + 3) * 2;
         d[a] := d[3];
@@ -34,6 +36,9 @@ in
             a := 1;
         enddo;
         for a := 1 to 5 do
+            d[a] := 1;
+        enddo;
+        for a := 2 to 7 do
             d[a] := 1;
         enddo;
 end
