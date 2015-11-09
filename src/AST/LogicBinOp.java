@@ -1,4 +1,5 @@
 package AST;
 
-public class LogicBinOp extends BinOp {
+public abstract class LogicBinOp extends BinOp {
+
 }

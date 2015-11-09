@@ -1,4 +1,4 @@
 package AST;
 
-public class ComparisonBinOp extends BinOp {
+public abstract class ComparisonBinOp extends BinOp {
 }

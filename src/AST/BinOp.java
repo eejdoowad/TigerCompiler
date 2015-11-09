@@ -1,6 +1,6 @@
 package AST;
 
-public class BinOp extends Expr {
+public abstract class BinOp extends Expr {
 
     public Expr left;
     public Expr right;

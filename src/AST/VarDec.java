@@ -7,4 +7,6 @@ public class VarDec extends Node {
     public ArrayList<SemanticSymbol> vars = new ArrayList<>();
     public SemanticSymbol type;
     public Const init;
+
+    public void accept(Visitor v) { v.visit(this); }
 }
