@@ -292,7 +292,7 @@ public class TigerSemanticAnalysis {
             error("Semantic error: Array index must be of type int");
             return;
         }
-        if (variable.type.getArraySize() <= 1) {
+        if (variable.type.getArraySize() <= 0) {
             error("Semantic error: Type " + variable.type.getName() + " is not an array type");
             return;
         }
@@ -309,7 +309,7 @@ public class TigerSemanticAnalysis {
     // Ensures topmost variable reference is not an array
     public void semaVariableReferenceArrayCheck() {
         VarReference var = (VarReference)semanticStack.peekFirst();
-        if (var.type.getArraySize() > 1) {
+        if (var.type.getArraySize() > 0) {
             error("Semantic error: " + var.reference.getName() + " is an array but is not indexed into");
             return;
         }
@@ -352,11 +352,11 @@ public class TigerSemanticAnalysis {
             error("Semantic error: " + variableID.name + " is not a declared variable");
             return;
         }
-        if (variable.getSymbolTypeReference().getArraySize() > 1 && index == null) {
+        if (variable.getSymbolTypeReference().getArraySize() > 0 && index == null) {
             error("Semantic error: " + variableID.name + " requires an array reference before assignment");
             return;
         }
-        if (variable.getSymbolTypeReference().getArraySize() <= 1 && index != null) {
+        if (variable.getSymbolTypeReference().getArraySize() <= 0 && index != null) {
             error("Semantic error: " + variableID.name + " is not of an array type");
             return;
         }

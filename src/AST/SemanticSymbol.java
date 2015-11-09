@@ -36,8 +36,8 @@ public class SemanticSymbol {
     // Reference to semantic symbol if a custom alias
     private SemanticSymbol typeSymbol;
 
-    // Array size
-    private int arraySize = 1;
+    // Array size (0 means not an array)
+    private int arraySize = 0;
 
     public String getName() {
         return name;
@@ -85,7 +85,7 @@ public class SemanticSymbol {
         // Get inferred array size
         SemanticSymbol iter = this;
         int size = arraySize;
-        while (iter.type == SymbolType.SymbolCustom && size <= 1) {
+        while (iter.type == SymbolType.SymbolCustom && size <= 0) {
             iter = iter.typeSymbol;
             size = iter.arraySize;
         }
