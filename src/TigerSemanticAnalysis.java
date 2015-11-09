@@ -353,14 +353,16 @@ public class TigerSemanticAnalysis {
         Expr left = (Expr)semanticStack.removeFirst();
 
         // Test whether one can be converted to the other implicitly
-        if (semaCanConvertTypeNoError(left.type, right.type)) {
+        if (semaCanConvertTypeNoError(right.type, left.type)) {
             node.left = left;
             node.right = right;
             node.type = left.type;
-        } else if (semaCanConvertTypeNoError(right.type, left.type)) {
-            node.left = right;
-            node.right = left;
+            node.convertLeft = false;
+        } else if (semaCanConvertTypeNoError(left.type, right.type)) {
+            node.left = left;
+            node.right = right;
             node.type = right.type;
+            node.convertLeft = true;
         } else {
             error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName());
             return;
