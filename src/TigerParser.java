@@ -20,6 +20,7 @@ public class TigerParser {
     private Token nextToken; // the next token returned by
     private Stack<AST.Node> SR;
     private TigerSemanticAnalysis analyzer;
+    public Program program;
 
     // Stack that ID or LIT tokens popped off the parse stack are pushed to
     // to be processed by the semantic analyzer
@@ -197,7 +198,7 @@ public class TigerParser {
                 break;
             case END:
                 System.out.println("SA: END");
-                Program program = analyzer.semaProgramEnd();
+                program = analyzer.semaProgramEnd();
                 break;
 
             case SEMA_INT_LIT:

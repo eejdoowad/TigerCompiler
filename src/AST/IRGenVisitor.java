@@ -1,14 +1,38 @@
 package AST;
 
 public class IRGenVisitor implements Visitor {
-    public void visit(Program n){
 
+    public void visit(Program n){
+        for (TypeDec d : n.typeDecs){
+            d.accept(this);
+        }
+        for (VarDec d : n.varDecs){
+            d.accept(this);
+        }
+        for (FunDec d : n.funDecs){
+            d.accept(this);
+        }
+        for (Stat s : n.stats){
+            s.accept(this);
+        }
     }
+    // no action done by IR CodeGen for TypeDecs
     public void visit(TypeDec n){
 
     }
+    // generate assignments for initialized values
     public void visit(VarDec n){
+        if (n.init != null){
+            for (SemanticSymbol var : n.vars){
+                if (var.getArraySize() == 1){
 
+                }
+
+                else {
+
+                }
+            }
+        }
     }
     public void visit(FunDec n){
 

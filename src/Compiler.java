@@ -1,6 +1,9 @@
 // The Compiler class should be the top-level Entity
 // It will be composed of the various phases of the compiler
 
+import AST.IRGenVisitor;
+import IR.IRGenerator;
+
 public class Compiler {
 
     public Compiler(){
@@ -16,6 +19,8 @@ public class Compiler {
         TigerScanner scanner = new TigerScanner(file);
         TigerParser parser = new TigerParser(scanner);
         parser.parse();
+        IRGenerator irgen = new IRGenerator(parser.program);
+        irgen.generate();
         // Currently our compiler functions only up to the parser
     }
 }
