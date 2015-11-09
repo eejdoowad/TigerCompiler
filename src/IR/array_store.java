@@ -19,6 +19,6 @@ public class array_store extends IR {
     }
 
     public String toString(){
-        return "assign, " + var + ", " + index + ", " + right;
+        return "array_store, " + var + ", " + index + ", " + right;
     }
 }
