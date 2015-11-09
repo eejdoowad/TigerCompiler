@@ -24,6 +24,7 @@ public class IRGenerator {
         g.program = program;
         g.instructions = instructions;
         program.accept(g);
+        System.out.println("All done");
     }
 
     public String toString(){

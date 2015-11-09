@@ -22,11 +22,11 @@ public class Label extends IR {
     public String name;
 
     public Label(String name){
-        this.name = name + id;
         id = labelNum++;
+        this.name = name + id;
     }
 
     public String toString(){
-        return name;
+        return name + ":";
     }
 }

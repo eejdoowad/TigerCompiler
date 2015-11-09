@@ -98,6 +98,9 @@ public class SemanticSymbol {
         return size;
     }
 
+    public boolean isIntPrimitive() { return getInferredPrimitive() == SemanticSymbol.SymbolType.SymbolInt; }
+    public boolean isFloatPrimitive() { return getInferredPrimitive() == SymbolType.SymbolFloat; }
+
     public boolean isArray(){
         return getArraySize() > 0;
     }

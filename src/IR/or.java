@@ -4,8 +4,10 @@ import AST.SemanticSymbol;
 
 public class or extends binop {
 
-    public or(SemanticSymbol symbolLeft, SemanticSymbol symbolRight){
-        super(symbolLeft, symbolRight);
-        op = BinOpType.OR;
+    public or(Operand left, Operand right, Operand result){
+        super(left, right, result);
+    }
+    public String toString(){
+        return  "or, " + left + ", " + right + ", " + result;
     }
 }

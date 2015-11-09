@@ -4,8 +4,10 @@ import AST.SemanticSymbol;
 
 public class add extends binop {
 
-    public add(SemanticSymbol symbolLeft, SemanticSymbol symbolRight){
-        super(symbolLeft, symbolRight);
-        op = BinOpType.ADD;
+    public add(Operand left, Operand right, Operand result){
+        super(left, right, result);
+    }
+    public String toString(){
+        return  "add, " + left + ", " + right + ", " + result;
     }
 }
