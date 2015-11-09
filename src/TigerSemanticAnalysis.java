@@ -331,12 +331,15 @@ public class TigerSemanticAnalysis {
     }
 
     public void semaAssign() {
-        // TODO: Handle if variable is an array
         Expr assignment = (Expr)semanticStack.removeFirst();
         ID variableID = (ID)semanticStack.removeFirst();
         SemanticSymbol variable = symbolTable.get(variableID.name);
         if (variable == null || variable.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
             error("Semantic error: " + variableID.name + " is not a declared variable");
+            return;
+        }
+        if (variable.getArraySize() <= 1) {
+            error("Semantic error: " + variableID.name + " requires an array reference before assignment");
             return;
         }
         if (!semaCanConvertType(variable.getSymbolTypeReference(), assignment.type)) {
