@@ -1,6 +1,7 @@
 import AST.*;
 import AST.Node;
 
+import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -281,6 +282,27 @@ public class TigerSemanticAnalysis {
         node.index = null;
         node.type = lookup.getSymbolTypeReference();
         semanticStack.addFirst(node);
+    }
+
+    public void semaVariableReferenceIndex() {
+        Expr index = (Expr)semanticStack.removeFirst();
+        VarReference variable = (VarReference)semanticStack.peekFirst();
+        if (!index.type.getName().equals("int")) {
+            error("Semantic error: Array index must be of type int");
+            return;
+        }
+        if (variable.type.getArraySize() <= 1) {
+            error("Semantic error: Type " + variable.type.getName() + " is not an array type");
+            return;
+        }
+        if (variable.type.getSymbolType() == SemanticSymbol.SymbolType.SymbolInt) {
+            variable.type = symbolTable.get("int");
+        } else if (variable.type.getSymbolType() == SemanticSymbol.SymbolType.SymbolFloat) {
+            variable.type = symbolTable.get("float");
+        } else {
+            variable.type = variable.type.getSymbolTypeReference();
+        }
+        variable.index = index;
     }
 
     // Returns whether one type can be implicitly converted to another

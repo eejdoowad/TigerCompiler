@@ -82,6 +82,13 @@ public class SemanticSymbol {
     }
 
     public int getArraySize() {
-        return arraySize;
+        // Get inferred array size
+        SemanticSymbol iter = this;
+        int size = arraySize;
+        while (iter.type == SymbolType.SymbolCustom && size <= 1) {
+            iter = iter.typeSymbol;
+            size = iter.arraySize;
+        }
+        return size;
     }
 }

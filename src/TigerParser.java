@@ -235,6 +235,8 @@ public class TigerParser {
             case SEMA_VAR_REF:
                 analyzer.semaVariableReference(tokenStack.removeFirst().lexeme);
                 break;
+            case SEMA_VAR_REF_INDEX:
+
             case SEMA_ASSIGN:
                 analyzer.semaAssign();
                 break;
