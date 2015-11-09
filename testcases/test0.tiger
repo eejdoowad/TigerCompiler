@@ -12,11 +12,12 @@ let
         var f : cat := 7;
 
         function add(addend1 : int, addend2 : int) : int begin
-            a := addend1 + addend2;
+            return addend1 + addend2;
         end;
 in
         a := 1;
         b := 2;
+        add(a, b);
         a := (a + 3) * 2;
         d[a] := d[3];
         d[d[3]] := b;

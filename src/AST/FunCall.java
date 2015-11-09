@@ -2,7 +2,7 @@ package AST;
 
 import java.util.ArrayList;
 
-public class FunCall extends Node {
+public class FunCall extends Stat {
 
     public SemanticSymbol func;
     public ArrayList<Expr> args = new ArrayList<Expr>();

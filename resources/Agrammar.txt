@@ -35,11 +35,11 @@ stat -> IF expr #semaIfStart THEN stat-seq #semaIfBlock stat-if-tail SEMI
 stat -> WHILE expr #semaWhileStart DO stat-seq #semaWhileBlock ENDDO SEMI
 stat -> FOR ID #semaIdentifier ASSIGN expr TO expr #semaForStart DO stat-seq #semaForBlock ENDDO SEMI
 stat -> BREAK SEMI #semaBreak
-stat -> RETURN expr SEMI
+stat -> RETURN expr SEMI #semaReturn
 stat -> ID #semaIdentifier stat-id-tail SEMI
 stat-id-tail -> ASSIGN stat-assign-tail #semaAssign
 stat-id-tail -> LBRACK expr RBRACK ASSIGN stat-assign-tail #semaAssign
-stat-id-tail -> LPAREN expr-list RPAREN
+stat-id-tail -> LPAREN expr-list RPAREN #semaFuncCall
 stat-assign-tail -> LPAREN term0 RPAREN term5' term4' term3' term2' term1' term0'
 stat-assign-tail -> const term5' term4' term3' term2' term1' term0'
 stat-assign-tail -> ID #semaVarRef stat-assign-id-tail

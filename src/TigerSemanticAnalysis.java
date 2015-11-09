@@ -721,4 +721,59 @@ public class TigerSemanticAnalysis {
         currentFunction = null;
         symbolTable.endScope();
     }
+
+    public void semaReturn() {
+        Expr ret = (Expr)semanticStack.removeFirst();
+        if (currentFunction == null) {
+            error("Semantic error: return cannot appear outside a function block");
+        }
+        if (currentFunction.getFunctionReturnType() == null) {
+            error("Semantic error: function with no return type cannot return");
+        }
+        if (!semaCanConvertType(ret.type, currentFunction.getFunctionReturnType())) {
+            return;
+        }
+        ReturnStat node = new ReturnStat();
+        node.retVal = ret;
+        semanticStack.addFirst(node);
+    }
+
+    public void semaFunctionCall() {
+        Deque<Expr> args = new ArrayDeque<>();
+        while (semanticStack.peekFirst() instanceof Expr) {
+            args.addFirst((Expr)semanticStack.removeFirst());
+        }
+        ID functionID = (ID)semanticStack.removeFirst();
+
+        // Attempt a lookup
+        SemanticSymbol function = symbolTable.get(functionID.name);
+        if (function == null || function.getSymbolClass() != SemanticSymbol.SymbolClass.FunctionDeclatation) {
+            error("Semantic error: " + functionID.name + " is not a defined function");
+            return;
+        }
+
+        FunCall call = new FunCall();
+        call.func = function;
+
+        // Compare argument count
+        if (function.getFunctionParameters() == null) {
+            if (args.size() != 0) {
+                error("Semantic error: " + functionID.name + " does not take any parameters");
+                return;
+            }
+        } else if (function.getFunctionParameters().size() != args.size()) {
+            error("Semantic error: attempt to call " + functionID.name + " with invalid number of parameters");
+            return;
+        } else {
+            // type check and add the parameters
+            for (SemanticSymbol arg : function.getFunctionParameters()) {
+                Expr ex = args.removeFirst();
+                if (!semaCanConvertType(ex.type, arg.getSymbolTypeReference())) {
+                    return;
+                }
+                call.args.add(ex);
+            }
+        }
+        semanticStack.addFirst(call);
+    }
 }

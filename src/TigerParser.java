@@ -320,6 +320,12 @@ public class TigerParser {
             case SEMA_FUNC_BLOCK:
                 analyzer.semaFunctionBlock();
                 break;
+            case SEMA_RETURN:
+                analyzer.semaReturn();
+                break;
+            case SEMA_FUNC_CALL:
+                analyzer.semaFunctionCall();
+                break;
         }
     }
 }
