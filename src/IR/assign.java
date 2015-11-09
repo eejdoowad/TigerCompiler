@@ -4,7 +4,8 @@ import AST.SemanticSymbol;
 
 public class assign extends IR {
 
-    // there is no scenario in which the l-value is a temporary
+    // the l-value is always Named
+    // wouldn't make sense to assign to a temp
     public NamedVar var;
     // the right hand side could be anything
     public Operand right;
