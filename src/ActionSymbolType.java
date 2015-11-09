@@ -42,6 +42,12 @@ public enum ActionSymbolType {
     SEMA_MULT ("#semaMult"),
     SEMA_DIV ("#semaDiv"),
 
+    // If statement actions
+    SEMA_IF_START ("#semaIfStart"),
+    SEMA_IF_BLOCK ("#semaIfBlock"),
+    SEMA_ELSE_START ("#semaElseStart"),
+    SEMA_ELSE_BLOCK ("#semaElseBlock"),
+
     // eh.. review
     P_TYPEDEC ("#p-typeDec"),
     B_NEWTYPE ("#b-newType"),

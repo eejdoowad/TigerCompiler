@@ -16,4 +16,13 @@ in
         a := (a + 3) * 2;
         d[a] := d[3];
         d[d[3]] := b;
+        if (a > b) then
+            a := 3;
+            b := 5;
+        else
+            a := 2;
+            if (a < b) then
+                b := 4;
+            endif;
+        endif;
 end

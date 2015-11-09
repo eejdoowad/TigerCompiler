@@ -471,4 +471,76 @@ public class TigerSemanticAnalysis {
 
         semanticStack.addFirst(node);
     }
+
+    public void semaIfStart() {
+        // get the expression
+        Expr cond = (Expr)semanticStack.removeFirst();
+
+        // condition must be an integer type
+        if (!cond.type.getName().equals("int")) {
+            error("Semantic error: condition must be an integer");
+            return;
+        }
+
+        // Build the node
+        IfStat node = new IfStat();
+        node.cond = cond;
+        node.finalized = false;
+        semanticStack.addFirst(node);
+    }
+
+    public void semaIfBlock() {
+        Deque<Stat> statements = new ArrayDeque<>();
+        while (!semanticStack.isEmpty()) {
+            Stat statement = (Stat)semanticStack.peekFirst();
+            // We break if we find an if statement that is not finalized (i.e under construction)
+            // That is the if statement we are attaching everything to. If an if statement is finalized,
+            // it is a nested if statement that will already be done and we don't want to attach to a
+            // nested if statement
+            if (statement instanceof IfStat) {
+                if (!((IfStat)statement).finalized) {
+                    break;
+                }
+            }
+            // Otherwise it is a statement inside the if block
+            // We use a stack to reverse the already reversed statements
+            statements.addFirst((Stat)semanticStack.removeFirst());
+        }
+
+        // Add the statements
+        IfStat node = (IfStat)semanticStack.peekFirst();
+        for (Stat stat : statements) {
+            node.trueStats.add(stat);
+        }
+        node.finalized = true;
+    }
+
+    public void semaElseStart() {
+        IfStat node = (IfStat)semanticStack.peekFirst();
+
+        // Statement is no longer finalized
+        node.finalized = false;
+        node.falseStats = new ArrayList<>();
+    }
+
+    // Very similar to analyzing an if block
+    public void semaElseBlock() {
+        Deque<Stat> statements = new ArrayDeque<>();
+        while (!semanticStack.isEmpty()) {
+            Stat statement = (Stat)semanticStack.peekFirst();
+            if (statement instanceof IfStat) {
+                if (!((IfStat)statement).finalized) {
+                    break;
+                }
+            }
+            statements.addFirst((Stat)semanticStack.removeFirst());
+        }
+
+        // Add the statements
+        IfStat node = (IfStat)semanticStack.peekFirst();
+        for (Stat stat : statements) {
+            node.falseStats.add(stat);
+        }
+        node.finalized = true;
+    }
 }

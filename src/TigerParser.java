@@ -280,6 +280,18 @@ public class TigerParser {
             case SEMA_OR:
                 analyzer.semaLogicBinOp(new AST.Or());
                 break;
+            case SEMA_IF_START:
+                analyzer.semaIfStart();
+                break;
+            case SEMA_IF_BLOCK:
+                analyzer.semaIfBlock();
+                break;
+            case SEMA_ELSE_START:
+                analyzer.semaElseStart();
+                break;
+            case SEMA_ELSE_BLOCK:
+                analyzer.semaElseBlock();
+                break;
         }
     }
 }
