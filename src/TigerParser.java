@@ -256,49 +256,23 @@ public class TigerParser {
             case SEMA_DIV:
                 analyzer.semaArithmeticBinOp(new AST.Div());
                 break;
-
-            case P_TYPEDEC:
-                //System.out.println("SA: Push TypeDec");
+            case SEMA_GREATER:
+                analyzer.semaComparisonBinOp(new AST.Greater());
                 break;
-            case B_NEWTYPE:
-                //System.out.println("SA: Build NewType");
+            case SEMA_LESSER:
+                analyzer.semaComparisonBinOp(new AST.Lesser());
                 break;
-            case P_ADDTYPE:
-
+            case SEMA_GREATEREQ:
+                analyzer.semaComparisonBinOp(new AST.GreaterEq());
                 break;
-            case P_NEWTYPEDIM:
-
+            case SEMA_LESSEREQ:
+                analyzer.semaComparisonBinOp(new AST.LesserEq());
                 break;
-            case P_VARDEC:
-                //System.out.println("SA: Push VarDec");
-                //SR.push(new AST.VarDec());
+            case SEMA_EQ:
+                analyzer.semaComparisonBinOp(new AST.Eq());
                 break;
-            case A_VARDEC:
-                //System.out.println("SA: Attach VarDec");
-               // AST.VarDec varDec = (AST.VarDec)SR.pop();
-                //((AST.Program)SR.peek()).varDecs.add(varDec);
-                break;
-            case B_VARID:
-                break;
-            case B_CONSTINIT:
-                break;
-            case P_ASSIGNSTAT :
-
-                break;
-            case P_IF:
-
-                break;
-            case A_IF:
-
-                break;
-            case P_ID:
-
-                break;
-            case P_ASSIGN:
-
-                break;
-            case B_CONST:
-
+            case SEMA_NEQ:
+                analyzer.semaComparisonBinOp(new AST.Neq());
                 break;
         }
     }

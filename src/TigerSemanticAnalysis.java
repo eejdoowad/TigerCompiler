@@ -430,4 +430,28 @@ public class TigerSemanticAnalysis {
 
         semanticStack.addFirst(node);
     }
+
+    // Similar to arithmetic ops but result is always an integer value
+    public void semaComparisonBinOp(ComparisonBinOp node) {
+        // get the left and right
+        Expr right = (Expr)semanticStack.removeFirst();
+        Expr left = (Expr)semanticStack.removeFirst();
+
+        // Test whether one can be converted to the other implicitly
+        if (semaCanConvertTypeNoError(right.type, left.type)) {
+            node.left = left;
+            node.right = right;
+            node.convertLeft = false;
+        } else if (semaCanConvertTypeNoError(left.type, right.type)) {
+            node.left = left;
+            node.right = right;
+            node.convertLeft = true;
+        } else {
+            error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName());
+            return;
+        }
+        node.type = symbolTable.get("int");
+
+        semanticStack.addFirst(node);
+    }
 }
