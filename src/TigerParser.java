@@ -308,6 +308,18 @@ public class TigerParser {
             case SEMA_BREAK:
                 analyzer.semaBreak();
                 break;
+            case SEMA_FUNC_START:
+                analyzer.semaFunctionStart();
+                break;
+            case SEMA_FUNC_ARGS:
+                analyzer.semaFunctionArgs();
+                break;
+            case SEMA_FUNC_RET:
+                analyzer.semaFunctionReturnType();
+                break;
+            case SEMA_FUNC_BLOCK:
+                analyzer.semaFunctionBlock();
+                break;
         }
     }
 }

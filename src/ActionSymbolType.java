@@ -59,6 +59,12 @@ public enum ActionSymbolType {
     // Break
     SEMA_BREAK ("#semaBreak"),
 
+    // Functions
+    SEMA_FUNC_START ("#semaFuncStart"),
+    SEMA_FUNC_ARGS ("#semaFuncArgs"),
+    SEMA_FUNC_RET ("#semaFuncRet"),
+    SEMA_FUNC_BLOCK ("#semaFuncBlock"),
+
     // eh.. review
     P_TYPEDEC ("#p-typeDec"),
     B_NEWTYPE ("#b-newType"),

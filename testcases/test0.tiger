@@ -10,6 +10,10 @@ let
         var d : int_arr;
         var e : int := 7;
         var f : cat := 7;
+
+        function add(addend1 : int, addend2 : int) : int begin
+            a := addend1 + addend2;
+        end;
 in
         a := 1;
         b := 2;

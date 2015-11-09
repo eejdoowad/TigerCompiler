@@ -35,6 +35,9 @@ public class TigerSemanticAnalysis {
     // Used to determine if a break is legal.
     private int loopCounter = 0;
 
+    // Current function (used to analyze return statements
+    private SemanticSymbol currentFunction = null;
+
     public TigerSemanticAnalysis() {
         root = null;
         symbolTable = new SymbolTable();
@@ -651,5 +654,71 @@ public class TigerSemanticAnalysis {
 
         BreakStat node = new BreakStat();
         semanticStack.addFirst(node);
+    }
+
+    // And so functions begin...
+    public void semaFunctionStart() {
+        ID name = (ID)semanticStack.removeFirst();
+        if (symbolTable.get(name.name) != null) {
+            error("Semantic error: " + name.name + "is already defined");
+            return;
+        }
+
+        // Create symbol table entry for this function
+        SemanticSymbol symbol = new SemanticSymbol(name.name, SemanticSymbol.SymbolClass.FunctionDeclatation);
+        symbolTable.put(name.name, symbol);
+        currentFunction = symbol;
+
+        // Enter function scope
+        symbolTable.beginScope();
+
+        // Create AST node
+        FunDec node = new FunDec();
+        node.function = symbol;
+        semanticStack.addFirst(node);
+    }
+
+    public void semaFunctionArgs() {
+        // Get the declarations off the stack
+        Deque<VarDec> declarations = new ArrayDeque<>();
+        while (semanticStack.peekFirst() instanceof VarDec) {
+            declarations.addFirst((VarDec)semanticStack.removeFirst());
+        }
+
+        // Extract the symbols into a list
+        ArrayList<SemanticSymbol> args = new ArrayList<>();
+        for (VarDec dec : declarations) {
+            args.add(dec.vars.get(0));
+        }
+
+        // If there are args put them in the function symbol
+        if (args.size() > 0) {
+            currentFunction.setFunctionParameters(args);
+        }
+    }
+
+    public void semaFunctionReturnType() {
+        ID type = (ID)semanticStack.removeFirst();
+        SemanticSymbol symbol = symbolTable.get(type.name);
+        if (symbol == null || symbol.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
+            error("Semantic error: " + type.name + " does not name a defined type");
+            return;
+        }
+        currentFunction.setFunctionReturnType(symbol);
+    }
+
+    public void semaFunctionBlock() {
+        Deque<Stat> statements = new ArrayDeque<>();
+        while (semanticStack.peekFirst() instanceof Stat) {
+            statements.addFirst((Stat)semanticStack.removeFirst());
+        }
+
+        // Add the statements
+        FunDec node = (FunDec) semanticStack.peekFirst();
+        for (Stat stat : statements) {
+            node.stats.add(stat);
+        }
+        currentFunction = null;
+        symbolTable.endScope();
     }
 }

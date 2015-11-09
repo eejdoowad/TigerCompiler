@@ -14,8 +14,7 @@ public class IRGenVisitor implements Visitor {
         instructions.add(instruction);
     }
 
-
-
+//    public Temporary generateRetVal;
 
     public void visit(Program n){
         for (TypeDec d : n.typeDecs){
@@ -40,10 +39,10 @@ public class IRGenVisitor implements Visitor {
         if (n.init != null){
             for (SemanticSymbol var : n.vars){
                 if (var.isArray()){
-                    //emit(new array_assign());
+//                    emit(new array_assign());
                 }
                 else {
-                    //emit(new assign());
+//                    emit(new assign());
                 }
             }
         }
@@ -53,6 +52,15 @@ public class IRGenVisitor implements Visitor {
     }
 
     public void visit(FunCall n){
+//    x = f(expr1, expr2, ...);
+// becomes
+//    a = generate(f)
+//    foreach expr-i
+//    ti = generate(expri)
+//    emit( push ti )
+//
+//    emit( call_jump a )
+//    emit( x = get_result )
 
     }
     public void visit(Param n){
@@ -77,17 +85,45 @@ public class IRGenVisitor implements Visitor {
 
     }
     public void visit(WhileStat stat){
+//    while (expr)
+//      statement;
+// becomes
+//    E = new_label()
+//    T = new_label()
+//    emit( T: )
+//    t = generate(expr)
+//    emit( ifnot_goto t, E )
+//    generate(statement)
+//    emit( goto T )
+//    emit( E: )
 
+        Label before = new Label("before_while");
+        Label after = new Label("after_while");
+        emit(before);
+        // handle generating condition branch
+        // may have to modify accept method
+        // that or pass as global variables
+        // if global, consider set and get methods
+        // where the get
+        // 1. checks if null reference (error)
+        // 2. sets to null reference on completion
+        stat.cond.accept(this);
+        // handle generating while body statements
+        for (Stat s : stat.stats){
+            s.accept(this);
+        }
+        emit(new goTo(before));
+        emit(after);
     }
     public void visit(ProcedureStat stat){
 
     }
 
     public void visit(ID n){
-
+        // should never get here
     }
     public void visit(VarReference n){
-
+        //
     }
     public void visit(IntLit n){
 

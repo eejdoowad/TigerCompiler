@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.ArrayList;
+
 /**
  * Base class for a semantic symbol that can be entered into the
  * symbol table
@@ -38,6 +40,10 @@ public class SemanticSymbol {
 
     // Array size (0 means not an array)
     private int arraySize = 0;
+
+    // Function parameters
+    private ArrayList<SemanticSymbol> functionParameters;
+    private SemanticSymbol functionReturnType;
 
     public String getName() {
         return name;
@@ -94,5 +100,21 @@ public class SemanticSymbol {
 
     public boolean isArray(){
         return getArraySize() > 0;
+    }
+
+    public void setFunctionParameters(ArrayList<SemanticSymbol> parameters) {
+        functionParameters = parameters;
+    }
+
+    public ArrayList<SemanticSymbol> getFunctionParameters() {
+        return functionParameters;
+    }
+
+    public void setFunctionReturnType(SemanticSymbol type) {
+        functionReturnType = type;
+    }
+
+    public SemanticSymbol getFunctionReturnType() {
+        return functionReturnType;
     }
 }

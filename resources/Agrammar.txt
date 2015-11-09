@@ -20,14 +20,14 @@ optional-init -> EPSILON
 optional-init -> ASSIGN const
 const -> INTLIT #semaIntLit
 const -> FLOATLIT #semaFloatLit
-funct-declaration -> FUNC ID LPAREN param-list RPAREN ret-type BEGIN stat-seq END SEMI
+funct-declaration -> FUNC ID #semaIdentifier #semaFuncStart LPAREN param-list RPAREN #semaFuncArgs ret-type BEGIN stat-seq #semaFuncBlock END SEMI
 param-list -> EPSILON
 param-list -> param param-list-tail
 param-list-tail -> EPSILON
 param-list-tail -> COMMA param param-list-tail
 ret-type -> EPSILON
-ret-type -> COLON type
-param -> ID COLON type
+ret-type -> COLON type #semaFuncRet
+param -> ID #semaIdentifier COLON type #semaVarDec
 stat-seq -> stat stat-seq-tail
 stat-seq-tail -> stat stat-seq-tail
 stat-seq-tail -> EPSILON
