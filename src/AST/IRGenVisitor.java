@@ -235,6 +235,14 @@ public class IRGenVisitor implements Visitor {
     public void visit(Add n){
         debugPrompt("Add");
 
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        TempVar result = new TempVar();
+        emit(new add(left, right, result));
+        context.setRetVal(result);
     }
     public void visit(Sub n){
         debugPrompt("Sub");
