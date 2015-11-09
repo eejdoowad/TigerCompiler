@@ -65,6 +65,7 @@ public enum ActionSymbolType {
     SEMA_FUNC_RET ("#semaFuncRet"),
     SEMA_FUNC_BLOCK ("#semaFuncBlock"),
     SEMA_RETURN ("#semaReturn"),
+    SEMA_PROC_CALL ("#semaProcCall"),
     SEMA_FUNC_CALL ("#semaFuncCall");
 
     private final String name;

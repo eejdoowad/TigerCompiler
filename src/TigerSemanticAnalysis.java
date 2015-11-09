@@ -754,6 +754,7 @@ public class TigerSemanticAnalysis {
 
         FunCall call = new FunCall();
         call.func = function;
+        call.type = function.getFunctionReturnType();
 
         // Compare argument count
         if (function.getFunctionParameters() == null) {
@@ -775,5 +776,13 @@ public class TigerSemanticAnalysis {
             }
         }
         semanticStack.addFirst(call);
+    }
+
+    public void semaProcedureCall() {
+        // Get the function and wrap it into a procedure statement
+        FunCall call = (FunCall)semanticStack.removeFirst();
+        ProcedureStat node = new ProcedureStat();
+        node.funCall = call;
+        semanticStack.addFirst(node);
     }
 }

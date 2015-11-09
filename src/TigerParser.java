@@ -323,6 +323,9 @@ public class TigerParser {
             case SEMA_RETURN:
                 analyzer.semaReturn();
                 break;
+            case SEMA_PROC_CALL:
+                analyzer.semaProcedureCall();
+                break;
             case SEMA_FUNC_CALL:
                 analyzer.semaFunctionCall();
                 break;
