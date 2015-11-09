@@ -11,4 +11,5 @@ public class Program extends Node {
     public ArrayList<FunDec> funDecs = new ArrayList<FunDec>();
     public ArrayList<Stat> stats = new ArrayList<Stat>();
 
+    public void accept(Visitor v) { v.visit(this); }
 }

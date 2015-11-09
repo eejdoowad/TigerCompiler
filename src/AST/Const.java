@@ -1,4 +1,5 @@
 package AST;
 
-public class Const extends Expr {
+public abstract class Const extends Expr {
+
 }

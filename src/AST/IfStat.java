@@ -8,4 +8,5 @@ public class IfStat extends Stat {
     public ArrayList<Stat> trueStats = new ArrayList<Stat>();
     public ArrayList<Stat> falseStats = null; // must explicitly init for IF-ELSE
 
+    public void accept(Visitor v) { v.visit(this); }
 }

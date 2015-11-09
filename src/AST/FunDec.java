@@ -8,4 +8,5 @@ public class FunDec extends Node {
     public ArrayList<Param> params = new ArrayList<Param>();
     public ID retType; // Not sure about this
 
+    public void accept(Visitor v) { v.visit(this); }
 }
