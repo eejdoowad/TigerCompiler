@@ -1,4 +1,4 @@
 package AST;
 
-public class Div extends BinOp {
+public class Div extends ArithmeticBinOp {
 }

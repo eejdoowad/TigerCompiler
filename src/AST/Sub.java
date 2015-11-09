@@ -1,4 +1,4 @@
 package AST;
 
-public class Sub extends BinOp {
+public class Sub extends ArithmeticBinOp {
 }

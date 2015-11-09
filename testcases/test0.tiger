@@ -3,10 +3,13 @@ let
         type dog = cat;
         type int_arr = array [100] of int;
         var a : int;
-        var b, c : float;
+        var b : int;
+        var c : float;
         var d : array [100] of int;
         var e : int := 7;
         var f : cat := 7;
 in
         a := 1;
+        b := 2;
+        a := (a + 3) * 2;
 end
