@@ -454,4 +454,21 @@ public class TigerSemanticAnalysis {
 
         semanticStack.addFirst(node);
     }
+
+    public void semaLogicBinOp(LogicBinOp node) {
+        // get the left and right
+        Expr right = (Expr)semanticStack.removeFirst();
+        Expr left = (Expr)semanticStack.removeFirst();
+
+        // Make sure they are both integers
+        if (!left.type.getName().equals("int") || !right.type.getName().equals("int")) {
+            error("Logical comparison operator only acts on integers");
+            return;
+        }
+        node.left = left;
+        node.right = right;
+        node.type = left.type;
+
+        semanticStack.addFirst(node);
+    }
 }

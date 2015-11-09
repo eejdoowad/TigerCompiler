@@ -274,6 +274,12 @@ public class TigerParser {
             case SEMA_NEQ:
                 analyzer.semaComparisonBinOp(new AST.Neq());
                 break;
+            case SEMA_AND:
+                analyzer.semaLogicBinOp(new AST.And());
+                break;
+            case SEMA_OR:
+                analyzer.semaLogicBinOp(new AST.Or());
+                break;
         }
     }
 }
