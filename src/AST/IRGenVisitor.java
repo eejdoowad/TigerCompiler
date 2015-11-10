@@ -108,18 +108,8 @@ public class IRGenVisitor implements Visitor {
 
         if (n.init != null){
 
-            Operand right;
-            if (n.type.isIntPrimitive()){
-                right = new IntImmediate(((AST.IntLit)n.init).val);
-            }
-            else if (n.type.isFloatPrimitive()){
-                right = new FloatImmediate(((AST.FloatLit)n.init).val);
-            }
-            else {
-                System.out.println("!!!!!!!!!! WHAT ARE YOU");
-                System.exit(1);
-                right = new FloatImmediate(0.123456789f); // silence warning
-            }
+            n.init.accept(this);
+            Operand right = context.getRetVal();
 
             for (SemanticSymbol var : n.vars){
                 NamedVar left = new NamedVar(var.getName());
