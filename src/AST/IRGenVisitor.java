@@ -46,7 +46,7 @@ class IRGenVisitorContext {
         }
     }
     public Label getFalseLabel() {
-        if (retVal == null) {
+        if (falseLabel == null) {
             System.out.println("ERROR: Attempted to get null falseLabel");
             //System.exit(1);
             return null; // silence error
@@ -241,6 +241,8 @@ public class IRGenVisitor implements Visitor {
         Label before = new Label("before_while");
         Label after = new Label("after_while");
         emit(before);
+
+        context.setFalseLabel(after);
         stat.cond.accept(this);
 
         for (Stat s : stat.stats){
@@ -363,25 +365,74 @@ public class IRGenVisitor implements Visitor {
     public void visit(Eq n){
         debugPrompt("Eq");
 
+        Label falseLabel = context.getFalseLabel();
+
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        emit(new brneq(left, right, new LabelOp(falseLabel)));
+
     }
     public void visit(Neq n){
         debugPrompt("Neq");
 
+        Label falseLabel = context.getFalseLabel();
+
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        emit(new breq(left, right, new LabelOp(falseLabel)));
     }
     public void visit(Greater n){
         debugPrompt("Greater");
 
+        Label falseLabel = context.getFalseLabel();
+
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        emit(new brleq(left, right, new LabelOp(falseLabel)));
     }
     public void visit(GreaterEq n){
         debugPrompt("GreaterEq");
 
+        Label falseLabel = context.getFalseLabel();
+
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        emit(new brlt(left, right, new LabelOp(falseLabel)));
     }
     public void visit(Lesser n){
         debugPrompt("Lesser");
 
+        Label falseLabel = context.getFalseLabel();
+
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        emit(new brgeq(left, right, new LabelOp(falseLabel)));
     }
     public void visit(LesserEq n){
         debugPrompt("LesserEq");
 
+        Label falseLabel = context.getFalseLabel();
+
+        n.left.accept(this);
+        Operand left = context.getRetVal();
+        n.right.accept(this);
+        Operand right = context.getRetVal();
+
+        emit(new brgt(left, right, new LabelOp(falseLabel)));
     }
 }
