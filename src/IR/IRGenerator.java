@@ -34,7 +34,7 @@ public class IRGenerator {
     public String toString(){
         String out = "";
         for (IR i : instructions){
-            out += i.toString() + "\n";
+            out += ((i instanceof Label) ? "" : "\t") + i.toString() + "\n";
         }
         return out;
     }
