@@ -202,7 +202,8 @@ public class IRGenVisitor implements Visitor {
     }
     public void visit(BreakStat stat){
         debugPrompt("BreakStat");
-
+        LabelOp breakLabelOp = new LabelOp(context.breakLabels.peek());
+        emit(new goTo(breakLabelOp));
     }
     public void visit(ReturnStat stat){
         debugPrompt("ReturnStat");
@@ -223,6 +224,7 @@ public class IRGenVisitor implements Visitor {
         // Not always emitted. only used if there is an else block
         Label afterElse = new Label("after_else");
 
+        // There is an else block so skip it
         if (stat.falseStats != null){
             emit(new goTo(new LabelOp(afterElse)));
         }
