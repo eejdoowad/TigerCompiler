@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 class IRGenVisitorContext {
     private Operand retVal = null;
+    private Label falseLabel = null; // propogated down to condition statements
+    private Label lastLoopLabel = null; // for break statements
 
     public void setRetVal(Operand retVal){
         if (this.retVal != null){
@@ -30,6 +32,52 @@ class IRGenVisitorContext {
             Operand localRetVal = retVal;
             retVal = null;
             return localRetVal;
+        }
+    }
+
+    public void setFalseLabel(Label falseLabel){
+        if (this.falseLabel != null){
+            System.out.println("ERROR: Attempted to set non-null falseLabel");
+            //System.exit(1);
+        }
+        else{
+            System.out.println("SET falseLabel");
+            this.falseLabel = falseLabel;
+        }
+    }
+    public Label getFalseLabel() {
+        if (retVal == null) {
+            System.out.println("ERROR: Attempted to get null falseLabel");
+            //System.exit(1);
+            return null; // silence error
+        } else {
+            System.out.println("GET falseLabel");
+            Label localFalseLabel = falseLabel;
+            falseLabel = null;
+            return localFalseLabel;
+        }
+    }
+    public void setLastLoopLabel(Label lastLoopLabel){
+        if (this.lastLoopLabel != null){
+            System.out.println("ERROR: Attempted to set non-null lastLoopLabel");
+            //System.exit(1);
+        }
+        else{
+            System.out.println("SET lastLoopLabel");
+            this.lastLoopLabel = lastLoopLabel;
+        }
+    }
+    public Label getLastLoopLabel(){
+        if (retVal == null){
+            System.out.println("ERROR: Attempted to get null lastLoopLabel");
+            //System.exit(1);
+            return null; // silence error
+        }
+        else{
+            System.out.println("GET lastLoopLabel");
+            Label localLastLoopLabel = lastLoopLabel;
+            lastLoopLabel = null;
+            return localLastLoopLabel;
         }
     }
 }
@@ -193,19 +241,12 @@ public class IRGenVisitor implements Visitor {
         Label before = new Label("before_while");
         Label after = new Label("after_while");
         emit(before);
-        // handle generating condition branch
-        // may have to modify accept method
-        // that or pass as global variables
-        // if global, consider set and get methods
-        // where the get
-        // 1. checks if null reference (error)
-        // 2. sets to null reference on completion
         stat.cond.accept(this);
-        // handle generating while body statements
+
         for (Stat s : stat.stats){
             s.accept(this);
         }
-        emit(new goTo(before));
+        emit(new goTo(new LabelOp(before)));
         emit(after);
     }
     public void visit(ProcedureStat stat){

@@ -4,9 +4,10 @@ import AST.SemanticSymbol;
 
 public class brlt extends branch {
 
-    public brlt(SemanticSymbol symbolLeft, SemanticSymbol symbolRight) {
-        super(symbolLeft, symbolRight);
-        type = BranchType.BRLT;
+    public brlt(Operand left, Operand right, LabelOp labelOp){
+        super(left, right, labelOp);
     }
-
+    public String toString(){
+        return  "brlt, " + left + ", " + right + ", " + labelOp;
+    }
 }

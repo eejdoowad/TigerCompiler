@@ -4,8 +4,10 @@ import AST.SemanticSymbol;
 
 public class brleq extends branch{
 
-    public brleq(SemanticSymbol symbolLeft, SemanticSymbol symbolRight) {
-        super(symbolLeft, symbolRight);
-        type = BranchType.BRLEQ;
+    public brleq(Operand left, Operand right, LabelOp labelOp){
+        super(left, right, labelOp);
+    }
+    public String toString(){
+        return  "brleq, " + left + ", " + right + ", " + labelOp;
     }
 }

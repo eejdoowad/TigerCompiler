@@ -2,13 +2,13 @@ package IR;
 
 public class goTo extends IR {
 
-    Label label;
+    LabelOp labelOp;
 
-    public goTo(Label label){
-        this.label = label;
+    public goTo(LabelOp labelOp){
+        this.labelOp = labelOp;
     }
 
     public String toString(){
-        return "goto, " + label.name;
+        return "goto, " + labelOp.label.name;
     }
 }
