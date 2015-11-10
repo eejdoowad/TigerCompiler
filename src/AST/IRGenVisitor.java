@@ -211,6 +211,22 @@ public class IRGenVisitor implements Visitor {
     public void visit(IfStat stat){
         debugPrompt("IfStat");
 
+        Label ifFalse = new Label("if_false");
+
+        context.setFalseLabel(ifFalse);
+        stat.cond.accept(this);
+
+        for (Stat s : stat.trueStats){
+            s.accept(this);
+        }
+
+        emit(ifFalse);
+
+        if (stat.falseStats != null){
+            for (Stat s : stat.falseStats){
+                s.accept(this);
+            }
+        }
     }
     public void visit(ForStat stat){
         debugPrompt("ForStat");
