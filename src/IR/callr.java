@@ -6,19 +6,19 @@ import java.util.ArrayList;
 
 public class callr extends IR {
 
-    public SemanticSymbol fun;
-    public SemanticSymbol retVal;
-    public ArrayList<SemanticSymbol> args;
+    public LabelOp fun;
+    public Operand retVal;
+    public ArrayList<Operand> args;
 
-    public callr(SemanticSymbol fun, SemanticSymbol retVal, ArrayList<SemanticSymbol> args){
+    public callr(LabelOp fun, Operand retVal, ArrayList<Operand> args){
         this.fun = fun;
         this.retVal = retVal;
         this.args = args;
     }
     public String toString(){
-        String out = "call, " + fun.getName() + ", " + retVal.getName();
-        for (SemanticSymbol arg : args){
-            out += (", " + arg.getName());
+        String out = "callr, " + fun + ", " + retVal;
+        for (Operand arg : args){
+            out += (", " + arg);
         }
         return out;
     }

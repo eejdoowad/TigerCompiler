@@ -13,6 +13,6 @@ public class ret extends IR {
 
     }
     public String toString(){
-        return  "return, " + retVal + " , ,";
+        return  "return, " + (retVal == null ? "" : retVal) + ", ,";
     }
 }

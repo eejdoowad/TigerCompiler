@@ -10,7 +10,7 @@ import java.util.Stack;
 class IRGenVisitorContext {
     private Operand retVal = null;
     private Label falseLabel = null; // propogated down to condition statements
-    public Stack<Label> breakLabels = new Stack<>();
+    public Stack<SharedLabel> breakLabels = new Stack<>();
 
     public void setRetVal(Operand retVal){
         if (this.retVal != null){
@@ -58,31 +58,6 @@ class IRGenVisitorContext {
             return localFalseLabel;
         }
     }
-
-//    public void setLastLoopLabel(Label lastLoopLabel){
-//        if (this.lastLoopLabel != null){
-//            System.out.println("ERROR: Attempted to set non-null lastLoopLabel");
-//            //System.exit(1);
-//        }
-//        else{
-//            System.out.println("SET lastLoopLabel");
-//            this.lastLoopLabel = lastLoopLabel;
-//        }
-//    }
-//    public Label getLastLoopLabel(){
-//        if (retVal == null){
-//            System.out.println("ERROR: Attempted to get null lastLoopLabel");
-//            //System.exit(1);
-//            return null; // silence error
-//        }
-//        else{
-//            System.out.println("GET lastLoopLabel");
-//            Label localLastLoopLabel = lastLoopLabel;
-//            lastLoopLabel = null;
-//            return localLastLoopLabel;
-//        }
-//    }
-
 }
 
 public class IRGenVisitor implements Visitor {
@@ -111,13 +86,14 @@ public class IRGenVisitor implements Visitor {
         for (TypeDec d : n.typeDecs){
             d.accept(this);
         }
-        for (VarDec d : n.varDecs){
-            d.accept(this);
-        }
         for (FunDec d : n.funDecs){
             d.accept(this);
         }
-        emit(new Label("main"));
+        emit(new UniqueLabel("initialization"));
+        for (VarDec d : n.varDecs){
+            d.accept(this);
+        }
+        emit(new UniqueLabel("main"));
         for (Stat s : n.stats){
             s.accept(this);
         }
@@ -160,20 +136,45 @@ public class IRGenVisitor implements Visitor {
     public void visit(FunDec n){
         debugPrompt("VarDec");
 
-        Label funLabel = new Label(n.function.getName());
+        Label funLabel = new UniqueLabel(n.function.getName());
         emit(funLabel);
 
-        emit(new retD());
+        for (Stat s : n.stats){
+            s.accept(this);
+        }
+
+        emit(new ret(null));
     }
 
     public void visit(FunCall n){
         debugPrompt("FunCall");
 
+        ArrayList<Operand> args = new ArrayList<>();
 
+        for (Expr arg : n.args){
+            arg.accept(this);
+            args.add(context.getRetVal());
+        }
+
+        LabelOp fun = new LabelOp(new UniqueLabel(n.func.getName()));
+
+        // Check for return value
+        if (n.type == null){
+            emit(new call(fun, args));
+        }
+        else {
+            TempVar t = new TempVar();
+            emit(new callr(fun, t, args));
+            context.setRetVal(t);
+        }
     }
+
     public void visit(Param n){
         debugPrompt("Param");
 
+        System.out.println("WHY U HERE PARAM!");
+        System.exit(1);
+        // GOOD FOR NOTHING
     }
 
 
@@ -212,11 +213,15 @@ public class IRGenVisitor implements Visitor {
     public void visit(ReturnStat stat){
         debugPrompt("ReturnStat");
 
+        stat.retVal.accept(this);
+        Operand retVal = context.getRetVal();
+
+        emit(new ret(retVal));
     }
     public void visit(IfStat stat){
         debugPrompt("IfStat");
 
-        Label ifFalse = new Label("if_false");
+        SharedLabel ifFalse = new SharedLabel("if_false");
 
         context.setFalseLabel(ifFalse);
         stat.cond.accept(this);
@@ -226,7 +231,7 @@ public class IRGenVisitor implements Visitor {
         }
 
         // Not always emitted. only used if there is an else block
-        Label afterElse = new Label("after_else");
+        SharedLabel afterElse = new SharedLabel("after_else");
 
         // There is an else block so skip it
         if (stat.falseStats != null){
@@ -246,8 +251,8 @@ public class IRGenVisitor implements Visitor {
     public void visit(ForStat stat){
         debugPrompt("ForStat");
 
-        Label before = new Label("before_for");
-        Label after = new Label("after_for");
+        SharedLabel before = new SharedLabel("before_for");
+        SharedLabel after = new SharedLabel("after_for");
 
         stat.start.accept(this);
         Operand startIndex = context.getRetVal();
@@ -272,10 +277,9 @@ public class IRGenVisitor implements Visitor {
     public void visit(WhileStat stat){
         debugPrompt("WhileStat");
 
-        Label before = new Label("before_while");
-        Label after = new Label("after_while");
+        SharedLabel before = new SharedLabel("before_while");
+        SharedLabel after = new SharedLabel("after_while");
         emit(before);
-
 
         context.setFalseLabel(after);
         stat.cond.accept(this);
@@ -292,6 +296,7 @@ public class IRGenVisitor implements Visitor {
     public void visit(ProcedureStat stat){
         debugPrompt("ProcedureStat");
 
+        stat.funCall.accept(this);
     }
 
     public void visit(ID n){

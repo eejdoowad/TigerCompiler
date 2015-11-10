@@ -15,11 +15,14 @@ let
         function add(addend1 : int, addend2 : int) : int begin
             return addend1 + addend2;
         end;
+        function nada(hola : int) begin
+            hola := 1;
+        end;
 in
-        /* d = 78 this crashes the parser Semantic Analysis */
         d := 78;
         a := 1;
         b := 2;
+        nada(7);
         add(a, b);
         a := add(a, b);
         a := (a + 3) * 2;
@@ -43,6 +46,7 @@ in
             while (1 = 1) do
                 break;
             enddo;
-            i := 101;
+            i := 101; /* This isn't seen */
         enddo;
+        i := 595; /* This isn't seen either */
 end
