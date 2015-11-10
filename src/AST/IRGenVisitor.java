@@ -220,12 +220,21 @@ public class IRGenVisitor implements Visitor {
             s.accept(this);
         }
 
+        // Not always emitted. only used if there is an else block
+        Label afterElse = new Label("after_else");
+
+        if (stat.falseStats != null){
+            emit(new goTo(new LabelOp(afterElse)));
+        }
+
         emit(ifFalse);
 
+        // There is an else block
         if (stat.falseStats != null){
             for (Stat s : stat.falseStats){
                 s.accept(this);
             }
+            emit(afterElse);
         }
     }
     public void visit(ForStat stat){
