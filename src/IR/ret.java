@@ -2,15 +2,17 @@ package IR;
 
 import AST.SemanticSymbol;
 
+import java.util.ArrayList;
+
 public class ret extends IR {
 
-    SemanticSymbol retVal;
+    Operand retVal;
 
-    public ret(SemanticSymbol retVal){
+    public ret(Operand retVal){
         this.retVal = retVal;
 
     }
     public String toString(){
-        return "return," + retVal.getName();
+        return  "return, " + retVal + " , ,";
     }
 }

@@ -160,6 +160,10 @@ public class IRGenVisitor implements Visitor {
     public void visit(FunDec n){
         debugPrompt("VarDec");
 
+        Label funLabel = new Label(n.function.getName());
+        emit(funLabel);
+
+        emit(new retD());
     }
 
     public void visit(FunCall n){
