@@ -18,11 +18,17 @@ let
         function nada(hola : int) begin
             hola := 1;
         end;
+        function broken1() : int begin
+        	if (1 > 2) then
+        		return 1;
+        	endif;
+        end;
 in
         d := 78;
         a := 1;
         b := 2;
         nada(7);
+        broken1();
         add(a, b);
         a := add(a, b);
         a := (a + 3) * 2;

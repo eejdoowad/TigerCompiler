@@ -133,7 +133,9 @@ public class IRGenVisitor implements Visitor {
             s.accept(this);
         }
 
-        emit(new ret(null));
+        if (n.function.getFunctionReturnType() == null){
+            emit(new ret(null));
+        }
     }
 
     public void visit(FunCall n){
