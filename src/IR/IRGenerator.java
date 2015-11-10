@@ -24,7 +24,11 @@ public class IRGenerator {
         g.program = program;
         g.instructions = instructions;
         program.accept(g);
-        System.out.println("All done");
+
+        System.out.println("IR CODE GENERATED:");
+        for (IR instruction : instructions){
+            System.out.println(instruction);
+        }
     }
 
     public String toString(){
