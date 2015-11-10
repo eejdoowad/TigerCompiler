@@ -4,12 +4,13 @@ import IR.*;
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 
 class IRGenVisitorContext {
     private Operand retVal = null;
     private Label falseLabel = null; // propogated down to condition statements
-    private Label lastLoopLabel = null; // for break statements
+    public Stack<Label> breakLabels = new Stack<>();
 
     public void setRetVal(Operand retVal){
         if (this.retVal != null){
@@ -57,29 +58,31 @@ class IRGenVisitorContext {
             return localFalseLabel;
         }
     }
-    public void setLastLoopLabel(Label lastLoopLabel){
-        if (this.lastLoopLabel != null){
-            System.out.println("ERROR: Attempted to set non-null lastLoopLabel");
-            //System.exit(1);
-        }
-        else{
-            System.out.println("SET lastLoopLabel");
-            this.lastLoopLabel = lastLoopLabel;
-        }
-    }
-    public Label getLastLoopLabel(){
-        if (retVal == null){
-            System.out.println("ERROR: Attempted to get null lastLoopLabel");
-            //System.exit(1);
-            return null; // silence error
-        }
-        else{
-            System.out.println("GET lastLoopLabel");
-            Label localLastLoopLabel = lastLoopLabel;
-            lastLoopLabel = null;
-            return localLastLoopLabel;
-        }
-    }
+
+//    public void setLastLoopLabel(Label lastLoopLabel){
+//        if (this.lastLoopLabel != null){
+//            System.out.println("ERROR: Attempted to set non-null lastLoopLabel");
+//            //System.exit(1);
+//        }
+//        else{
+//            System.out.println("SET lastLoopLabel");
+//            this.lastLoopLabel = lastLoopLabel;
+//        }
+//    }
+//    public Label getLastLoopLabel(){
+//        if (retVal == null){
+//            System.out.println("ERROR: Attempted to get null lastLoopLabel");
+//            //System.exit(1);
+//            return null; // silence error
+//        }
+//        else{
+//            System.out.println("GET lastLoopLabel");
+//            Label localLastLoopLabel = lastLoopLabel;
+//            lastLoopLabel = null;
+//            return localLastLoopLabel;
+//        }
+//    }
+
 }
 
 public class IRGenVisitor implements Visitor {
@@ -143,12 +146,12 @@ public class IRGenVisitor implements Visitor {
             }
 
             for (SemanticSymbol var : n.vars){
+                NamedVar left = new NamedVar(var.getName());
                 if (var.isArray()){
-                    System.out.println("MISSING ARRAY_ASSIGN: FIX SEMANALYSIS");
-                    //emit(new array_assign());
+                    IntImmediate arraySize = new IntImmediate(var.getArraySize());
+                    emit(new array_assign(left, arraySize, right));
                 }
                 else {
-                    NamedVar left = new NamedVar(var.getName());
                     emit(new assign(left, right));
                 }
             }
@@ -162,15 +165,6 @@ public class IRGenVisitor implements Visitor {
     public void visit(FunCall n){
         debugPrompt("FunCall");
 
-//    x = f(expr1, expr2, ...);
-// becomes
-//    a = generate(f)
-//    foreach expr-i
-//    ti = generate(expri)
-//    emit( push ti )
-//
-//    emit( call_jump a )
-//    emit( x = get_result )
 
     }
     public void visit(Param n){
@@ -183,19 +177,19 @@ public class IRGenVisitor implements Visitor {
     public void visit(AssignStat stat){
         debugPrompt("AssignStat");
 
-        // First generate right expression
+        NamedVar left = new NamedVar(stat.left.getName());
         stat.right.accept(this);
         Operand right = context.getRetVal();
 
-        // Then generate l-value assignment
+        // Generate correct type of assignment/store
         if (stat.left.isArray()){
             // no index, so generate array_assign
             if (stat.index == null){
-// TODO
+                IntImmediate arrSize = new IntImmediate(stat.left.getArraySize());
+                emit(new array_assign(left, arrSize, right));
             }
             // index, so generate array_store
             else {
-                NamedVar left = new NamedVar(stat.left.getName());
                 stat.index.accept(this);
                 Operand index = context.getRetVal();
                 emit(new array_store(left, index, right));
@@ -203,7 +197,6 @@ public class IRGenVisitor implements Visitor {
         }
         // Normal non-array named variable, generate normal assign
         else {
-            NamedVar left = new NamedVar(stat.left.getName());
             emit(new assign(left, right));
         }
     }
@@ -222,32 +215,46 @@ public class IRGenVisitor implements Visitor {
     public void visit(ForStat stat){
         debugPrompt("ForStat");
 
+        Label before = new Label("before_for");
+        Label after = new Label("after_for");
+
+        stat.start.accept(this);
+        Operand startIndex = context.getRetVal();
+        stat.end.accept(this);
+        Operand endIndex = context.getRetVal();
+
+        NamedVar loopVar = new NamedVar(stat.var.getName());
+
+        emit(new assign(loopVar, startIndex));
+        emit(before);
+        emit(new brgeq(loopVar, endIndex, new LabelOp(after)));
+
+        context.breakLabels.push(after);
+        for (Stat s : stat.stats){
+            s.accept(this);
+        }
+        context.breakLabels.pop();
+
+        emit(new add(loopVar, loopVar, new IntImmediate(1)));
+        emit(after);
     }
     public void visit(WhileStat stat){
         debugPrompt("WhileStat");
-
-//    while (expr)
-//      statement;
-// becomes
-//    E = new_label()
-//    T = new_label()
-//    emit( T: )
-//    t = generate(expr)
-//    emit( ifnot_goto t, E )
-//    generate(statement)
-//    emit( goto T )
-//    emit( E: )
 
         Label before = new Label("before_while");
         Label after = new Label("after_while");
         emit(before);
 
+
         context.setFalseLabel(after);
         stat.cond.accept(this);
 
+        context.breakLabels.push(after);
         for (Stat s : stat.stats){
             s.accept(this);
         }
+        context.breakLabels.pop();
+
         emit(new goTo(new LabelOp(before)));
         emit(after);
     }
@@ -436,3 +443,4 @@ public class IRGenVisitor implements Visitor {
         emit(new brgt(left, right, new LabelOp(falseLabel)));
     }
 }
+

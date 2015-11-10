@@ -8,17 +8,17 @@ import AST.SemanticSymbol;
 
 public class array_assign extends IR {
 
-    NamedVar array;
-    IntImmediate size;
-    Operand val; // the value to assign to the array
+    public NamedVar var;
+    public IntImmediate num;
+    public Operand right;
 
-    public array_assign(SemanticSymbol array, Operand val){
-        // this.array = new NamedVar(array.getName());
-        // this.size = new Immediate
-        // this.val = val;
+    public array_assign(NamedVar var, IntImmediate num, Operand right){
+        this.var = var;
+        this.num = num;
+        this.right = right;
     }
+
     public String toString(){
-        return "assign, " + array + ", " +  "IAN_MAKE_ARRAYSIZE_PUBLIC"// array.arraySize()
-            + ", " + val;
+        return "assign, " + var + ", " + num + ", " + right;
     }
 }
