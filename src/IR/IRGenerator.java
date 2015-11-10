@@ -26,15 +26,15 @@ public class IRGenerator {
         program.accept(g);
 
         System.out.println("IR CODE GENERATED:");
-        for (IR instruction : instructions){
-            System.out.println(instruction);
-        }
+        System.out.println(this.toString());
     }
+
+
 
     public String toString(){
         String out = "";
         for (IR i : instructions){
-            out += i.toString();
+            out += i.toString() + "\n";
         }
         return out;
     }
