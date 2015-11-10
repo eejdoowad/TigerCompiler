@@ -39,12 +39,12 @@ stat -> RETURN expr SEMI #semaReturn
 stat -> ID #semaIdentifier stat-id-tail SEMI
 stat-id-tail -> ASSIGN stat-assign-tail #semaAssign
 stat-id-tail -> LBRACK expr RBRACK ASSIGN stat-assign-tail #semaAssign
-stat-id-tail -> LPAREN expr-list RPAREN #semaFuncCall
+stat-id-tail -> LPAREN expr-list RPAREN #semaFuncCall #semaProcCall
 stat-assign-tail -> LPAREN term0 RPAREN term5' term4' term3' term2' term1' term0'
 stat-assign-tail -> const term5' term4' term3' term2' term1' term0'
-stat-assign-tail -> ID #semaVarRef stat-assign-id-tail
-stat-assign-id-tail -> LPAREN expr-list RPAREN
-stat-assign-id-tail -> opt-index term5' term4' term3' term2' term1' term0'
+stat-assign-tail -> ID stat-assign-id-tail
+stat-assign-id-tail -> #semaIdentifier LPAREN expr-list RPAREN #semaFuncCall
+stat-assign-id-tail -> #semaVarRef opt-index term5' term4' term3' term2' term1' term0'
 stat-if-tail -> ENDIF
 stat-if-tail -> ELSE #semaElseStart stat-seq #semaElseBlock ENDIF
 expr -> term0

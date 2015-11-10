@@ -7,23 +7,22 @@ let
         var doge : dog;
         var meow : cat;
         var c : float;
-        var d : int_arr := 42;
+        var d : int_arr;
         var e : int := 7;
         var f : cat := 7;
-        var g : float := 1.56;
 
         function add(addend1 : int, addend2 : int) : int begin
             return addend1 + addend2;
         end;
 in
-        /* d := 1; */
-        a := 1337;
-        b := 1 + 2 + 3;
-        /* add(a, b);
-        add(a, b); */
+        a := 1;
+        b := 2;
+        add(a, b);
+        a := add(a, b);
         a := (a + 3) * 2;
         d[a] := d[3];
         d[d[3]] := b;
+        d := 3;
         if (a > b) then
             a := 3;
             b := 5;
@@ -37,9 +36,6 @@ in
             a := 1;
         enddo;
         for a := 1 to 5 do
-            d[a] := 1;
-        enddo;
-        for a := 2 to 7 do
             d[a] := 1;
         enddo;
 end
