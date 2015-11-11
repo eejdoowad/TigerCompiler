@@ -1,70 +1,14 @@
-package AST;
-
+import AST.*;
 import IR.*;
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 
 import java.util.ArrayList;
 import java.util.Stack;
 
 
-class IRGenVisitorContext {
-    private Operand retVal = null;
-    private Label falseLabel = null; // propogated down to condition statements
-    public Stack<SharedLabel> breakLabels = new Stack<>();
-
-    public void setRetVal(Operand retVal){
-        if (this.retVal != null){
-            System.out.println("ERROR: Attempted to set non-null retVal");
-            //System.exit(1);
-        }
-        else{
-            System.out.println("SET RETVAL");
-            this.retVal = retVal;
-        }
-    }
-    public Operand getRetVal(){
-        if (retVal == null){
-            System.out.println("ERROR: Attempted to get null retVal");
-            //System.exit(1);
-            return null; // silence error
-        }
-        else{
-            System.out.println("GET RETVAL");
-            Operand localRetVal = retVal;
-            retVal = null;
-            return localRetVal;
-        }
-    }
-
-    public void setFalseLabel(Label falseLabel){
-        if (this.falseLabel != null){
-            System.out.println("ERROR: Attempted to set non-null falseLabel");
-            //System.exit(1);
-        }
-        else{
-            System.out.println("SET falseLabel");
-            this.falseLabel = falseLabel;
-        }
-    }
-    public Label getFalseLabel() {
-        if (falseLabel == null) {
-            System.out.println("ERROR: Attempted to get null falseLabel");
-            //System.exit(1);
-            return null; // silence error
-        } else {
-            System.out.println("GET falseLabel");
-            Label localFalseLabel = falseLabel;
-            falseLabel = null;
-            return localFalseLabel;
-        }
-    }
-}
-
 public class IRGenVisitor implements Visitor {
 
-    private boolean DEBUGIR = true;
     public void debugPrompt(String str){
-        if (DEBUGIR)
+        if (Config.DEBUG_IRCODEGEN)
             System.out.println("Visiting (" + str + ")");
     }
 
@@ -97,6 +41,7 @@ public class IRGenVisitor implements Visitor {
         for (Stat s : n.stats){
             s.accept(this);
         }
+        emit(new ret(null));
     }
     // no action done by IR CodeGen for TypeDecs
     public void visit(TypeDec n){
@@ -194,7 +139,13 @@ public class IRGenVisitor implements Visitor {
         }
         // Normal non-array named variable, generate normal assign
         else {
-            emit(new assign(left, right));
+            IR last = instructions.get(instructions.size()-1);
+            // If the last IR is a binop whose result will be assigned, we can do a little optimization
+            if (last instanceof binop && ((binop)last).result == right) {
+                ((binop)last).result = left;
+            } else {
+                emit(new assign(left, right));
+            }
         }
     }
     public void visit(BreakStat stat){
@@ -264,6 +215,7 @@ public class IRGenVisitor implements Visitor {
         context.breakLabels.pop();
 
         emit(new add(loopVar, loopVar, new IntImmediate(1)));
+        emit(new goTo(new LabelOp(before)));
         emit(after);
     }
     public void visit(WhileStat stat){

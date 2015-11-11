@@ -1,6 +1,3 @@
-package IR;
-
-import AST.IRGenVisitor;
 import AST.Program;
 
 import java.util.ArrayList;
@@ -11,7 +8,7 @@ public class IRGenerator {
     public Program program;
 
     // IROC representation output by IRGenerator
-    public ArrayList<IR> instructions = new ArrayList<>();
+    public ArrayList<IR.IR> instructions = new ArrayList<>();
 
 
     public IRGenerator(Program program){
@@ -33,8 +30,8 @@ public class IRGenerator {
 
     public String toString(){
         String out = "";
-        for (IR i : instructions){
-            out += ((i instanceof Label) ? "" : "\t") + i.toString() + "\n";
+        for (IR.IR i : instructions){
+            out += ((i instanceof IR.Label) ? "" : "\t") + i.toString() + "\n";
         }
         return out;
     }

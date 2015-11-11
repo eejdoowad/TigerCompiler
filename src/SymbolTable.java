@@ -59,6 +59,16 @@ public class SymbolTable {
         floatSymbol.setArraySize(0);
         put("int", intSymbol);
         put("float", floatSymbol);
+
+        // Standard library functions
+        SemanticSymbol printi = new SemanticSymbol("printi", SemanticSymbol.SymbolClass.FunctionDeclatation);
+        printi.setFunctionReturnType(null);
+        SemanticSymbol num = new SemanticSymbol("num", SemanticSymbol.SymbolClass.VarDeclaration);
+        num.setSymbolType(intSymbol);
+        ArrayList<SemanticSymbol> args = new ArrayList<>();
+        args.add(num);
+        printi.setFunctionParameters(args);
+        put("printi", printi);
     }
 
     // Enters a new scope

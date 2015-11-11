@@ -1,9 +1,6 @@
 // The Compiler class should be the top-level Entity
 // It will be composed of the various phases of the compiler
 
-import AST.IRGenVisitor;
-import IR.IRGenerator;
-
 public class Compiler {
 
     public Compiler(){
