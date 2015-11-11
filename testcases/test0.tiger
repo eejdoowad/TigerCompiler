@@ -30,7 +30,8 @@ in
         b := 2;
         nada(7);
         broken1();
-        add(a, b);
+        add(1, b);
+        a := 2;
         a := add(a, b);
         a := (a + 3) * 2;
         d[a] := d[3];
@@ -53,7 +54,7 @@ in
             while (1 = 1) do
                 break;
             enddo;
-            i := 101; /* This isn't seen */
+            i := 101;
         enddo;
-        i := 595; /* This isn't seen either */
+        i := 595;
 end

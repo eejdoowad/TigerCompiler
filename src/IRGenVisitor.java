@@ -241,6 +241,9 @@ public class IRGenVisitor implements Visitor {
         debugPrompt("ProcedureStat");
 
         stat.funCall.accept(this);
+        if (stat.funCall.func.getFunctionReturnType() != null){
+            context.getRetVal(); // discard return value
+        }
     }
 
     public void visit(ID n){
