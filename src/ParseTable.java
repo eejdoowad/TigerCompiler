@@ -62,6 +62,8 @@ public class ParseTable {
         }
     }
 
+    public TokenType getAnExpected(int nonTerminalID){ return table.get(nonTerminalID).keySet().iterator().next(); }
+
     public int getRuleID(int nonTerminalID, TokenType tokenType){
         return table.get(nonTerminalID).get(tokenType);
     }

@@ -138,7 +138,9 @@ public class TigerParser {
                 parseStack.push(derivation.get(i));
             }
         } else { // ERROR
-            System.out.println("ERROR: No Parse Table Entry for [" + curNonTerminal.symbol + "][" + nextToken.type + "]");
+            if (Config.DEBUG && Config.DEBUG_PARSER2) {
+                System.out.println("ERROR: No Parse Table Entry for [" + curNonTerminal.symbol + "][" + nextToken.type + "]");
+            }
             error();
         }
     }
@@ -168,7 +170,16 @@ public class TigerParser {
     private void error(){
         System.out.println("Parser error (line " + scanner.getLineNumber() +
                 "): " + scanner.getLineString() + "<---");
-        System.out.println("        " + scanner.getLexeme() + " is not a valid token.");
+        System.out.print("        " + scanner.getLexeme() + " is not a valid token. ");
+
+        Symbol curSymbol = parseStack.peek();
+        if (curSymbol instanceof NonTerminal){
+            System.out.println("Expected \"" + parseTable.getAnExpected(((NonTerminal)curSymbol).id).toLexeme() + "\".");
+        }
+        else if (curSymbol instanceof Terminal){
+            System.out.println("Expected \"" + ((Terminal)curSymbol).type.toLexeme() + "\".");
+        }
+
         parseSuccess = false;
         doSemanticAnalysis = false;
         if (nextToken.type.isSequencePoint()) recoverState();

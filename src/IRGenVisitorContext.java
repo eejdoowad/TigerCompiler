@@ -11,7 +11,7 @@ class IRGenVisitorContext {
 
     public void setRetVal(Operand retVal){
         if (this.retVal != null){
-            System.out.println("ERROR: Attempted to set non-null retVal");
+            if (Config.DEBUG && Config.DEBUG_IRCODEGEN) System.out.println("ERROR: Attempted to set non-null retVal");
             //System.exit(1);
         }
         else{
@@ -20,7 +20,7 @@ class IRGenVisitorContext {
     }
     public Operand getRetVal(){
         if (retVal == null){
-            System.out.println("ERROR: Attempted to get null retVal");
+            if (Config.DEBUG && Config.DEBUG_IRCODEGEN) System.out.println("ERROR: Attempted to get null retVal");
             //System.exit(1);
             return null; // silence error
         }
@@ -33,21 +33,21 @@ class IRGenVisitorContext {
 
     public void setFalseLabel(Label falseLabel){
         if (this.falseLabel != null){
-            System.out.println("ERROR: Attempted to set non-null falseLabel");
+            if (Config.DEBUG && Config.DEBUG_IRCODEGEN) System.out.println("ERROR: Attempted to set non-null falseLabel");
             //System.exit(1);
         }
         else{
-            System.out.println("SET falseLabel");
+            if (Config.DEBUG && Config.DEBUG_IRCODEGEN) System.out.println("SET falseLabel");
             this.falseLabel = falseLabel;
         }
     }
     public Label getFalseLabel() {
         if (falseLabel == null) {
-            System.out.println("ERROR: Attempted to get null falseLabel");
+            if (Config.DEBUG && Config.DEBUG_IRCODEGEN) System.out.println("ERROR: Attempted to get null falseLabel");
             //System.exit(1);
             return null; // silence error
         } else {
-            System.out.println("GET falseLabel");
+            if (Config.DEBUG && Config.DEBUG_IRCODEGEN) System.out.println("GET falseLabel");
             Label localFalseLabel = falseLabel;
             falseLabel = null;
             return localFalseLabel;

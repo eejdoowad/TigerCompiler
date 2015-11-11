@@ -5,7 +5,7 @@
 
 public class Terminal extends Symbol {
 
-    TokenType type;
+    public TokenType type;
 
     public Terminal(TokenType type){
         this.symbol = type.toString();
