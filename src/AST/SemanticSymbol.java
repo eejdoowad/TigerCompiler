@@ -30,6 +30,7 @@ public class SemanticSymbol {
         SymbolInt,
         SymbolFloat,
         SymbolCustom,
+        SymbolError,
     }
 
     // The type that this symbol is aliasing/storing/returning
