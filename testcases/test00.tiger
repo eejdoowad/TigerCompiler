@@ -1,0 +1,17 @@
+let
+        type cat = int;
+        type dog = cat;
+        type rat = float;
+        var a : int := 1.1; /* Line 5 this shouldn't */
+        var b : float := 1; /* Line 6 this should work */
+        var tom : cat := 42;
+        var nyan : cat := 1.1;
+        var jerry : rat := 1.1;
+        var pinky : rat := 1;
+        var doge : dog := 9001;
+        var dog2 : dog := 9002;
+        var a : int;
+in
+        a := 1;
+        printi(a);
+end
