@@ -1,5 +1,5 @@
 let
-        type cat = int;
+        type cat = animal;
         type dog = cat;
         type int_arr = array [100] of int;
         var a : int;
@@ -11,6 +11,7 @@ let
         var e : int := 7;
         var f : cat := 7;
         var g : int_arr := 89;
+        var i : int;
 
         function add(addend1 : int, addend2 : int) : int begin
             return addend1 + addend2;

@@ -19,8 +19,9 @@ public class Compiler {
         TigerScanner scanner = new TigerScanner(file);
         TigerParser parser = new TigerParser(scanner);
         parser.parse();
-        IRGenerator irgen = new IRGenerator(parser.program);
-        irgen.generate();
-        // Currently our compiler functions only up to the parser
+        if (parser.isParseSuccess()) {
+            IRGenerator irgen = new IRGenerator(parser.program);
+            irgen.generate();
+        }
     }
 }

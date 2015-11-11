@@ -38,6 +38,8 @@ public class TigerSemanticAnalysis {
     // Current function (used to analyze return statements
     private SemanticSymbol currentFunction = null;
 
+    private int currentLine = 0; // Line associated with current node
+
     public TigerSemanticAnalysis() {
         root = null;
         symbolTable = new SymbolTable();
@@ -50,14 +52,26 @@ public class TigerSemanticAnalysis {
         semanticError = true;
     }
 
+    // Semantic errors with line number
+    private void error(String message, Node cause) {
+        System.out.println("Line " + cause.lineNumber + ": " + message);
+        semanticError = true;
+    }
+
     // Returns whether a semantic error occured
     public boolean isSemanticError() {
         return semanticError;
     }
 
+    // Sets current line
+    public void setCurrentLine(int line) {
+        currentLine = line;
+    }
+
     // Creates root AST node. Nothing special.
     public void semaProgramStart() {
         root = new Program();
+        root.lineNumber = currentLine;
     }
 
     public Program semaProgramEnd() {
@@ -65,6 +79,12 @@ public class TigerSemanticAnalysis {
             Node node = semanticStack.removeLast();
             if (node instanceof Stat) {
                 root.stats.add((Stat)node);
+            } else if (node instanceof TypeDec) {
+                root.typeDecs.add((TypeDec)node);
+            } else if (node instanceof VarDec) {
+                root.varDecs.add((VarDec)node);
+            } else if (node instanceof FunDec) {
+                root.funDecs.add((FunDec)node);
             }
         }
         return root;
@@ -77,6 +97,7 @@ public class TigerSemanticAnalysis {
         AST.IntLit node = new IntLit();
         node.val = value;
         node.type = symbolTable.get("int");
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -86,12 +107,14 @@ public class TigerSemanticAnalysis {
         AST.FloatLit node = new FloatLit();
         node.val = value;
         node.type = symbolTable.get("float");
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
     public void semaIdentifier(String lit) {
         AST.ID node = new ID();
         node.name = lit;
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -101,7 +124,7 @@ public class TigerSemanticAnalysis {
 
         // Make sure new type is not already defined
         if (symbolTable.get(newType.name) != null) {
-            error("Semantic error: " + newType.name + " is already defined");
+            error("Semantic error: " + newType.name + " is already defined", newType);
             return;
         }
 
@@ -113,7 +136,7 @@ public class TigerSemanticAnalysis {
             // Look it up, rename it
             SemanticSymbol type = symbolTable.get(exisitingType.name);
             if (type == null) {
-                error("Semantic error: lookup of temporary " + exisitingType.name + " failed");
+                error("Semantic error: lookup of temporary " + exisitingType.name + " failed", exisitingType);
                 return;
             }
             symbolTable.rename(type, newType.name);
@@ -136,11 +159,11 @@ public class TigerSemanticAnalysis {
             // Case 4: new type is an alias of another custom type
             SemanticSymbol lookup = symbolTable.get(exisitingType.name);
             if (lookup == null) {
-                error("Semantic error: " + exisitingType.name + " is not a defined type");
+                error("Semantic error: " + exisitingType.name + " is not a defined type", exisitingType);
                 return;
             }
             if (lookup.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
-                error("Semantic error: " + exisitingType.name + " is not a defined type");
+                error("Semantic error: " + exisitingType.name + " is not a defined type", exisitingType);
                 return;
             }
 
@@ -151,7 +174,7 @@ public class TigerSemanticAnalysis {
             symbolTable.put(newType.name, type);
             node.newType = type;
         }
-
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -175,18 +198,18 @@ public class TigerSemanticAnalysis {
         // Perform a type lookup
         SemanticSymbol typeSymbol = symbolTable.get(type.name);
         if (typeSymbol == null) {
-            error("Semantic Error: " + type.name + " does not name a valid type");
+            error("Semantic Error: " + type.name + " does not name a valid type", type);
             return;
         }
         if (typeSymbol.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
-            error("Semantic Error: " + type.name + " does not name a valid type");
+            error("Semantic Error: " + type.name + " does not name a valid type", type);
             return;
         }
 
         // Create new symbol table entries for each new variable
         for (ID var : varNames) {
             if (symbolTable.get(var.name) != null) {
-                error("Semantic Error: variable " + var.name + " is already defined");
+                error("Semantic Error: variable " + var.name + " is already defined", var);
                 return;
             }
 
@@ -200,7 +223,7 @@ public class TigerSemanticAnalysis {
         if (initializer != null) {
             // First check if type is of first order
             if (typeSymbol.getSymbolType() == SemanticSymbol.SymbolType.SymbolCustom) {
-                error("Semantic error: " + typeSymbol.getName() + " is not a 1st order derived type");
+                error("Semantic error: " + typeSymbol.getName() + " is not a 1st order derived type", type);
                 return;
             }
 
@@ -212,7 +235,7 @@ public class TigerSemanticAnalysis {
                     initializer = new IntLit();
                     ((IntLit)initializer).val = (int)val;
                 } else if (typeSymbol.getSymbolType() != SemanticSymbol.SymbolType.SymbolFloat) {
-                    error("Semantic Error: Attempted to assign float to integer variables");
+                    error("Semantic Error: Attempted to assign float to integer variables", initializer);
                     return;
                 }
             }
@@ -220,7 +243,7 @@ public class TigerSemanticAnalysis {
             // Type check int constant values
             if (initializer instanceof IntLit) {
                 if (typeSymbol.getSymbolType() != SemanticSymbol.SymbolType.SymbolInt) {
-                    error("Semantic Error: Attempted to assign int to float values");
+                    error("Semantic Error: Attempted to assign int to float values", initializer);
                     return;
                 }
             }
@@ -231,6 +254,7 @@ public class TigerSemanticAnalysis {
         node.type = typeSymbol;
         node.vars = varSymbols;
         node.init = initializer;
+        node.lineNumber = type.lineNumber;
         semanticStack.addFirst(node);
     }
 
@@ -241,7 +265,7 @@ public class TigerSemanticAnalysis {
         ID type = (ID)semanticStack.removeFirst();
         IntLit literal = (IntLit)semanticStack.removeFirst();
         if (literal.val <= 0) {
-            error("Semantic error: Attempted to create array type with size <= 0");
+            error("Semantic error: Attempted to create array type with size <= 0", literal);
             return;
         }
 
@@ -254,7 +278,7 @@ public class TigerSemanticAnalysis {
         } else if (type.name.equals("float")) {
             newType.setSymbolType(SemanticSymbol.SymbolType.SymbolFloat);
         } else {
-            error("Semantic error: Array must be of type int or float");
+            error("Semantic error: Array must be of type int or float", type);
             return;
         }
         newType.setArraySize(literal.val);
@@ -263,19 +287,8 @@ public class TigerSemanticAnalysis {
         // ID reference to this new type
         ID reference = new ID();
         reference.name = tempName;
+        reference.lineNumber = type.lineNumber;
         semanticStack.addFirst(reference);
-    }
-
-    public void semaAttachTypeDec(){
-        root.typeDecs.add((AST.TypeDec) semanticStack.pop());
-    }
-
-    public void semaAttachVarDec(){
-        root.varDecs.add((AST.VarDec)semanticStack.pop());
-    }
-
-    public void semaAttachFunDec(){
-        root.funDecs.add((AST.FunDec)semanticStack.pop());
     }
 
     public void semaVariableReference(String name) {
@@ -289,6 +302,7 @@ public class TigerSemanticAnalysis {
         node.reference = lookup;
         node.index = null;
         node.type = lookup.getSymbolTypeReference();
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -296,11 +310,11 @@ public class TigerSemanticAnalysis {
         Expr index = (Expr)semanticStack.removeFirst();
         VarReference variable = (VarReference)semanticStack.peekFirst();
         if (!index.type.getName().equals("int")) {
-            error("Semantic error: Array index must be of type int");
+            error("Semantic error: Array index must be of type int", index);
             return;
         }
         if (variable.type.getArraySize() <= 0) {
-            error("Semantic error: Type " + variable.type.getName() + " is not an array type");
+            error("Semantic error: Type " + variable.type.getName() + " is not an array type", variable);
             return;
         }
         if (variable.type.getSymbolType() == SemanticSymbol.SymbolType.SymbolInt) {
@@ -317,30 +331,30 @@ public class TigerSemanticAnalysis {
     public void semaVariableReferenceArrayCheck() {
         VarReference var = (VarReference)semanticStack.peekFirst();
         if (var.type.getArraySize() > 0) {
-            error("Semantic error: " + var.reference.getName() + " is an array but is not indexed into");
+            error("Semantic error: " + var.reference.getName() + " is an array but is not indexed into", var);
             return;
         }
     }
 
     // Returns whether one type can be implicitly converted to another
-    private boolean semaCanConvertType(SemanticSymbol src, SemanticSymbol dst) {
+    private boolean semaCanConvertType(SemanticSymbol src, SemanticSymbol dst, Node fault) {
         if (src != dst) {
             if (src.getName().equals("float") && dst.getName().equals("int")) {
-                error("Semantic error: cannot convert float to int");
+                error("Semantic error: cannot convert float to int", fault);
                 return false;
             }
             if (src.getName().equals("int")) {
                 if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolInt) {
-                    error("Semantic error: cannot assign int to type " + dst.getName());
+                    error("Semantic error: cannot assign int to type " + dst.getName(), fault);
                     return false;
                 }
             } else if (src.getName().equals("float")) {
                 if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolFloat) {
-                    error("Semantic error: cannot assign float to type " + dst.getName());
+                    error("Semantic error: cannot assign float to type " + dst.getName(), fault);
                     return false;
                 }
             } else {
-                error("Semantic error: " + src.getName() + " and " + dst.getName() + " are incompatible types");
+                error("Semantic error: " + src.getName() + " and " + dst.getName() + " are incompatible types", fault);
                 return false;
             }
         }
@@ -356,18 +370,18 @@ public class TigerSemanticAnalysis {
         ID variableID = (ID)semanticStack.removeFirst();
         SemanticSymbol variable = symbolTable.get(variableID.name);
         if (variable == null || variable.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
-            error("Semantic error: " + variableID.name + " is not a declared variable");
+            error("Semantic error: " + variableID.name + " is not a declared variable", variableID);
             return;
         }
         if (variable.getSymbolTypeReference().getArraySize() <= 0 && index != null) {
-            error("Semantic error: " + variableID.name + " is not of an array type");
+            error("Semantic error: " + variableID.name + " is not of an array type", variableID);
             return;
         }
 
         SemanticSymbol baseType = variable.getSymbolTypeReference();
         if (index != null) {
             if (!index.type.getName().equals("int")) {
-                error("Semantic error: Array index must be of type int");
+                error("Semantic error: Array index must be of type int", index);
                 return;
             }
         }
@@ -382,13 +396,14 @@ public class TigerSemanticAnalysis {
             }
         }
 
-        if (!semaCanConvertType(assignment.type, baseType)) {
+        if (!semaCanConvertType(assignment.type, baseType, assignment)) {
             return;
         }
         AssignStat node = new AssignStat();
         node.left = variable;
         node.right = assignment;
         node.index = index;
+        node.lineNumber = variableID.lineNumber;
         semanticStack.addFirst(node);
     }
 
@@ -430,9 +445,10 @@ public class TigerSemanticAnalysis {
             node.type = right.type;
             node.convertLeft = true;
         } else {
-            error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName());
+            error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName(), left);
             return;
         }
+        node.lineNumber = left.lineNumber;
 
         semanticStack.addFirst(node);
     }
@@ -453,10 +469,11 @@ public class TigerSemanticAnalysis {
             node.right = right;
             node.convertLeft = true;
         } else {
-            error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName());
+            error("Semantic error: type mismatch between " + left.type.getName() + " and " + right.type.getName(), left);
             return;
         }
         node.type = symbolTable.get("int");
+        node.lineNumber = left.lineNumber;
 
         semanticStack.addFirst(node);
     }
@@ -468,12 +485,13 @@ public class TigerSemanticAnalysis {
 
         // Make sure they are both integers
         if (!left.type.getName().equals("int") || !right.type.getName().equals("int")) {
-            error("Logical comparison operator only acts on integers");
+            error("Logical comparison operator only acts on integers", left);
             return;
         }
         node.left = left;
         node.right = right;
         node.type = left.type;
+        node.lineNumber = left.lineNumber;
 
         semanticStack.addFirst(node);
     }
@@ -484,7 +502,7 @@ public class TigerSemanticAnalysis {
 
         // condition must be an integer type
         if (!cond.type.getName().equals("int")) {
-            error("Semantic error: condition must be an integer");
+            error("Semantic error: condition must be an integer", cond);
             return;
         }
 
@@ -492,6 +510,7 @@ public class TigerSemanticAnalysis {
         IfStat node = new IfStat();
         node.cond = cond;
         node.finalized = false;
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -527,6 +546,7 @@ public class TigerSemanticAnalysis {
         // Statement is no longer finalized
         node.finalized = false;
         node.falseStats = new ArrayList<>();
+        node.lineNumber = currentLine;
     }
 
     // Very similar to analyzing an if block
@@ -555,7 +575,7 @@ public class TigerSemanticAnalysis {
 
         // condition must be an integer type
         if (!cond.type.getName().equals("int")) {
-            error("Semantic error: condition must be an integer");
+            error("Semantic error: condition must be an integer", cond);
             return;
         }
 
@@ -566,6 +586,7 @@ public class TigerSemanticAnalysis {
         WhileStat node = new WhileStat();
         node.cond = cond;
         node.finalized = false;
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -600,13 +621,13 @@ public class TigerSemanticAnalysis {
         // Perform a lookup first
         SemanticSymbol variable = symbolTable.get(varID.name);
         if (variable == null || variable.getSymbolClass() != SemanticSymbol.SymbolClass.VarDeclaration) {
-            error("Symantic error: " + varID.name + " is not a defined variable");
+            error("Semantic error: " + varID.name + " is not a defined variable", varID);
             return;
         }
 
         // Type check
-        if (!semaCanConvertType(to.type, variable.getSymbolTypeReference()) ||
-                !semaCanConvertType(from.type, variable.getSymbolTypeReference())) {
+        if (!semaCanConvertType(to.type, variable.getSymbolTypeReference(), to) ||
+                !semaCanConvertType(from.type, variable.getSymbolTypeReference(), from)) {
             return;
         }
 
@@ -619,6 +640,7 @@ public class TigerSemanticAnalysis {
         node.end = to;
         node.var = variable;
         node.finalized = false;
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -646,12 +668,13 @@ public class TigerSemanticAnalysis {
     }
 
     public void semaBreak() {
+        BreakStat node = new BreakStat();
+        node.lineNumber = currentLine;
         if (loopCounter <= 0) {
-            error("Semantic error: break statement must be inside a loop");
+            error("Semantic error: break statement must be inside a loop", node);
             return;
         }
 
-        BreakStat node = new BreakStat();
         semanticStack.addFirst(node);
     }
 
@@ -659,7 +682,7 @@ public class TigerSemanticAnalysis {
     public void semaFunctionStart() {
         ID name = (ID)semanticStack.removeFirst();
         if (symbolTable.get(name.name) != null) {
-            error("Semantic error: " + name.name + "is already defined");
+            error("Semantic error: " + name.name + "is already defined", name);
             return;
         }
 
@@ -674,6 +697,7 @@ public class TigerSemanticAnalysis {
         // Create AST node
         FunDec node = new FunDec();
         node.function = symbol;
+        node.lineNumber = currentLine;
         semanticStack.addFirst(node);
     }
 
@@ -700,7 +724,7 @@ public class TigerSemanticAnalysis {
         ID type = (ID)semanticStack.removeFirst();
         SemanticSymbol symbol = symbolTable.get(type.name);
         if (symbol == null || symbol.getSymbolClass() != SemanticSymbol.SymbolClass.TypeDecleration) {
-            error("Semantic error: " + type.name + " does not name a defined type");
+            error("Semantic error: " + type.name + " does not name a defined type", type);
             return;
         }
         currentFunction.setFunctionReturnType(symbol);
@@ -723,16 +747,17 @@ public class TigerSemanticAnalysis {
 
     public void semaReturn() {
         Expr ret = (Expr)semanticStack.removeFirst();
+        ReturnStat node = new ReturnStat();
+        node.lineNumber = currentLine;
         if (currentFunction == null) {
-            error("Semantic error: return cannot appear outside a function block");
+            error("Semantic error: return cannot appear outside a function block", node);
         }
         if (currentFunction.getFunctionReturnType() == null) {
-            error("Semantic error: function with no return type cannot return");
+            error("Semantic error: function with no return type cannot return", node);
         }
-        if (!semaCanConvertType(ret.type, currentFunction.getFunctionReturnType())) {
+        if (!semaCanConvertType(ret.type, currentFunction.getFunctionReturnType(), ret)) {
             return;
         }
-        ReturnStat node = new ReturnStat();
         node.retVal = ret;
         semanticStack.addFirst(node);
     }
@@ -747,7 +772,7 @@ public class TigerSemanticAnalysis {
         // Attempt a lookup
         SemanticSymbol function = symbolTable.get(functionID.name);
         if (function == null || function.getSymbolClass() != SemanticSymbol.SymbolClass.FunctionDeclatation) {
-            error("Semantic error: " + functionID.name + " is not a defined function");
+            error("Semantic error: " + functionID.name + " is not a defined function", functionID);
             return;
         }
 
@@ -758,22 +783,23 @@ public class TigerSemanticAnalysis {
         // Compare argument count
         if (function.getFunctionParameters() == null) {
             if (args.size() != 0) {
-                error("Semantic error: " + functionID.name + " does not take any parameters");
+                error("Semantic error: " + functionID.name + " does not take any parameters", functionID);
                 return;
             }
         } else if (function.getFunctionParameters().size() != args.size()) {
-            error("Semantic error: attempt to call " + functionID.name + " with invalid number of parameters");
+            error("Semantic error: attempt to call " + functionID.name + " with invalid number of parameters", functionID);
             return;
         } else {
             // type check and add the parameters
             for (SemanticSymbol arg : function.getFunctionParameters()) {
                 Expr ex = args.removeFirst();
-                if (!semaCanConvertType(ex.type, arg.getSymbolTypeReference())) {
+                if (!semaCanConvertType(ex.type, arg.getSymbolTypeReference(), ex)) {
                     return;
                 }
                 call.args.add(ex);
             }
         }
+        call.lineNumber = functionID.lineNumber;
         semanticStack.addFirst(call);
     }
 
@@ -782,6 +808,7 @@ public class TigerSemanticAnalysis {
         FunCall call = (FunCall)semanticStack.removeFirst();
         ProcedureStat node = new ProcedureStat();
         node.funCall = call;
+        node.lineNumber = call.lineNumber;
         semanticStack.addFirst(node);
     }
 }

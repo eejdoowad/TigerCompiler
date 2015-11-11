@@ -51,6 +51,7 @@ package AST;
 // Debate... where do you insert Types, leaning to in var and expr nodes
 
 public abstract class Node {
+    public int lineNumber = 1; // line number associated with node
 
     public Node(){
 

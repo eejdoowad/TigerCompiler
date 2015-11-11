@@ -18,8 +18,8 @@ public class TigerParser {
     private ParseTable parseTable;
     private Stack<Symbol> parseStack;
     private Token nextToken; // the next token returned by
-    private Stack<AST.Node> SR;
     private TigerSemanticAnalysis analyzer;
+    private boolean doSemanticAnalysis; // used to disable analysis in case of parser error
     public Program program;
 
     // Stack that ID or LIT tokens popped off the parse stack are pushed to
@@ -45,14 +45,14 @@ public class TigerParser {
         // Set up Parse Stack
         parseStack = new Stack<Symbol>();
 
-        // Set up Semantic Record
-        SR = new Stack<AST.Node>();
-
         // Set up semantic analyzer
         analyzer = new TigerSemanticAnalysis();
 
         // Set up token stack
         tokenStack = new ArrayDeque<>();
+
+        // Default to doing semantic analysis
+        doSemanticAnalysis = true;
 
         if (Config.DEBUG && Config.DEBUG_INIT){
             System.out.println("Parser initialized");
@@ -107,6 +107,7 @@ public class TigerParser {
                     nextToken.type == TokenType.KINT ||
                     nextToken.type == TokenType.KFLOAT) {
                 tokenStack.addFirst(nextToken);
+                analyzer.setCurrentLine(scanner.getLineNumber());
             }
             nextToken = scanner.nextToken();
 
@@ -165,12 +166,11 @@ public class TigerParser {
     }
 
     private void error(){
-        if (Config.DEBUG && Config.DEBUG_PARSER1){
-            System.out.println("Parser error (line " + scanner.getLineNumber() +
-                    "): " + scanner.getLineString() + "<---");
-            System.out.println("        " + scanner.getLexeme() + " is not a valid token.");
-        }
+        System.out.println("Parser error (line " + scanner.getLineNumber() +
+                "): " + scanner.getLineString() + "<---");
+        System.out.println("        " + scanner.getLexeme() + " is not a valid token.");
         parseSuccess = false;
+        doSemanticAnalysis = false;
         if (nextToken.type.isSequencePoint()) recoverState();
         nextToken = scanner.nextToken();
     }
@@ -191,13 +191,14 @@ public class TigerParser {
 
     // this is going to take a while...
     void SemanticAction(ActionSymbol action){
+        if (!doSemanticAnalysis) {
+            return;
+        }
         switch (action.type){
             case START:
-                System.out.println("SA: Pushing Program onto SR");
                 analyzer.semaProgramStart();
                 break;
             case END:
-                System.out.println("SA: END");
                 program = analyzer.semaProgramEnd();
                 break;
 
@@ -222,16 +223,6 @@ public class TigerParser {
                 break;
             case SEMA_TYPE_DEC:
                 analyzer.semaTypeDeclaration();
-                break;
-
-            case SEMA_ATTACH_TYPEDEC:
-                analyzer.semaAttachTypeDec();
-                break;
-            case SEMA_ATTACH_VARDEC:
-                analyzer.semaAttachVarDec();
-                break;
-            case SEMA_ATTACH_FUNDEC:
-                analyzer.semaAttachFunDec();
                 break;
             case SEMA_VAR_REF:
                 analyzer.semaVariableReference(tokenStack.removeFirst().lexeme);
@@ -330,5 +321,14 @@ public class TigerParser {
                 analyzer.semaFunctionCall();
                 break;
         }
+
+        // No success so code won't generate
+        if (analyzer.isSemanticError()) {
+            parseSuccess = false;
+        }
+    }
+
+    boolean isParseSuccess() {
+        return parseSuccess;
     }
 }

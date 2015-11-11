@@ -4,7 +4,7 @@ public enum ActionSymbolType {
     START ("#start"),
     END ("#end"),
 
-
+    // Var and type declarations
     SEMA_VAR_DEC ("#semaVarDec"),
     SEMA_TYPE_DEC("#semaTypeDec"),
 
@@ -14,11 +14,7 @@ public enum ActionSymbolType {
     SEMA_FLOAT_LIT ("#semaFloatLit"),
     SEMA_ARRAY_TYPE ("#semaArrayType"),
 
-    // Sufyan SEMA additions... might as well attach them to root
-    SEMA_ATTACH_TYPEDEC("#semaAttachTypeDec"),
-    SEMA_ATTACH_VARDEC("#semaAttachVarDec"),
-    SEMA_ATTACH_FUNDEC("#semaAttachFunDec"),
-
+    // Variable references and assignments
     SEMA_VAR_REF ("#semaVarRef"),
     SEMA_VAR_REF_INDEX ("#semaVarRefIndex"),
     SEMA_VAR_REF_ARRAY_CHECK ("#semaVarRefArrayCheck"),
