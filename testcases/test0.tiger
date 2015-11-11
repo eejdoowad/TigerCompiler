@@ -1,5 +1,5 @@
 let
-        type cat = animal;
+        type cat = int;
         type dog = cat;
         type int_arr = array [100] of int;
         var a : int;

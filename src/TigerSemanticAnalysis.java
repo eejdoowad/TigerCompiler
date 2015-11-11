@@ -249,7 +249,9 @@ public class TigerSemanticAnalysis {
         if (initializer != null) {
             // First check if type is of first order
             if (typeSymbol.getSymbolType() == SemanticSymbol.SymbolType.SymbolCustom) {
-                error("Semantic error: " + typeSymbol.getName() + " is not a 1st order derived type", type);
+                if (typeSymbol.getSymbolTypeReference().getSymbolType() != SemanticSymbol.SymbolType.SymbolError) {
+                    error("Semantic error: " + typeSymbol.getName() + " is not a 1st order derived type", type);
+                }
                 // Remove initializer if it is invalid
                 initializer = null;
             } else {
@@ -686,7 +688,6 @@ public class TigerSemanticAnalysis {
         // Type check
         if (!semaCanConvertType(to.type, variable.getSymbolTypeReference(), to) ||
                 !semaCanConvertType(from.type, variable.getSymbolTypeReference(), from)) {
-            return;
         }
 
         // Loop counter is incremented
@@ -848,13 +849,11 @@ public class TigerSemanticAnalysis {
             }
         } else if (function.getFunctionParameters().size() != args.size()) {
             error("Semantic error: attempt to call " + functionID.name + " with invalid number of parameters", functionID);
-            return;
         } else {
             // type check and add the parameters
             for (SemanticSymbol arg : function.getFunctionParameters()) {
                 Expr ex = args.removeFirst();
                 if (!semaCanConvertType(ex.type, arg.getSymbolTypeReference(), ex)) {
-                    return;
                 }
                 call.args.add(ex);
             }
