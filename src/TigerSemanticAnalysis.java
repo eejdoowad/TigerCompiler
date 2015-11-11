@@ -255,23 +255,23 @@ public class TigerSemanticAnalysis {
                 // Remove initializer if it is invalid
                 initializer = null;
             } else {
-                // Check float and convert to int if needed
-                if (initializer instanceof FloatLit) {
-                    if (typeSymbol.getName().equals("int")) {
+                // Check int and convert to float if needed
+                if (initializer instanceof IntLit) {
+                    if (typeSymbol.getName().equals("float")) {
                         // Convert to int by grammar conversion rules
-                        float val = ((FloatLit) initializer).val;
-                        initializer = new IntLit();
-                        ((IntLit) initializer).val = (int) val;
-                    } else if (typeSymbol.getSymbolType() != SemanticSymbol.SymbolType.SymbolFloat) {
-                        error("Semantic Error: Attempted to assign float to integer variables", initializer);
+                        int val = ((IntLit) initializer).val;
+                        initializer = new FloatLit();
+                        ((FloatLit)initializer).val = (float)val;
+                    } else if (typeSymbol.getSymbolType() != SemanticSymbol.SymbolType.SymbolInt) {
+                        error("Semantic Error: Attempted to assign int to non-integer variables", initializer);
                         initializer = null;
                     }
                 }
 
                 // Type check int constant values
-                if (initializer instanceof IntLit) {
-                    if (typeSymbol.getSymbolType() != SemanticSymbol.SymbolType.SymbolInt) {
-                        error("Semantic Error: Attempted to assign int to float values", initializer);
+                if (initializer instanceof FloatLit) {
+                    if (typeSymbol.getSymbolType() != SemanticSymbol.SymbolType.SymbolFloat) {
+                        error("Semantic Error: Attempted to assign float to non-float variables", initializer);
                         initializer = null;
                     }
                 }
