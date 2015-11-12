@@ -1,4 +1,4 @@
-./grademe
+grademe/
 build/IntelliJ/.idea/workspace.xml
 .DS_store
 out/*
