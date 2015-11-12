@@ -127,6 +127,16 @@ public class SymbolTable {
         }
         return false;
     }
+
+    // Pretty prints the symbol table
+    public String toString() {
+        String ret = "Global symbols:\n";
+        HashMap<String, SemanticSymbol> global = scopeStack.peekLast();
+        for (SemanticSymbol sym : global.values()) {
+            ret += sym + "\n";
+        }
+        return ret;
+    }
 }
 
 

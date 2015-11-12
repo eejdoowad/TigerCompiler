@@ -105,6 +105,9 @@ public class TigerSemanticAnalysis {
                 root.funDecs.add((FunDec)node);
             }
         }
+        if (!semanticError) {
+            System.out.println(symbolTable);
+        }
         return root;
     }
 

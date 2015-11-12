@@ -9,9 +9,18 @@ import java.util.ArrayList;
 public class SemanticSymbol {
     // enum of symbol classes
     public enum SymbolClass {
-        TypeDecleration,
-        VarDeclaration,
-        FunctionDeclatation,
+        TypeDecleration ("Type"),
+        VarDeclaration ("Variable"),
+        FunctionDeclatation ("Function");
+
+        private String name;
+        private SymbolClass(String text) {
+            name = text;
+        }
+
+        public String toString() {
+            return name;
+        }
     }
 
     // Type of symbol
@@ -27,10 +36,19 @@ public class SemanticSymbol {
 
     // Typing specifics
     public enum SymbolType {
-        SymbolInt,
-        SymbolFloat,
-        SymbolCustom,
-        SymbolError,
+        SymbolInt ("int"),
+        SymbolFloat ("float"),
+        SymbolCustom ("custom"),
+        SymbolError ("error");
+
+        private String name;
+        private SymbolType(String text) {
+            name = text;
+        }
+
+        public String toString() {
+            return name;
+        }
     }
 
     // The type that this symbol is aliasing/storing/returning
@@ -120,5 +138,36 @@ public class SemanticSymbol {
 
     public SemanticSymbol getFunctionReturnType() {
         return functionReturnType;
+    }
+
+    public String toString() {
+        String ret = "Symbol: " + name + "\n" +
+                "\tClass: " + symClass + "\n";
+        if (symClass == SymbolClass.TypeDecleration) {
+            ret += "\tBase type: ";
+            if (type == SymbolType.SymbolCustom) {
+                ret += typeSymbol.getName();
+            } else {
+                ret += type;
+            }
+            if (arraySize > 0) {
+                ret += "\n\tArray Size: " + arraySize;
+            }
+        } else if (symClass == SymbolClass.VarDeclaration) {
+            ret += "\tType: " + typeSymbol.getName();
+        } else {
+            if (functionReturnType != null) {
+                ret += "\tReturn type: " + functionReturnType.getName();
+            } else {
+                ret += "\tReturn type: void";
+            }
+            if (functionParameters != null) {
+                ret += "\n\tParameters:";
+                for (SemanticSymbol param : functionParameters) {
+                    ret += "\n\t\t" + param.getName() + " : " + param.getSymbolTypeReference().getName();
+                }
+            }
+        }
+        return ret;
     }
 }
