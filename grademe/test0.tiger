@@ -1,0 +1,60 @@
+let
+        type cat = int;
+        type dog = cat;
+        type int_arr = array [100] of int;
+        var a : int;
+        var b : int;
+        var doge : dog;
+        var meow : cat;
+        var c : float;
+        var d : int_arr;
+        var e : int := 7;
+        var f : cat := 7;
+        var g : int_arr := 89;
+        var i : int;
+
+        function add(addend1 : int, addend2 : int) : int begin
+            return addend1 + addend2;
+        end;
+        function nada(hola : int) begin
+            hola := 1;
+        end;
+        function broken1() : int begin
+        	if (1 > 2) then
+        		return 1;
+        	endif;
+        end;
+in
+        d := 78;
+        a := 1;
+        b := 2;
+        nada(7);
+        broken1();
+        add(1, b);
+        a := 2;
+        a := add(a, b);
+        a := (a + 3) * 2;
+        d[a] := d[3];
+        d[d[3]] := b;
+        d := 3;
+        if (a > b) then
+            a := 3;
+            b := 5;
+        else
+            a := 2;
+            if (a < b) then
+                b := 4;
+            endif;
+        endif;
+        while (a <> 1) do
+            a := 1;
+        enddo;
+        for a := 1 to 5 do
+            d[a] := 1;
+            while (1 = 1) do
+                break;
+            enddo;
+            i := 101;
+        enddo;
+        i := 595;
+end

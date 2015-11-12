@@ -1,0 +1,6 @@
+Phase II:
+
+1. Fix AssigStat so that it uses VarReference instead of left and index
+2. Fix ArrayAssign so it works
+3. Fix function calls and Procedures. Consider making a FuncCallStat
+in addition to the ProcedureStat
