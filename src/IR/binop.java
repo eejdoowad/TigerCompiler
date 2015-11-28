@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 
 // I'm not sure anymore if the instruction should have a semantic Symbol
 // as its left and right members

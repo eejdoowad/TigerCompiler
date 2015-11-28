@@ -1,5 +1,7 @@
 package AST;
 
+import SemanticAnalyzer.SemanticSymbol;
+
 public class TypeDec extends Node {
 
     public SemanticSymbol newType;

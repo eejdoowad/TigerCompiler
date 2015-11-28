@@ -1,4 +1,4 @@
-
+package Parser;
 
 public enum ActionSymbolType {
     START ("#start"),

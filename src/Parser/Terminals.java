@@ -1,3 +1,10 @@
+package Parser;
+
+import Config.Config;
+import Parser.Terminal;
+
+import java.util.*;
+
 
 // Contains a list of terminals
 // All Terminal symbols are hardcoded in this implementation
@@ -7,7 +14,6 @@
 // Similar to the NonTerminals Class, Terminals are addressable by either a TokenType or a symbol string
 // and provide two separate HashMaps for rapid access via either type of key
 
-import java.util.*;
 
 
 public class Terminals {

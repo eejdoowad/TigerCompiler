@@ -1,3 +1,9 @@
+package Parser;
+
+import Config.Config;
+import Parser.ActionSymbol;
+import Parser.ActionSymbolType;
+
 import java.util.*;
 
 public class ActionSymbols {

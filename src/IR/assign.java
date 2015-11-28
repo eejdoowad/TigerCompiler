@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class assign extends IR {
 
     // the l-value is always Named

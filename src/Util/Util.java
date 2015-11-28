@@ -1,3 +1,5 @@
+package Util;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +15,7 @@ public class Util {
             FileReader fileReader = new FileReader(filename);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             List<String> lines = new ArrayList<String>();
-            String line = null;
+            String line;
             while ((line = bufferedReader.readLine()) != null) {
                 lines.add(line);
             }

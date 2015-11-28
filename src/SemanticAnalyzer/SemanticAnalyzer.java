@@ -1,12 +1,11 @@
+package SemanticAnalyzer;
+
 import AST.*;
 import AST.Node;
 
-import javax.lang.model.element.VariableElement;
-import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.concurrent.Exchanger;
 
 // Performs semantic analysis via inputs from the parser and outputs
 // an AST upon successful analysis
@@ -15,7 +14,8 @@ import java.util.concurrent.Exchanger;
 // to the stack from semantic terminals which are individually checked for
 // semantics and then reduced to a head AST node where the symbols are
 // attached.
-public class TigerSemanticAnalysis {
+
+public class SemanticAnalyzer {
     // Root of the AST under construction
     private Program root;
 
@@ -45,7 +45,7 @@ public class TigerSemanticAnalysis {
 
     private int currentLine = 0; // Line associated with current node
 
-    public TigerSemanticAnalysis() {
+    public SemanticAnalyzer() {
         root = null;
         symbolTable = new SymbolTable();
         semanticStack = new ArrayDeque<>();

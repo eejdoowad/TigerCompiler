@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class array_store extends IR {
 
     // the l-value is always Named

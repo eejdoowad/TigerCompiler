@@ -4,8 +4,6 @@ package IR;
 // var X : ArrayInt := 10;
 
 
-import AST.SemanticSymbol;
-
 public class array_assign extends IR {
 
     public NamedVar var;

@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class breq extends branch{
 
     public breq(Operand left, Operand right, LabelOp labelOp){

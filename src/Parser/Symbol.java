@@ -1,4 +1,4 @@
-
+package Parser;
 
 // This class represents a grammar symbol
 // (i'm considering renaming it to GrammarSymbol, so we don't get confused when we add a symbol table)

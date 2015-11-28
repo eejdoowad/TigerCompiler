@@ -1,5 +1,9 @@
+package Parser;
+
+import Config.Config;
 import java.util.*;
 import AST.*;
+import SemanticAnalyzer.SemanticAnalyzer;
 
 // Yeah... the parser
 // Does what you expect it to
@@ -11,14 +15,14 @@ import AST.*;
 // The ParseTable.csv file is needed to... construct the parse table
 
 
-public class TigerParser {
+public class Parser {
 
     private TigerScanner scanner;
     private Grammar grammar;
     private ParseTable parseTable;
     private Stack<Symbol> parseStack;
     private Token nextToken; // the next token returned by
-    private TigerSemanticAnalysis analyzer;
+    private SemanticAnalyzer analyzer;
     private boolean doSemanticAnalysis; // used to disable analysis in case of parser error
     public Program program;
 
@@ -33,7 +37,7 @@ public class TigerParser {
     private Stack<Symbol> errorStack;
 
 
-    public TigerParser(TigerScanner scanner){
+    public Parser(TigerScanner scanner){
         this.scanner = scanner;
 
         // Set up Grammar
@@ -46,7 +50,7 @@ public class TigerParser {
         parseStack = new Stack<Symbol>();
 
         // Set up semantic analyzer
-        analyzer = new TigerSemanticAnalysis();
+        analyzer = new SemanticAnalyzer();
 
         // Set up token stack
         tokenStack = new ArrayDeque<>();
@@ -339,7 +343,7 @@ public class TigerParser {
         }
     }
 
-    boolean isParseSuccess() {
+    public boolean isParseSuccess() {
         return parseSuccess;
     }
 }

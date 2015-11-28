@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public abstract class branch extends IR {
 
     public Operand left;

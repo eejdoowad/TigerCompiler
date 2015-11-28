@@ -1,3 +1,8 @@
+package Parser;
+
+import Parser.NonTerminal;
+import Parser.Symbol;
+
 import java.util.*;
 
 // A production is a single grammar rule

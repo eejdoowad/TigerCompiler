@@ -1,11 +1,11 @@
-package AST;
+package SemanticAnalyzer;
 
 import java.util.ArrayList;
 
-/**
- * Base class for a semantic symbol that can be entered into the
- * symbol table
- */
+//  Base class for a semantic symbol that can be entered into the
+//  symbol table
+//  ALSO used in AST as substitute for nodes =(
+
 public class SemanticSymbol {
     // enum of symbol classes
     public enum SymbolClass {

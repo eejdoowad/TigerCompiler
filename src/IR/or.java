@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class or extends binop {
 
     public or(Operand left, Operand right, Operand result){

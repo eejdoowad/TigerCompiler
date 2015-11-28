@@ -1,4 +1,4 @@
-// Well... The grammar has been augmented with action symbols in phase 2
+package Parser;// Well... The grammar has been augmented with action symbols in phase 2
 // Action symbols are used in our implementation to:
 //     1. Generate the Symbol Table
 //     2. Generate the Abstract Syntax Tree (AST)
@@ -10,8 +10,10 @@
 // thoughts: should be enumerable, there is a finite set of action symbols
 
 
+import Parser.ActionSymbolType;
+import Parser.Symbol;
 
-public class ActionSymbol extends Symbol{
+public class ActionSymbol extends Symbol {
     ActionSymbolType type;
     public ActionSymbol(ActionSymbolType type){
         this.symbol = type.toString();

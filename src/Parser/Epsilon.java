@@ -1,3 +1,7 @@
+package Parser;
+
+import Config.Config;
+
 
 // Nothing to epsilon really
 // All you ever do is:

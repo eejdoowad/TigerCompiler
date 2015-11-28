@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class mult extends binop {
 
     public mult(Operand left, Operand right, Operand result){

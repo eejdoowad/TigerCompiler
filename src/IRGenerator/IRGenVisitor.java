@@ -1,8 +1,11 @@
+package IRGenerator;
+
+import Config.Config;
 import AST.*;
 import IR.*;
+import SemanticAnalyzer.SemanticSymbol;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 
 public class IRGenVisitor implements Visitor {

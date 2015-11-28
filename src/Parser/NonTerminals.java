@@ -1,3 +1,8 @@
+package Parser;
+
+import Config.Config;
+import Parser.NonTerminal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

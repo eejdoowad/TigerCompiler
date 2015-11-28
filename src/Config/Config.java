@@ -1,3 +1,5 @@
+package Config;
+
 
 public class Config {
     public static boolean DEBUG = true;                         // Enable or disable all debugging, HIGHEST PRIORITY
@@ -12,3 +14,4 @@ public class Config {
     public static String GRAMMAR_PATH = "Agrammar.txt";         // Specify the grammar file path
     public static String EPSILON = "EPSILON";                   // Specify the string used to denote epsilon in the grammar
 }
+

@@ -1,4 +1,4 @@
-import AST.SemanticSymbol;
+package SemanticAnalyzer;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -70,23 +70,25 @@ public class SymbolTable {
         printi.setFunctionParameters(args);
         put("printi", printi);
 
-        // not(i)
-        SemanticSymbol not = new SemanticSymbol("not", SemanticSymbol.SymbolClass.FunctionDeclatation);
-        not.setFunctionReturnType(intSymbol);
-        num = new SemanticSymbol("num", SemanticSymbol.SymbolClass.VarDeclaration);
-        args = new ArrayList<>();
-        args.add(num);
-        not.setFunctionParameters(args);
-        put("not", not);
 
-        // exit(i)
-        SemanticSymbol exit = new SemanticSymbol("exit", SemanticSymbol.SymbolClass.FunctionDeclatation);
-        exit.setFunctionReturnType(null);
-        num = new SemanticSymbol("num", SemanticSymbol.SymbolClass.VarDeclaration);
-        args = new ArrayList<>();
-        args.add(num);
-        exit.setFunctionParameters(args);
-        put("exit", exit);
+//      SILLY IAN
+//        // not(i)
+//        SemanticSymbol not = new SemanticSymbol("not", SemanticSymbol.SymbolClass.FunctionDeclatation);
+//        not.setFunctionReturnType(intSymbol);
+//        num = new SemanticSymbol("num", SemanticSymbol.SymbolClass.VarDeclaration);
+//        args = new ArrayList<>();
+//        args.add(num);
+//        not.setFunctionParameters(args);
+//        put("not", not);
+//
+//        // exit(i)
+//        SemanticSymbol exit = new SemanticSymbol("exit", SemanticSymbol.SymbolClass.FunctionDeclatation);
+//        exit.setFunctionReturnType(null);
+//        num = new SemanticSymbol("num", SemanticSymbol.SymbolClass.VarDeclaration);
+//        args = new ArrayList<>();
+//        args.add(num);
+//        exit.setFunctionParameters(args);
+//        put("exit", exit);
     }
 
     // Enters a new scope

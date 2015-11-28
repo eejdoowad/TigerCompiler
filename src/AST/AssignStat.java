@@ -1,5 +1,7 @@
 package AST;
 
+import SemanticAnalyzer.SemanticSymbol;
+
 public class AssignStat extends Stat {
 
     public SemanticSymbol left; // what you assign to

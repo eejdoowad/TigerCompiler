@@ -1,9 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
-import java.util.ArrayList;
-
 public class ret extends IR {
 
     Operand retVal;

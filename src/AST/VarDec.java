@@ -1,5 +1,7 @@
 package AST;
 
+import SemanticAnalyzer.SemanticSymbol;
+
 import java.util.ArrayList;
 
 public class VarDec extends Node {

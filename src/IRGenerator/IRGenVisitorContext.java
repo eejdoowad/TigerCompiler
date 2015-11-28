@@ -1,3 +1,6 @@
+package IRGenerator;
+
+import Config.Config;
 import IR.Label;
 import IR.Operand;
 import IR.SharedLabel;

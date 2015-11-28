@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class brgt extends branch {
 
     public brgt(Operand left, Operand right, LabelOp labelOp){

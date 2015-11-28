@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 public class sub extends binop {
 
     public sub(Operand left, Operand right, Operand result){

@@ -1,6 +1,5 @@
-/**
- * Created by sd on 10/6/15.
- */
+package Parser;
+
 public class NonTerminal extends Symbol {
 
     int id; // each nonTerminal should be uniquely identified by its id

@@ -1,7 +1,18 @@
+package Parser;
+
+import Config.Config;
+import Util.Util;
+import Parser.Grammar;
+
+import java.util.*;
+
+
+
 // A parse table is used for determining the next grammar rule to apply
 // Given: A nonterminal and a look-ahead symbol (token type),
 // the parse table returns the index of the next grammar rule to apply
-import java.util.*;
+
+
 
 public class ParseTable {
 
@@ -32,7 +43,7 @@ public class ParseTable {
         // Now store the index at which each TokenType appears in the ParseTable.csv file
         String [] tokenLineEntries = lines[0].split(",");
         // Note first entry will be junk and should not be written or read
-        TokenType [] tokenTypeAtIndex = new TokenType[tokenLineEntries.length]; // first entry blank in csv file
+        TokenType[] tokenTypeAtIndex = new TokenType[tokenLineEntries.length]; // first entry blank in csv file
         for (int i = 1; i < tokenLineEntries.length; i++){
             tokenTypeAtIndex[i] = grammar.terminals.getBySymbol(tokenLineEntries[i]).type;
         }

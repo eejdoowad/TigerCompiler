@@ -1,8 +1,10 @@
+package IRGenerator;
+
 import AST.Program;
 
 import java.util.ArrayList;
 
-public class IRGenerator {
+public class IRGen {
 
     // AST representation output by parser
     public Program program;
@@ -11,7 +13,7 @@ public class IRGenerator {
     public ArrayList<IR.IR> instructions = new ArrayList<>();
 
 
-    public IRGenerator(Program program){
+    public IRGen(Program program){
         this.program = program;
     }
 

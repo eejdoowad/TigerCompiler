@@ -1,4 +1,4 @@
-// A token consists of:
+package Parser;// A token consists of:
 // 1. A lexeme (The actual string or name read by the scanner)
 // 2. A Token Type (the syntactic category of the input word)
 // 3. Other metadata like line number

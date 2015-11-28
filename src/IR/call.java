@@ -1,7 +1,5 @@
 package IR;
 
-import AST.SemanticSymbol;
-
 import java.util.ArrayList;
 
 public class call extends IR {

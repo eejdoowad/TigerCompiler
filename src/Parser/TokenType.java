@@ -1,4 +1,4 @@
-
+package Parser;
 // The TokenType enumerates the types possible syntactic categories
 // in the tiger language.
 

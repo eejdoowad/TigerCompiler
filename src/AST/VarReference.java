@@ -7,6 +7,8 @@ package AST;
 //  So a + b would have a plus node
 // with two VarReference children
 
+import SemanticAnalyzer.SemanticSymbol;
+
 public class VarReference extends Expr {
     // Reference to variable symbol that this variable represents
     public SemanticSymbol reference;

@@ -1,7 +1,9 @@
-
+package Parser;
 // A Terminal Symbol corresponds to a token of a particular type
 // all Terminals hardcoded for now based on enum TokenType
 
+
+import Parser.Symbol;
 
 public class Terminal extends Symbol {
 
