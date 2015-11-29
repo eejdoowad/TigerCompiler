@@ -2,7 +2,7 @@ package IR;
 
 public class goTo extends controlFlowInstruction {
 
-    LabelOp labelOp;
+    public LabelOp labelOp;
 
     public goTo(LabelOp labelOp){
         this.labelOp = labelOp;
