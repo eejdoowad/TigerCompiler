@@ -2,7 +2,7 @@ import Config.Config;
 import IRGenerator.IRGen;
 import Parser.Parser;
 import Parser.TigerScanner;
-import RegAlloc.FlowGraph;
+import RegisterAllocator.FlowGraph;
 import Util.Util;
 
 import java.io.File;

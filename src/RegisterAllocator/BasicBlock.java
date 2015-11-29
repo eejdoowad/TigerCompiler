@@ -1,4 +1,4 @@
-package RegAlloc;
+package RegisterAllocator;
 
 import IR.*;
 import java.util.ArrayList;
