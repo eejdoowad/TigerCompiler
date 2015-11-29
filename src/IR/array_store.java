@@ -1,6 +1,6 @@
 package IR;
 
-public class array_store extends IR {
+public class array_store extends regularInstruction {
 
     // the l-value is always Named
     // wouldn't make sense to assign to a temp

@@ -36,14 +36,21 @@ public class IRGenVisitor implements Visitor {
         for (FunDec d : n.funDecs){
             d.accept(this);
         }
-        emit(new UniqueLabel("initialization"));
+        emit(new UniqueLabel("main"));
         for (VarDec d : n.varDecs){
             d.accept(this);
         }
-        emit(new UniqueLabel("main"));
         for (Stat s : n.stats){
             s.accept(this);
         }
+//        emit(new UniqueLabel("initialization"));
+//        for (VarDec d : n.varDecs){
+//            d.accept(this);
+//        }
+//        emit(new UniqueLabel("main"));
+//        for (Stat s : n.stats){
+//            s.accept(this);
+//        }
         emit(new ret(null));
     }
     // no action done by IR CodeGen for TypeDecs

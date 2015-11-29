@@ -8,7 +8,7 @@ package IR;
 // Now i'm thinking perhaps we should make a new class Operand
 // where an operand is either
 
-public abstract class binop extends IR {
+public abstract class binop extends regularInstruction {
 
     public Operand left;
     public Operand right;

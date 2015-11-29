@@ -4,7 +4,7 @@ package IR;
 // var X : ArrayInt := 10;
 
 
-public class array_assign extends IR {
+public class array_assign extends regularInstruction {
 
     public NamedVar var;
     public IntImmediate num;

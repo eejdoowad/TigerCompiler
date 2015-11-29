@@ -1,6 +1,6 @@
 package IR;
 
-public class goTo extends IR {
+public class goTo extends controlFlowInstruction {
 
     LabelOp labelOp;
 

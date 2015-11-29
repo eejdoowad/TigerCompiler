@@ -1,6 +1,6 @@
 package IR;
 
-public abstract class branch extends IR {
+public abstract class branch extends controlFlowInstruction {
 
     public Operand left;
     public Operand right;

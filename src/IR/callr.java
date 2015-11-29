@@ -2,7 +2,7 @@ package IR;
 
 import java.util.ArrayList;
 
-public class callr extends IR {
+public class callr extends controlFlowInstruction {
 
     public LabelOp fun;
     public Operand retVal;
