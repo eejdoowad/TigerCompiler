@@ -2,6 +2,7 @@ import Config.Config;
 import IRGenerator.IRGen;
 import Parser.Parser;
 import Parser.TigerScanner;
+import RegAlloc.FlowGraph;
 import Util.Util;
 
 import java.io.File;
@@ -35,9 +36,11 @@ public class tig {
         TigerScanner scanner = new TigerScanner(file);
         Parser parser = new Parser(scanner);
         parser.parse();
-        if (parser.isParseSuccess() && scanner.success) {
-            IRGen irgen = new IRGen(parser.program);
-            irgen.generate();
+        if (!parser.isParseSuccess() || !scanner.success) {
+            return;
         }
+        IRGen irgen = new IRGen(parser.program);
+        irgen.generate();
+        FlowGraph fg = new FlowGraph(irgen.instructions);
     }
 }
