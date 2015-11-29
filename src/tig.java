@@ -1,11 +1,13 @@
 import Config.Config;
 import IRGenerator.IRGen;
+import MIPSGenerator.InstructionSelector;
 import Parser.Parser;
 import Parser.TigerScanner;
-import RegisterAllocator.FlowGraph;
+import AST.ASTRoot;
+import IR.IR;
+import RegisterAllocator.RegAllocator;
 import Util.Util;
-
-import java.io.File;
+import java.util.ArrayList;
 
 
 // The Compiler class should be the top-level Entity
@@ -44,14 +46,18 @@ public class tig {
     // Doesn't do any error checking regarding the tiger file
     // So error check the file before calling compile
     public static void compile(String file){
+
         TigerScanner scanner = new TigerScanner(file);
         Parser parser = new Parser(scanner);
-        parser.parse();
-        if (!parser.isParseSuccess() || !scanner.success) {
-            return;
-        }
-        IRGen irgen = new IRGen(parser.program);
-        irgen.generate();
-        FlowGraph fg = new FlowGraph(irgen.instructions);
+        ASTRoot ast = parser.parse();
+
+        IRGen irgen = new IRGen(ast);
+        ArrayList<IR> instructions1 = irgen.generate();
+
+        RegAllocator regAllocator = new RegAllocator(instructions1);
+        ArrayList<IR> instructions2 = regAllocator.allocate();
+
+        InstructionSelector selector = new InstructionSelector(instructions2);
+        selector.generateMIPS();
     }
 }

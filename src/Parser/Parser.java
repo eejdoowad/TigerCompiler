@@ -24,7 +24,7 @@ public class Parser {
     private Token nextToken; // the next token returned by
     private SemanticAnalyzer analyzer;
     private boolean doSemanticAnalysis; // used to disable analysis in case of parser error
-    public Program program;
+    private ASTRoot ast;
 
     // Stack that ID or LIT tokens popped off the parse stack are pushed to
     // to be processed by the semantic analyzer
@@ -64,7 +64,7 @@ public class Parser {
     }
 
 
-    public void parse(){
+    public ASTRoot parse(){
 
         parseStack.push(grammar.nonTerminals.getByID(0)); // Push Start symbol (always at index 0)
         saveState();
@@ -88,7 +88,12 @@ public class Parser {
             else if (curSymbol instanceof ActionSymbol) processActionSymbol((ActionSymbol) curSymbol);
             else { System.out.println("WTH is the symbol?"); System.exit(1); }
         }
-        System.out.println("\n" + ((parseSuccess && scanner.success) ? "successful" : "unsuccessful") + " parse");
+
+        boolean success = parseSuccess && scanner.success;
+        System.out.println("\n" + (success ? "successful" : "unsuccessful") + " parse");
+        if (!success) System.exit(1);
+
+        return ast;
     }
 
     // Processes a Terminal at the top of the parse stack
@@ -214,7 +219,7 @@ public class Parser {
                 analyzer.semaProgramStart();
                 break;
             case END:
-                program = analyzer.semaProgramEnd();
+                ast = analyzer.semaProgramEnd();
                 break;
 
             case SEMA_INT_LIT:

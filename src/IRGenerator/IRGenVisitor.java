@@ -10,24 +10,29 @@ import java.util.ArrayList;
 
 public class IRGenVisitor implements Visitor {
 
-    public void debugPrompt(String str){
+    private ASTRoot ast;
+    private ArrayList<IR> instructions = new ArrayList<>();
+    private IRGenVisitorContext context = new IRGenVisitorContext();
+
+    public IRGenVisitor(ASTRoot ast){
+        this.ast = ast;
+    }
+
+    public ArrayList<IR> generateIR(){
+        ast.accept(this);
+        return instructions;
+    }
+
+    private void debugPrompt(String str){
         if (Config.DEBUG_IRCODEGEN)
             System.out.println("Visiting (" + str + ")");
     }
 
-    // AST representation output by parser
-    public Program program;
-    // IROC representation output by IRGenerator
-    public ArrayList<IR> instructions = new ArrayList<>();
     public void emit(IR instruction){
         instructions.add(instruction);
     }
 
-    private IRGenVisitorContext context = new IRGenVisitorContext();
-
-//    public Temporary generateRetVal;
-
-    public void visit(Program n){
+    public void visit(AST.ASTRoot n){
         debugPrompt("Program");
 
         for (TypeDec d : n.typeDecs){

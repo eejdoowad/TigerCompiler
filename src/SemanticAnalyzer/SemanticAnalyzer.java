@@ -18,7 +18,7 @@ import java.util.Deque;
 
 public class SemanticAnalyzer {
     // Root of the AST under construction
-    private Program root;
+    private AST.ASTRoot root;
 
     // Symbol table
     private SymbolTable symbolTable;
@@ -89,11 +89,11 @@ public class SemanticAnalyzer {
 
     // Creates root AST node. Nothing special.
     public void semaProgramStart() {
-        root = new Program();
+        root = new AST.ASTRoot();
         root.lineNumber = currentLine;
     }
 
-    public Program semaProgramEnd() {
+    public AST.ASTRoot semaProgramEnd() {
         while (!semanticStack.isEmpty()) {
             Node node = semanticStack.removeLast();
             if (node instanceof Stat) {
