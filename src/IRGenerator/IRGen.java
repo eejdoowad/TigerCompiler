@@ -21,7 +21,7 @@ public class IRGen {
         IRGenVisitor generator = new IRGenVisitor(ast);
         instructions = generator.generateIR();
 
-        System.out.println(this.toString());
+        //System.out.println(this.toString());
         removeRedundantLabels();
         System.out.println(this.toString());
 
@@ -45,7 +45,7 @@ public class IRGen {
             if (instructions.get(first) instanceof Label){
                 Label firstLabel = (Label)instructions.get(first);
                 newLabel.put(firstLabel, firstLabel);
-                while (i < instructions.size() && instructions.get(i) instanceof Label){
+                while (i >= 0 && instructions.get(i) instanceof Label){
                     newLabel.put((Label)instructions.get(i), firstLabel);
                     instructions.remove(i);
                     i--;

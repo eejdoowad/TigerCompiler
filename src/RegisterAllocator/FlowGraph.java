@@ -17,13 +17,12 @@ public class FlowGraph extends Graph{
 
         // First find leaders
         ArrayList<Integer> leaders = new ArrayList<>();
-
         for (int i = 0; i < instructions.size(); i++){
 
             // An instruction is a leader if it is the target of a branch instruction
             // This is denoted by an instruction following a label
-            // Our implementation allows multiple consecutive labels,
-            // So only a label followed by a non-label  should result in a new leader
+            // Our implementation allow no longer allows multiple consecutive labels,
+            // But this code handles that case
             if (instructions.get(i) instanceof Label){
                 int nextInstruction = i + 1;
                 if (nextInstruction < instructions.size()){
@@ -42,19 +41,29 @@ public class FlowGraph extends Graph{
                     }
                 }
             }
-
         }
 
-
         // Then create a basic block for each leader
+        // With appropriate instructions
+        BasicBlock entry = new BasicBlock();
+        BasicBlock block = entry;
+        for (int i = 0; i < instructions.size(); i++){
+            if (leaders.contains(i)){
+                BasicBlock next = new BasicBlock();
+                block.addSucc(next);
+                block = next;
+            }
+            // Only add to basic block if not a label
+            if (instructions.get(i) instanceof instruction){
+                block.addInstruction(instructions.get(i));
+            }
+        }
+        BasicBlock exit = new BasicBlock();
+        block.addSucc(exit);
 
 
+        // Now add edges between basic blocks
 
-        // Start by adding empty Entry Basic Block (seeing main label will add it)
-        BasicBlock block = new BasicBlock();
-
-
-        addNode(new BasicBlock());
     }
 
     public Operand def(){
@@ -63,5 +72,10 @@ public class FlowGraph extends Graph{
 
     public ArrayList<Operand> use(){
         return null;
+    }
+
+
+    public void addNode(Node n) {
+
     }
 }

@@ -2,25 +2,22 @@ package Util;
 
 import java.util.ArrayList;
 
-public class Graph {
+public abstract class Graph {
 
-    private ArrayList<Node> nodes = new ArrayList<>();
+    // private ArrayList<Node> nodes = new ArrayList<>();
 
     public Graph() {
 
     }
 
-    public void addNode(Node n){
-        nodes.add(n);
-    }
+    public abstract void addNode(Node n);
 
     public void addEdge(Node from, Node to){
-        from.goesTo(to);
-        to.comesFrom(from);
+        from.addSucc(to);
     }
 
     public void removeEdge(Node from, Node to){
-
+        from.removeSucc(to);
     }
 
     public void print(){

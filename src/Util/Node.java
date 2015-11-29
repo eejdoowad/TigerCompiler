@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public abstract class Node {
 
-    private ArrayList<Node> succ;
-    private ArrayList<Node> pred;
-    private ArrayList<Node> adj;
+    private ArrayList<Node> succ = new ArrayList<>();
+    private ArrayList<Node> pred = new ArrayList<>();
+    private ArrayList<Node> adj = new ArrayList<>();
 
 
     public Node(){
