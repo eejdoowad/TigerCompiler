@@ -21,13 +21,15 @@ public class IRGen {
         IRGenVisitor generator = new IRGenVisitor(ast);
         instructions = generator.generateIR();
 
+        System.out.println(this.toString());
         removeRedundantLabels();
+        System.out.println(this.toString());
 
         return instructions;
     }
 
     // if there are multiple consecutive labels,
-    // removes all but the first
+    // removes all but the last (main label always comes last)
     public void removeRedundantLabels(){
         // Two passes:
         // 1. Find equivalent labels, and remove consecutive labels
@@ -38,17 +40,30 @@ public class IRGen {
 
         // 1. Find equivalent labels, and remove consecutive labels
         HashMap<Label, Label> newLabel = new HashMap<>();
-        for (int i = 1; i < instructions.size(); i++) {
-            int first = i - 1;
+        for (int i = instructions.size() - 2; i >= 0; i--) {
+            int first = i + 1;
             if (instructions.get(first) instanceof Label){
                 Label firstLabel = (Label)instructions.get(first);
                 newLabel.put(firstLabel, firstLabel);
                 while (i < instructions.size() && instructions.get(i) instanceof Label){
                     newLabel.put((Label)instructions.get(i), firstLabel);
                     instructions.remove(i);
+                    i--;
                 }
             }
         }
+        // this removes all but the first... but main could get replaced =(
+//        for (int i = 1; i < instructions.size(); i++) {
+//            int first = i - 1;
+//            if (instructions.get(first) instanceof Label){
+//                Label firstLabel = (Label)instructions.get(first);
+//                newLabel.put(firstLabel, firstLabel);
+//                while (i < instructions.size() && instructions.get(i) instanceof Label){
+//                    newLabel.put((Label)instructions.get(i), firstLabel);
+//                    instructions.remove(i);
+//                }
+//            }
+//        }
 
         // 2. Replace instruction label operands with found equivalent labels
         for (IR instruction : instructions) {
