@@ -2,7 +2,7 @@ package IR;
 
 import java.util.ArrayList;
 
-public class callr extends controlFlowInstruction {
+public class callr extends jumpLabel {
 
     public LabelOp fun;
     public Operand retVal;
@@ -14,7 +14,7 @@ public class callr extends controlFlowInstruction {
         this.args = args;
     }
     public String toString(){
-        String out = "callr, " + fun + ", " + retVal;
+        String out = "callr, " + retVal + ", " + fun;
         for (Operand arg : args){
             out += (", " + arg);
         }

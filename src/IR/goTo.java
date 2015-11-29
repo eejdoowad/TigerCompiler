@@ -1,8 +1,7 @@
 package IR;
 
-public class goTo extends controlFlowInstruction {
+public class goTo extends jumpLabel {
 
-    public LabelOp labelOp;
 
     public goTo(LabelOp labelOp){
         this.labelOp = labelOp;

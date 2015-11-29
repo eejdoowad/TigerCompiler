@@ -1,6 +1,6 @@
 package IR;
 
-public class ret extends controlFlowInstruction {
+public class ret extends jump {
 
     Operand retVal;
 

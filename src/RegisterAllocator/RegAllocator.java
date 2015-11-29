@@ -8,7 +8,7 @@ public class RegAllocator {
 
     public RegAllocator(ArrayList<IR> instructions){
 
-        FlowGraph fg = new FlowGraph(instructions);
+        ArrayList<FlowGraph> fg = FlowGraphGen.generate(instructions);
 
     }
 
