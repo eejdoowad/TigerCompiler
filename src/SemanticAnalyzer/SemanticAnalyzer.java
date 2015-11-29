@@ -2,6 +2,7 @@ package SemanticAnalyzer;
 
 import AST.*;
 import AST.Node;
+import Config.Config;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -106,7 +107,8 @@ public class SemanticAnalyzer {
             }
         }
         if (!semanticError) {
-            System.out.println(symbolTable);
+            if (Config.DEBUG_SYMTABLE)
+                System.out.println(symbolTable);
         }
         return root;
     }

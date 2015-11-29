@@ -1,6 +1,7 @@
 package Util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -10,7 +11,13 @@ import java.util.*;
 
 public class Util {
 
-    public static String[] readLines(String filename) {
+    public static boolean fileExists(String filename){
+        File f = new File(filename);
+        return f.exists() && !f.isDirectory();
+    }
+
+
+        public static String[] readLines(String filename) {
         try {
             FileReader fileReader = new FileReader(filename);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -24,9 +31,6 @@ public class Util {
 
         } catch (IOException e) {
             System.out.println("Error reading " + filename);
-            System.out.println("Working Directory = " +
-                    System.getProperty("user.dir"));
-            System.out.println("ABANDON ALL HOPE (or make sure the file is in the correct path and retry)");
             System.exit(1);
         }
         return null;

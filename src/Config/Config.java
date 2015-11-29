@@ -4,6 +4,8 @@ package Config;
 public class Config {
 
     public static String PARSE_TABLE_PATH = "ParseTable.csv";   // Specify the parse table file path
+    // Note that the current implementation expects
+    // a grammar augmented with semantic actions
     public static String GRAMMAR_PATH = "Agrammar.txt";         // Specify the grammar file path
     public static String EPSILON = "EPSILON";                   // Specify the string used to denote epsilon in the grammar
 
@@ -19,6 +21,7 @@ public class Config {
     private final static boolean DEBUG_PARSER1_S = false;            // Enable for the debugging messages specified in the project report
     private final static boolean DEBUG_PARSER2_S = false;
     private final static boolean DEBUG_SEMACTS_S = false;            // Enable to debug semantic actions for generating parse tree
+    private final static boolean DEBUG_SYMTABLE_S = false;
     private final static boolean DEBUG_IRCODEGEN_S = false;          // Enable to debug intermediate code generation
     private final static boolean DEBUG_REGALLOC_S = true;            // Enable to debug register allocation
 
@@ -30,6 +33,7 @@ public class Config {
     public final static boolean DEBUG_PARSER1 = DEBUG_PARSER1_S && DEBUG_MASTER;
     public final static boolean DEBUG_PARSER2 = DEBUG_PARSER2_S && DEBUG_MASTER;
     public final static boolean DEBUG_SEMACTS = DEBUG_SEMACTS_S && DEBUG_MASTER;
+    public final static boolean DEBUG_SYMTABLE = DEBUG_SYMTABLE_S && DEBUG_MASTER;
     public final static boolean DEBUG_IRCODEGEN = DEBUG_IRCODEGEN_S && DEBUG_MASTER;
     public final static boolean DEBUG_REGALLOC = DEBUG_REGALLOC_S && DEBUG_MASTER;
 }

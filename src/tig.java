@@ -14,15 +14,26 @@ import java.io.File;
 public class tig {
 
     public static void main(String[] args){
-        if (Config.DEBUG){
-            System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
+        // Fail immediately if grammar and parse table aren't located
+        boolean noGrammar = !Util.fileExists(Config.GRAMMAR_PATH);
+        boolean noParseTable = !Util.fileExists(Config.PARSE_TABLE_PATH);
+        if (noGrammar || noParseTable){
+            System.out.println("Working Directory: " + System.getProperty("user.dir"));
+            if (noGrammar)
+                System.out.println("Failure, Grammar not at: " + Config.GRAMMAR_PATH);
+            if (noParseTable)
+                System.out.println("Failure, Parse Table not at: " + Config.PARSE_TABLE_PATH);
+            System.exit(1);
         }
+
+        //
         if (args.length != 1){
             System.out.println("Provide exactly one input tiger file for compilation");
-            System.out.println("USAGE: java Main input.tiger");
+            System.out.println("USAGE: java tig input.tiger");
         } else if (!Util.getFileExtension(args[0]).equals("tiger")){
             System.out.println("Input file must have .tiger extension");
-        } else if (!(new File(args[0]).exists())) {
+        } else if (!Util.fileExists(args[0])) {
             System.out.println(args[0] + " does not exist");
         } else {
             compile(args[0]);
