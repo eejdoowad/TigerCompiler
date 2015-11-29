@@ -69,7 +69,7 @@ public class TigerScanner {
 
 
 
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("TigerScanner initialized");
         }
     }

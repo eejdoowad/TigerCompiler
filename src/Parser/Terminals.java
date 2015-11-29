@@ -32,7 +32,7 @@ public class Terminals {
 
         }
 
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("Terminals initialized");
         }
     }

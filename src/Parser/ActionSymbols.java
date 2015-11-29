@@ -23,7 +23,7 @@ public class ActionSymbols {
 
         }
 
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("ActionSymbols initialized");
         }
     }

@@ -30,7 +30,7 @@ public class ParseTable {
         table = new ArrayList<HashMap<TokenType, Integer>>();
         this.grammar = grammar;
         init();
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("Parse Table initialized");
         }
     }
@@ -62,7 +62,7 @@ public class ParseTable {
                     newMappings.put(tokenTypeAtIndex[i], Integer.parseInt(lineEntries[i].trim()) - 1);
                 }
             }
-            if (Config.DEBUG && Config.DEBUG_PARSETABLE){
+            if (Config.DEBUG_PARSETABLE){
                 System.out.print("NonTerm " + (lineNum - 1) + " (" + grammar.nonTerminals.getByID(lineNum - 1).symbol + "): ");
                 for (TokenType key : newMappings.keySet()){
                     System.out.print(key + "->" + newMappings.get(key) + ", ");

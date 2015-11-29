@@ -29,7 +29,7 @@ public class NonTerminals {
         nonTermByID = new ArrayList<NonTerminal>();
         nonTermByString = new HashMap<String, NonTerminal>();
 
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("NonTerminals initialized");
         }
     }

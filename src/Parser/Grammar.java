@@ -32,7 +32,7 @@ public class Grammar {
 
         init();
 
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("Grammar initialized");
         }
     }
@@ -76,7 +76,7 @@ public class Grammar {
 
             rules.add(new Production(nonTerm, derivation));
 
-            if (Config.DEBUG && Config.DEBUG_GRAMMAR){
+            if (Config.DEBUG_GRAMMAR){
                 System.out.println("New rule " + i + ": " + rules.get(i).toString());
                 System.out.println("         " + i + ": " + rules.get(i).toStringID());
             }

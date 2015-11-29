@@ -58,7 +58,7 @@ public class Parser {
         // Default to doing semantic analysis
         doSemanticAnalysis = true;
 
-        if (Config.DEBUG && Config.DEBUG_INIT){
+        if (Config.DEBUG_INIT){
             System.out.println("Parser initialized");
         }
     }
@@ -97,10 +97,10 @@ public class Parser {
     //      2. Request next Token
     private void processTerminal(Terminal curTerminal){
         if (curTerminal.type == nextToken.type){
-            if (Config.DEBUG && Config.DEBUG_PARSER2){
+            if (Config.DEBUG_PARSER2){
                 System.out.println("PARSED: Matched terminal " + curTerminal);
             }
-            if (Config.DEBUG && Config.DEBUG_PARSER1){
+            if (Config.DEBUG_PARSER1){
                 System.out.print(curTerminal + " ");
             }
             parseStack.pop();
@@ -118,7 +118,7 @@ public class Parser {
 
         } else { // ERROR
 
-            if (Config.DEBUG && Config.DEBUG_PARSER2){
+            if (Config.DEBUG_PARSER2){
                 System.out.println("ERROR: Parse stack top terminal mismatch. Discarding token.");
             }
             error();
@@ -131,7 +131,7 @@ public class Parser {
     private void processNonTerminal(NonTerminal curNonTerminal){
 
         if (parseTable.containsRuleID(curNonTerminal.id, nextToken.type)){
-            if (Config.DEBUG && Config.DEBUG_PARSER2){
+            if (Config.DEBUG_PARSER2){
                 System.out.println("PARSED: Expanded NonTerminal " + curNonTerminal + " against " + nextToken);
             }
             // pop NonTerminal from stack then push symbols of its derivation onto stack in reverse order
@@ -142,7 +142,7 @@ public class Parser {
                 parseStack.push(derivation.get(i));
             }
         } else { // ERROR
-            if (Config.DEBUG && Config.DEBUG_PARSER2) {
+            if (Config.DEBUG_PARSER2) {
                 System.out.println("ERROR: No Parse Table Entry for [" + curNonTerminal.symbol + "][" + nextToken.type + "]");
             }
             error();
@@ -153,7 +153,7 @@ public class Parser {
     // Always succeeds. Always:
     //      1. Pops epsilon from the parse stack
     private void processEpsilon(Epsilon epsilon){
-        if (Config.DEBUG && Config.DEBUG_PARSER2){
+        if (Config.DEBUG_PARSER2){
             System.out.println("PARSED: Popped EPSILON off stack");
         }
         parseStack.pop();
@@ -162,7 +162,7 @@ public class Parser {
     // processes an Action Symbol at the top of the parse stack
     // 1. Pops Action Symbol from top of parse stack
     private void processActionSymbol(ActionSymbol curActionSymbol){
-        if (Config.DEBUG && (Config.DEBUG_PARSER2 || Config.DEBUG_SEMACTS)){
+        if (Config.DEBUG_PARSER2 || Config.DEBUG_SEMACTS){
             System.out.println("ACTION SYMBOL: " + curActionSymbol);
         }
 
