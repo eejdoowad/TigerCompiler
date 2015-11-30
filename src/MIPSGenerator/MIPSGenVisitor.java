@@ -16,7 +16,7 @@ public class MIPSGenVisitor implements IRVisitor {
     }
 
     public void visit(add i){
-
+        emit("Im an add and result is " + i.result.toString());
     }
 
     public void visit(sub i){

@@ -10,9 +10,15 @@ public class MIPSGen {
 
     public static ArrayList<String> generate(ArrayList<IR> instructions){
 
+        System.out.println("\nGENERATING MIPS CODE:\n");
+
         MIPSGenVisitor v = new MIPSGenVisitor(instructions);
         for (IR inst : instructions){
             inst.accept(v);
+        }
+
+        for (String s : v.mips){
+            System.out.println(s);
         }
 
         return v.mips;
