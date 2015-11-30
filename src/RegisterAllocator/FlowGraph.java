@@ -28,10 +28,10 @@ public class FlowGraph extends Graph<BasicBlock>{
 
         // Then create a basic block for each leader
         String startLabel = ((Label)instructions.get(0)).name;
-        entryBlock = new BasicBlock(FunctionLabel.generate("ENTRY_" + startLabel));
-        exitBlock = new BasicBlock(FunctionLabel.generate("EXIT_" + startLabel));
-
+        entryBlock = new BasicBlock(FunctionLabel.generate("ENTRY_" + startLabel), -1);
+        exitBlock = new BasicBlock(FunctionLabel.generate("EXIT_" + startLabel), -1);
         addNode(entryBlock);
+        addNode(exitBlock);
 
         BasicBlock block = entryBlock;
 
@@ -44,10 +44,10 @@ public class FlowGraph extends Graph<BasicBlock>{
             if (leaders.contains(i)){
                 BasicBlock next;
                 if (instructions.get(i-1) instanceof Label){
-                    next = new BasicBlock((Label)instructions.get(i-1));
+                    next = new BasicBlock((Label)instructions.get(i-1), i);
                 }
                 else{
-                    next = new BasicBlock();
+                    next = new BasicBlock(i);
                 }
                 addNode(next);
 
@@ -65,7 +65,6 @@ public class FlowGraph extends Graph<BasicBlock>{
                 block.addInstruction(instructions.get(i));
             }
         }
-        addNode(exitBlock);
 
 
         // Now add edges for goTo and branches

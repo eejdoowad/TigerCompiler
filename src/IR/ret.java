@@ -12,7 +12,8 @@ public class ret extends jump {
     }
 
     public Var def(){
-        return (Var)retVal;
+        if (retVal instanceof Var) return (Var)retVal;
+        else return null;
     }
 
     public ArrayList<Var> use(){
