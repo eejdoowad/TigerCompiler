@@ -33,4 +33,5 @@ public class array_store extends regularInstruction {
     public String toString(){
         return "array_store, " + var + ", " + index + ", " + right;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

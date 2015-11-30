@@ -36,4 +36,6 @@ public class callr extends jumpLabel {
         }
         return out;
     }
+
+    public void accept(IRVisitor v) { v.visit(this); }
 }

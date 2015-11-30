@@ -23,4 +23,5 @@ public class ret extends jump {
     public String toString(){
         return  "return, " + (retVal == null ? "" : retVal) + ", ,";
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

@@ -17,7 +17,7 @@ public class FlowGraphGen {
         ArrayList<IR> current = new ArrayList<>();
 
         for (IR instruction : instructions){
-            if (instruction instanceof UniqueLabel){
+            if (instruction instanceof FunctionLabel){ // only functions get unique labels
                 current = new ArrayList<>();
                 functionInstructions.add(current);
             }

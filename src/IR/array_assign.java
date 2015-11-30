@@ -33,4 +33,5 @@ public class array_assign extends regularInstruction {
     public String toString(){
         return "assign, " + var + ", " + count + ", " + val;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

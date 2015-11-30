@@ -8,4 +8,5 @@ public class sub extends binop {
     public String toString(){
         return  "sub, " + left + ", " + right + ", " + result;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

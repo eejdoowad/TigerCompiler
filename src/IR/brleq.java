@@ -8,4 +8,5 @@ public class brleq extends branch{
     public String toString(){
         return  "brleq, " + left + ", " + right + ", " + labelOp;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

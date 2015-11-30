@@ -8,4 +8,5 @@ public class breq extends branch{
     public String toString(){
         return  "breq, " + left + ", " + right + ", " + labelOp;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

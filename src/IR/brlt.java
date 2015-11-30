@@ -8,4 +8,5 @@ public class brlt extends branch {
     public String toString(){
         return  "brlt, " + left + ", " + right + ", " + labelOp;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

@@ -8,4 +8,5 @@ public class div extends binop {
     public String toString(){
         return  "div, " + left + ", " + right + ", " + result;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

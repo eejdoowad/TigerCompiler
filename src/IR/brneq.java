@@ -9,4 +9,5 @@ public class brneq extends branch {
     public String toString(){
         return  "brneq, " + left + ", " + right + ", " + labelOp;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

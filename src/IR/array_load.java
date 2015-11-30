@@ -33,4 +33,5 @@ public class array_load extends regularInstruction {
     public String toString(){
         return "array_load, " + left + ", " + var + ", " + index;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

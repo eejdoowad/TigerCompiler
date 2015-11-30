@@ -41,7 +41,7 @@ public class IRGenVisitor implements Visitor {
         for (FunDec d : n.funDecs){
             d.accept(this);
         }
-        emit(UniqueLabel.generate("main"));
+        emit(FunctionLabel.generate("main"));
         for (VarDec d : n.varDecs){
             d.accept(this);
         }
@@ -86,7 +86,7 @@ public class IRGenVisitor implements Visitor {
     public void visit(FunDec n){
         debugPrompt("VarDec");
 
-        Label funLabel = UniqueLabel.generate(n.function.getName());
+        Label funLabel = FunctionLabel.generate(n.function.getName());
         emit(funLabel);
 
         for (Stat s : n.stats){
@@ -108,7 +108,7 @@ public class IRGenVisitor implements Visitor {
             args.add(context.getRetVal());
         }
 
-        LabelOp fun = new LabelOp(UniqueLabel.generate(n.func.getName()));
+        LabelOp fun = new LabelOp(FunctionLabel.generate(n.func.getName()));
 
         // Check for return value
         if (n.type == null){

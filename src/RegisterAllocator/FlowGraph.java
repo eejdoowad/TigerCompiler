@@ -3,7 +3,6 @@ package RegisterAllocator;
 import IR.*;
 import Util.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 // A Control Flow Graph Used for liveness analysis
@@ -15,18 +14,22 @@ import java.util.ArrayList;
 
 public class FlowGraph extends Graph<BasicBlock>{
 
+    public ArrayList<IR> instructions;
     public BasicBlock entryBlock;
     public BasicBlock exitBlock;
 
     public FlowGraph(ArrayList<IR> instructions){
+
+        // Associate FlowGraph instructions with passed instruction stream
+        this.instructions = instructions;
 
         // First generate leaders
         ArrayList<Integer> leaders = generateLeaders(instructions);
 
         // Then create a basic block for each leader
         String startLabel = ((Label)instructions.get(0)).name;
-        entryBlock = new BasicBlock(UniqueLabel.generate("ENTRY_" + startLabel));
-        exitBlock = new BasicBlock(UniqueLabel.generate("EXIT_" + startLabel));
+        entryBlock = new BasicBlock(FunctionLabel.generate("ENTRY_" + startLabel));
+        exitBlock = new BasicBlock(FunctionLabel.generate("EXIT_" + startLabel));
 
         addNode(entryBlock);
 

@@ -8,4 +8,5 @@ public class mult extends binop {
     public String toString(){
         return  "mult, " + left + ", " + right + ", " + result;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

@@ -21,4 +21,5 @@ public class goTo extends jumpLabel {
     public String toString(){
         return "goto, " + labelOp.label.name;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

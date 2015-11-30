@@ -10,4 +10,5 @@ public class SharedLabel extends Label {
         id = labelNum++;
         this.name = name + "_" + id;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

@@ -1,6 +1,7 @@
 import Config.Config;
 import IRGenerator.IRGen;
-import MIPSGenerator.InstructionSelector;
+import MIPSGenerator.*;
+import MIPSGenerator.MIPSGen;
 import Parser.Parser;
 import Parser.TigerScanner;
 import AST.ASTRoot;
@@ -54,10 +55,10 @@ public class tig {
         IRGen irgen = new IRGen(ast);
         ArrayList<IR> instructions1 = irgen.generate();
 
-        RegAllocator regAllocator = new RegAllocator(instructions1);
-        ArrayList<IR> instructions2 = regAllocator.allocate();
+        ArrayList<IR> instructions2 = RegAllocator.allocate(instructions1);
 
-        InstructionSelector selector = new InstructionSelector(instructions2);
-        selector.generateMIPS();
+        ArrayList<String> output = MIPSGen.generate(instructions2);
+
+
     }
 }

@@ -29,4 +29,5 @@ public class assign extends regularInstruction {
     public String toString(){
         return "assign, " + var + ", " + right;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

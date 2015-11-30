@@ -1,5 +1,7 @@
 package IR;
 
+import IR.IRVisitor;
+
 public class add extends binop {
 
     public add(Operand left, Operand right, Operand result){
@@ -8,4 +10,5 @@ public class add extends binop {
     public String toString(){
         return  "add, " + left + ", " + right + ", " + result;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }

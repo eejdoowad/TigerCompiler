@@ -8,4 +8,5 @@ public class and extends binop {
     public String toString(){
         return  "and, " + left + ", " + right + ", " + result;
     }
+    public void accept(IRVisitor v) { v.visit(this); }
 }
