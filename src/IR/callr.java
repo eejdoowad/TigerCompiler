@@ -13,6 +13,22 @@ public class callr extends jumpLabel {
         this.retVal = retVal;
         this.args = args;
     }
+
+    public Var def(){
+        if (retVal instanceof Var) return (Var)retVal;
+        else return null;
+    }
+
+    public ArrayList<Var> use(){
+        ArrayList<Var> uses = new ArrayList<>();
+        for (Operand arg : args){
+            if (arg instanceof Var){
+                uses.add((Var)arg);
+            }
+        }
+        return uses;
+    }
+
     public String toString(){
         String out = "callr, " + retVal + ", " + fun;
         for (Operand arg : args){

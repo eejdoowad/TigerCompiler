@@ -8,6 +8,8 @@ package IR;
 // Now i'm thinking perhaps we should make a new class Operand
 // where an operand is either
 
+import java.util.ArrayList;
+
 public abstract class binop extends regularInstruction {
 
     public Operand left;
@@ -18,5 +20,16 @@ public abstract class binop extends regularInstruction {
         this.left = left;
         this.right = right;
         this.result = result;
+    }
+
+    public Var def(){
+        return (Var)result;
+    }
+
+    public ArrayList<Var> use(){
+        ArrayList<Var> uses = new ArrayList<>();
+        if (left instanceof Var) uses.add((Var)left);
+        if (right instanceof Var) uses.add((Var)right);
+        return uses;
     }
 }

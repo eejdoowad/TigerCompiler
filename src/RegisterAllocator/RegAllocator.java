@@ -10,6 +10,9 @@ public class RegAllocator {
 
         ArrayList<FlowGraph> fg = FlowGraphGen.generate(instructions);
 
+
+        System.out.println("REGISTERS ALLOCATED");
+
     }
 
     public ArrayList<IR> allocate(){

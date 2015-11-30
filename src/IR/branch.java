@@ -1,5 +1,7 @@
 package IR;
 
+import java.util.ArrayList;
+
 public abstract class branch extends controlFlowInstruction {
 
     public Operand left;
@@ -10,5 +12,16 @@ public abstract class branch extends controlFlowInstruction {
         this.left = left;
         this.right = right;
         this.labelOp = labelOp;
+    }
+
+    public Var def(){
+        return null;
+    }
+
+    public ArrayList<Var> use(){
+        ArrayList<Var> uses = new ArrayList<>();
+        if (left instanceof Var) uses.add((Var)left);
+        if (right instanceof Var) uses.add((Var)right);
+        return uses;
     }
 }

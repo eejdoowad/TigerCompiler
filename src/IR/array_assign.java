@@ -4,19 +4,33 @@ package IR;
 // var X : ArrayInt := 10;
 
 
+import java.util.ArrayList;
+
 public class array_assign extends regularInstruction {
 
     public NamedVar var;
-    public IntImmediate num;
-    public Operand right;
+    public IntImmediate count;
+    public Operand val;
 
-    public array_assign(NamedVar var, IntImmediate num, Operand right){
+    public array_assign(NamedVar var, IntImmediate count, Operand val){
         this.var = var;
-        this.num = num;
-        this.right = right;
+        this.count = count;
+        this.val = val;
+    }
+
+    public Var def(){
+        System.out.println("WE ARE NOT SUPPORTING ARRAY_ASSIGN, ONLY FOR INIT IN DATA SECTION");
+        System.exit(1);
+        return null;
+    }
+
+    public ArrayList<Var> use(){
+        System.out.println("WE ARE NOT SUPPORTING ARRAY_ASSIGN, ONLY FOR INIT IN DATA SECTION");
+        System.exit(1);
+        return null;
     }
 
     public String toString(){
-        return "assign, " + var + ", " + num + ", " + right;
+        return "assign, " + var + ", " + count + ", " + val;
     }
 }

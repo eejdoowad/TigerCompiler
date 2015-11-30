@@ -37,6 +37,14 @@ public class BasicBlock extends Node{
         return instructions.size();
     }
 
+    public Var def(int i){
+        return instructions.get(i).def();
+    }
+
+    public ArrayList<Var> use(int i){
+        return instructions.get(i).use();
+    }
+
     public String toString(){
         return "BB: " + ((startLabel == null) ? "unnamed" : startLabel);
     }

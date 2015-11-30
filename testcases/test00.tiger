@@ -13,5 +13,6 @@ let
         var a : int;
 in
         a := 1;
+        b := 1.5 + 1 - 1 + 2;
         printi(a);
 end
