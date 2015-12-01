@@ -166,15 +166,17 @@ public class IR2GenVisitor implements Visitor {
         }
         // Normal non-array named variable, generate normal assign
         else {
-//             THIS WAS AN INVALID OPTIMIZATION, what if you overwrite a var that will
-//            IR last = instructions.get(instructions.size()-1);
-//             be needed in the future?
-//             If the last IR is a binop whose result will be assigned, we can do a little optimization
-//            if (last instanceof binop && ((binop)last).result == right) {
-//                ((binop)last).result = left;
-//            } else {
-                emit(new assign(left, right));
-//            }
+            if (stat.left.isFloatPrimitive() && right.isInt()) {
+                if (right instanceof IntImmediate) {
+                    TempIntVar t = TempIntVar.gen();
+                    emit(new assign(t, right, true));
+                    right = t;
+                }
+                TempFloatVar temp = TempFloatVar.gen();
+                emit(new intToFloat(right, temp));
+                right = temp;
+            }
+            emit(new assign(left, right, stat.left.isIntPrimitive()));
         }
     }
     public void visit(BreakStat stat){

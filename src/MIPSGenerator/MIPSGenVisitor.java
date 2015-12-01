@@ -2,10 +2,12 @@ package MIPSGenerator;
 
 import IR.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MIPSGenVisitor implements IRVisitor {
 
 	public ArrayList<AssemblyHelper> assemblyHelp = new ArrayList<>();
+    public HashMap<String, Integer> dataSection = new HashMap<>();
 
 	private void emit(AssemblyHelper mipsInstruction) {
 		assemblyHelp.add(mipsInstruction);
@@ -29,6 +31,9 @@ public class MIPSGenVisitor implements IRVisitor {
 		} else {
 			emit(new AssemblyHelper("add.s", i.result.toString(), i.left.toString(), i.right.toString()));
 		}
+        if (i.result instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.result).name, 1);
+        }
 	}
 
 	public void visit(sub i) {
@@ -44,6 +49,9 @@ public class MIPSGenVisitor implements IRVisitor {
             }
         } else {
             emit(new AssemblyHelper("sub.s", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
+        if (i.result instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.result).name, 1);
         }
 	}
 
@@ -66,6 +74,9 @@ public class MIPSGenVisitor implements IRVisitor {
         } else {
             emit(new AssemblyHelper("mul.s", i.result.toString(), i.left.toString(), i.right.toString()));
         }
+        if (i.result instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.result).name, 1);
+        }
 	}
 
 	public void visit(div i) {
@@ -87,6 +98,9 @@ public class MIPSGenVisitor implements IRVisitor {
         } else {
             emit(new AssemblyHelper("div.s", i.result.toString(), i.left.toString(), i.right.toString()));
         }
+        if (i.result instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.result).name, 1);
+        }
 	}
 
 	public void visit(and i) {
@@ -98,6 +112,9 @@ public class MIPSGenVisitor implements IRVisitor {
             emit(new AssemblyHelper("andi", i.result.toString(), i.right.toString(), i.left.toString()));
         } else {
             emit(new AssemblyHelper("and", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
+        if (i.result instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.result).name, 1);
         }
 	}
 
@@ -111,19 +128,22 @@ public class MIPSGenVisitor implements IRVisitor {
         } else {
             emit(new AssemblyHelper("or", i.result.toString(), i.left.toString(), i.right.toString()));
         }
+        if (i.result instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.result).name, 1);
+        }
 	}
 
 	public void visit(assign i) {
         if (i.isInt()) {
             if (i.var instanceof Var && i.right instanceof IntImmediate) {
                 emit(new AssemblyHelper("li", "$t8", i.right.toString(), ""));
-                emit(new AssemblyHelper("sw", "$t8", i.var.toString() + "($gp)", ""));
+                emit(new AssemblyHelper("sw", "$t8", i.var.toString(), ""));
             } else if (i.var instanceof Register && i.right instanceof IntImmediate) {
                 emit(new AssemblyHelper("li", i.var.toString(), i.right.toString(), ""));
             } else if (i.var instanceof Var && i.right instanceof Var) {
                 emit(new AssemblyHelper("move", i.var.toString(), i.right.toString(), ""));
             } else {
-                emit(new AssemblyHelper("sw", i.right.toString(), i.var.toString() + "($gp)", ""));
+                emit(new AssemblyHelper("sw", i.right.toString(), i.var.toString(), ""));
             }
         } else {
             if (i.var instanceof Var) {
@@ -132,22 +152,26 @@ public class MIPSGenVisitor implements IRVisitor {
                 emit(new AssemblyHelper("mov.s", i.var.toString(), i.right.toString(), ""));
             }
         }
+        if (i.var instanceof Var) {
+            dataSection.putIfAbsent(((Var) i.var).name, 1);
+        }
 	}
 
 	public void visit(array_load i) {
         emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
-        emit(new AssemblyHelper("add", "$t8", "$t8", "$gp"));
-        emit(new AssemblyHelper("lw", i.left.toString(), i.var.toString() + "($t8)", ""));
+        emit(new AssemblyHelper("addi", "$t8", "$t8", i.var.toString()));
+        emit(new AssemblyHelper("lw", i.left.toString(), "0($t8)", ""));
 	}
 
 	public void visit(array_store i) {
         emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
-        emit(new AssemblyHelper("add", "$t8", "$t8", "$gp"));
-        emit(new AssemblyHelper("lw", i.right.toString(), i.var.toString() + "($t8)", ""));
+        emit(new AssemblyHelper("addi", "$t8", "$t8", i.var.toString()));
+        emit(new AssemblyHelper("sw", i.right.toString(), "0($t8)", ""));
 	}
 
 	public void visit(array_assign i) {
-		emit(new AssemblyHelper("array_assign", i.var.toString(), i.count.toString(), i.val.toString()));
+		//emit(new AssemblyHelper("array_assign", i.var.toString(), i.count.toString(), i.val.toString()));
+        dataSection.putIfAbsent(i.var.name, i.count.val);
 	}
 
 	public void visit(goTo i) {
@@ -168,39 +192,74 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(breq i) {
-        emit(new AssemblyHelper("beq", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("beq", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        } else {
+            emit(new AssemblyHelper("c.eq.s", i.left.toString(), i.right.toString(), ""));
+            emit(new AssemblyHelper("bc1t", i.labelOp.toString(), "", ""));
+        }
 	}
 
 	public void visit(brneq i) {
-        emit(new AssemblyHelper("bne", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("bne", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        } else {
+            emit(new AssemblyHelper("c.eq.s", i.left.toString(), i.right.toString(), ""));
+            emit(new AssemblyHelper("bc1f", i.labelOp.toString(), "", ""));
+        }
 	}
 
 	public void visit(brlt i) {
-        emit(new AssemblyHelper("blt", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("blt", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        } else {
+            emit(new AssemblyHelper("c.lt.s", i.left.toString(), i.right.toString(), ""));
+            emit(new AssemblyHelper("bc1t", i.labelOp.toString(), "", ""));
+        }
 	}
 
 	public void visit(brgt i) {
-        emit(new AssemblyHelper("bgt", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("bgt", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        } else {
+            emit(new AssemblyHelper("c.le.s", i.left.toString(), i.right.toString(), ""));
+            emit(new AssemblyHelper("bc1f", i.labelOp.toString(), "", ""));
+        }
 	}
 
 	public void visit(brleq i) {
-        emit(new AssemblyHelper("ble", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("ble", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        } else {
+            emit(new AssemblyHelper("c.le.s", i.left.toString(), i.right.toString(), ""));
+            emit(new AssemblyHelper("bc1t", i.labelOp.toString(), "", ""));
+        }
 	}
 
 	public void visit(brgeq i) {
-        emit(new AssemblyHelper("bge", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("bge", i.left.toString(), i.right.toString(), i.labelOp.toString()));
+        } else {
+            emit(new AssemblyHelper("c.lt.s", i.left.toString(), i.right.toString(), ""));
+            emit(new AssemblyHelper("bc1f", i.labelOp.toString(), "", ""));
+        }
 	}
 
 	public void visit(SharedLabel i) {
-		 emit(new AssemblyHelper("label", i.name.toString(), "",""));
+		 emit(new AssemblyHelper(i.name.toString() + ":", "", "",""));
 	}
 
 	public void visit(FunctionLabel i) {
-        emit(new AssemblyHelper("function", i.name.toString(), "", ""));
+        emit(new AssemblyHelper(i.name.toString() + ":", "", "", ""));
 	}
 
-	public void visit(intToFloat n){
-        emit(new AssemblyHelper("mtc1", n.src.toString(), n.dest.toString(), ""));
+	public void visit(intToFloat n) {
+        if (n.src instanceof IntImmediate) {
+            emit(new AssemblyHelper("li", "$t8", n.src.toString(), ""));
+            emit(new AssemblyHelper("mtc1", "$t8", n.dest.toString(), ""));
+        } else {
+            emit(new AssemblyHelper("mtc1", n.src.toString(), n.dest.toString(), ""));
+        }
         emit(new AssemblyHelper("cvt.s.w", n.dest.toString(), n.dest.toString(), ""));
 	}
 
@@ -210,17 +269,19 @@ public class MIPSGenVisitor implements IRVisitor {
 
 	public void visit(load n) {
         if (n.isInt()) {
-            emit(new AssemblyHelper("lw", n.dst.toString(), n.src.toString() + "($gp)", ""));
+            emit(new AssemblyHelper("lw", n.dst.toString(), n.src.toString(), ""));
         } else {
-            emit(new AssemblyHelper("lwc1", n.dst.toString(), n.src.toString() + "($gp)", ""));
+            emit(new AssemblyHelper("lwc1", n.dst.toString(), n.src.toString(), ""));
         }
+        dataSection.putIfAbsent(n.src.name, 1);
 	}
 
 	public void visit(store n) {
         if (n.isInt()) {
-            emit(new AssemblyHelper("sw", n.src.toString(), n.dst.toString() + "($gp)", ""));
+            emit(new AssemblyHelper("sw", n.src.toString(), n.dst.toString(), ""));
         } else {
-            emit(new AssemblyHelper("swc1", n.src.toString(), n.dst.toString() + "($gp)", ""));
+            emit(new AssemblyHelper("swc1", n.src.toString(), n.dst.toString(), ""));
         }
+        dataSection.putIfAbsent(n.dst.name, 1);
 	}
 }

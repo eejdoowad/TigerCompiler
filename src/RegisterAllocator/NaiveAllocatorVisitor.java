@@ -228,8 +228,8 @@ public class NaiveAllocatorVisitor implements IRVisitor {
 
     public void visit(intToFloat i) {
         if (i.src instanceof Var) {
-            emit(new load(new Register(i.isInt() ? Register.Reg.T0 : Register.Reg.F0), (Var)i.src, i.isInt()));
-            i.src = new Register(i.isInt() ? Register.Reg.T0 : Register.Reg.F0);
+            emit(new load(new Register(Register.Reg.T0), (Var)i.src, true));
+            i.src = new Register(Register.Reg.T0);
         }
         emit(i);
         emit(new store(new Register(Register.Reg.F1), (Var)i.dest, false));

@@ -8,9 +8,16 @@ public class assign extends regularInstruction {
     // the right hand side could be anything
     public Operand right;
 
-    public assign(Operand var, Operand right){
+    public assign(Operand var, Operand right) {
         this.var = var;
         this.right = right;
+        this.isInteger = true;
+    }
+
+    public assign(Operand var, Operand right, boolean isInt) {
+        this.var = var;
+        this.right = right;
+        this.isInteger = isInt;
     }
 
     public Var def(){
@@ -25,7 +32,7 @@ public class assign extends regularInstruction {
 
 
     public String toString(){
-        return "assign, " + var + ", " + right;
+        return (isInt() ? "assign, " : "assignf, ") + var + ", " + right;
     }
     public void accept(IRVisitor v) { v.visit(this); }
 }
