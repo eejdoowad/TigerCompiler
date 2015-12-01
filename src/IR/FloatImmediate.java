@@ -7,7 +7,7 @@ public class FloatImmediate extends Immediate {
     public float val;
 
     public FloatImmediate(float val){
-        this.type = SemanticSymbol.SymbolType.SymbolFloat;
+        isInteger = false;
         this.val = val;
     }
     public String toString(){

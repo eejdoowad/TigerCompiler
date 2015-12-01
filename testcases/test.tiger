@@ -1,17 +1,19 @@
 let
         var a : int;
-        var b : float;
+        var b, c, d, f : float;
+
         function print ( n : int ) begin
                 printi(n);
         end;
         function twicef ( n : float ) : float begin
             a := 1 + 1 + 1;
-            return n + n;
+            return n + n + 1.0;
         end;
         function ignore ( n : int ) : float begin
             return 5.0;
         end;
 in
+        f := b + c + d;
         a := 1 + 2 + 3;
         b := 1.5 + 1.5 + 2.5 * 3.2;
         b := twicef(b);

@@ -28,6 +28,12 @@ public class IRGenVisitor implements Visitor {
             System.out.println("Visiting (" + str + ")");
     }
 
+    public static boolean intResult(Operand l, Operand r){
+        if (l.isInt() && r.isInt())
+            return true;
+        return false;
+    }
+
     public void emit(IR instruction){
         instructions.add(instruction);
     }
@@ -115,7 +121,7 @@ public class IRGenVisitor implements Visitor {
             emit(new call(fun, args));
         }
         else {
-            TempVar t = TempVar.generateTempVar(n.type.getInferredPrimitive());
+            TempVar t = TempVar.gen(n.type.getInferredPrimitive());
             emit(new callr(fun, t, args));
             context.setRetVal(t);
         }
@@ -277,7 +283,7 @@ public class IRGenVisitor implements Visitor {
         else {
             n.index.accept(this);
             Operand index = context.getRetVal();
-            TempVar left = TempVar.generateTempVar(n.reference.getInferredPrimitive());
+            TempVar left = TempVar.gen(n.reference.getInferredPrimitive());
             NamedVar array = NamedVar.generateNamedVar(n.reference);
             emit(new array_load(left, array, index));
             context.setRetVal(left);
@@ -301,7 +307,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = TempVar.generateTempVar(left, right);
+        TempVar result = TempVar.gen(left, right);
         emit(new add(left, right, result));
         context.setRetVal(result);
     }
@@ -313,7 +319,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = TempVar.generateTempVar(left, right);
+        TempVar result = TempVar.gen(left, right);
         emit(new sub(left, right, result));
         context.setRetVal(result);
     }
@@ -325,7 +331,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = TempVar.generateTempVar(left, right);
+        TempVar result = TempVar.gen(left, right);
         emit(new mult(left, right, result));
         context.setRetVal(result);
     }
@@ -337,7 +343,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = TempVar.generateTempVar(left, right);
+        TempVar result = TempVar.gen(left, right);
         emit(new div(left, right, result));
         context.setRetVal(result);
     }
@@ -350,7 +356,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = TempVar.generateTempVar();
+        TempVar result = TempVar.gen(left, right);
         emit(new and(left, right, result));
         context.setRetVal(result);
     }
@@ -362,7 +368,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = TempVar.generateTempVar();
+        TempVar result = TempVar.gen(left, right);
         emit(new or(left, right, result));
         context.setRetVal(result);
     }

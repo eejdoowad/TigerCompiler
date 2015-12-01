@@ -13,7 +13,8 @@ package IR;
 import SemanticAnalyzer.SemanticSymbol;
 
 public abstract class Operand {
-    SemanticSymbol.SymbolType type;
+    protected boolean isInteger;
+    public boolean isInt(){ return isInteger;}
     public abstract String toString();
     public abstract String getType();
 }

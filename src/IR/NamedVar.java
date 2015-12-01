@@ -5,7 +5,7 @@ import SemanticAnalyzer.SemanticSymbol;
 public class NamedVar extends Var {
 
     private NamedVar(SemanticSymbol symbol){
-        this.type = symbol.getInferredPrimitive();
+        isInteger = (symbol.getInferredPrimitive() == SemanticSymbol.SymbolType.SymbolInt);
         this.name = symbol.getName();
     }
 
