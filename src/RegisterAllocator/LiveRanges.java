@@ -86,6 +86,19 @@ public class LiveRanges {
             }
         }
 
+        // calculate number of uses for each live range
+        for (LiveRange lr : allRanges()){
+            for (Integer i : lr.getLines()){
+                for (Var v : block.getInstruction(i).use()){
+                    if (v == lr.var){
+                        lr.numUses++;
+                        break;
+                    }
+                }
+
+            }
+        }
+
 
     }
 

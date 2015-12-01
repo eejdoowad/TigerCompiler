@@ -11,15 +11,19 @@ import java.util.Set;
 public class LiveRange {
 
     Var var;
-    Set<Integer> lines = new LinkedHashSet<>();
+    private Set<Integer> lines = new LinkedHashSet<>();
     public static int rangeNum = 0;
     public int rangeID;
+    public int numUses = 0;
 
     public LiveRange(Var var){
         this.var = var;
         this.rangeID = rangeNum++;
     }
 
+    public Set<Integer> getLines(){
+        return lines;
+    }
     public void add(Integer line){
         lines.add(line);
     }
@@ -41,6 +45,6 @@ public class LiveRange {
             l += line.toString();
             first = false;
         }
-        return var.toString() + "#" + rangeID + ": " + l;
+        return var.toString() + "#" + rangeID + ": " + l + " [" + numUses + " uses]";
     }
 }
