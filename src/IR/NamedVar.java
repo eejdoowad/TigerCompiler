@@ -12,7 +12,7 @@ public class NamedVar extends Var {
 
     public static NamedVar generateNamedVar(SemanticSymbol symbol) {
         NamedVar var;
-        if (getNames().containsKey(symbol.getName())){
+        if (getNames().containsKey(symbol.uniqueString())){
             var = (NamedVar)getNames().get(symbol.uniqueString());
         }
         else{

@@ -77,11 +77,25 @@ public class LiveRanges {
                 addLiveEntry(var, i);
             }
 
-            // If a variable is defined, add a new range
+            // If a variable is defined, and the definition is used
+            // add a new range starting at proceeding instruction
             Var def = block.getInstruction(i).def();
-            if (def != null){
+            if (def != null && block.out(i).contains(def)){
                 startNewLiveRange(def);
-                addLiveEntry(def, i);
+                addLiveEntry(def, i+1);
+            }
+        }
+
+        // calculate number of uses for each live range
+        for (LiveRange lr : allRanges()){
+            for (Integer i : lr.getLines()){
+                for (Var v : block.getInstruction(i).use()){
+                    if (v == lr.var){
+                        lr.numUses++;
+                        break;
+                    }
+                }
+
             }
         }
 

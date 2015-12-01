@@ -17,7 +17,7 @@ public class BasicBlock extends DiNode {
 
     private ArrayList<HashSet<Var>> live = new ArrayList<>();
 
-    private Boolean liveness_initialized = false;
+    private boolean liveness_initialized = false;
     public void calcLiveness(){
 
         if (!liveness_initialized){

@@ -158,15 +158,16 @@ public class IRGenVisitor implements Visitor {
                 emit(new array_store(left, index, right));
             }
         }
+        // THIS WAS AN INVALID OPTIMIZATION, WHAT IF RESULT OF BINOP IS VAR THAT WILL BE USED IN FUTURE?
         // Normal non-array named variable, generate normal assign
         else {
-            IR last = instructions.get(instructions.size()-1);
-            // If the last IR is a binop whose result will be assigned, we can do a little optimization
-            if (last instanceof binop && ((binop)last).result == right) {
-                ((binop)last).result = left;
-            } else {
+//            IR last = instructions.get(instructions.size()-1);
+//            // If the last IR is a binop whose result will be assigned, we can do a little optimization
+//            if (last instanceof binop && ((binop)last).result == right) {
+//                ((binop)last).result = left;
+//            } else {
                 emit(new assign(left, right));
-            }
+//            }
         }
     }
     public void visit(BreakStat stat){
