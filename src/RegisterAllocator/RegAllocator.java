@@ -27,7 +27,7 @@ public class RegAllocator {
             return EBBAllocator(instructions);
         }
         else{
-            System.out.println("WTH");
+            System.out.println("WTH SORT OF ALLOCATION YOU DOING");
             System.exit(1);
             return null;
         }

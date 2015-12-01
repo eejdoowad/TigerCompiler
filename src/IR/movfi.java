@@ -16,14 +16,14 @@ public class movfi extends instruction {
     }
 
     public Var def() {
-        return null;
+        if (dst instanceof Var) return (Var)dst;
+        else return null;
     }
 
     public ArrayList<Var> use() {
         ArrayList<Var> uses = new ArrayList<>();
-        if (dst instanceof Var) {
-            uses.add((Var)dst);
-        }
+
+        // TODO: Figure out how to add this to data memory
         return uses;
     }
 
