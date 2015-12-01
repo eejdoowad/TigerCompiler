@@ -13,4 +13,9 @@ public class IntImmediate extends Immediate {
     public String toString(){
         return Integer.toString(val);
     }
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "int";
+	}
 }
