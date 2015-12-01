@@ -17,7 +17,7 @@ public class Util {
     }
 
 
-        public static String[] readLines(String filename) {
+    public static String[] readLines(String filename) {
         try {
             FileReader fileReader = new FileReader(filename);
             BufferedReader bufferedReader = new BufferedReader(fileReader);

@@ -1,6 +1,7 @@
 let
         var a : int;
         var b : float;
+        var c : float := 1;
         function print ( n : int ) begin
                 printi(n);
         end;
@@ -16,5 +17,6 @@ in
         b := 1.5 + 1.5 + 2.5 * 3.2;
         b := twicef(b);
         b := ignore(a);
+        c := 1;
         print(5);
 end
