@@ -12,7 +12,7 @@ public class RegAllocator {
 
     // Given an stream of IR instructions with symbol names
     // returns a stream with MIPS register names
-
+    // and loads and stores inserted
     public static ArrayList<IR> allocate(ArrayList<IR> instructions){
         if (Config.REG_ALLOCATOR == Config.RegAllocator.NAIVE){
             System.out.println("DOING NAIVE ALLOCATION");
@@ -49,7 +49,7 @@ public class RegAllocator {
 
             for (BasicBlock block : flow.getNodes()){
 
-                //block.calcLiveness();
+                block.calcLiveness();
                 LiveRanges ranges = new LiveRanges(block);
                 InterferenceGraph IG = new InterferenceGraph(ranges);
 
@@ -60,6 +60,8 @@ public class RegAllocator {
             // then generating interference graphs
             // then coloring registers
         }
+        System.out.println("INTRABLOCK NOT YET IMPLEMENTED. ABORTING");
+        System.exit(1);
         return null;
     }
 
