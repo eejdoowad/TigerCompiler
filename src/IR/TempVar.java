@@ -10,12 +10,12 @@ public class TempVar extends Var {
     private TempVar(){
         this.type = SemanticSymbol.SymbolType.SymbolInt;
         id = num++;
-        name = ((this.type == SemanticSymbol.SymbolType.SymbolInt) ? "$t" : "$f") + id;
+        name = ((this.type == SemanticSymbol.SymbolType.SymbolInt) ? "t" : "f") + id;
     }
     private TempVar(SemanticSymbol.SymbolType type){
         this.type = type;
         id = num++;
-        name = ((this.type == SemanticSymbol.SymbolType.SymbolInt) ? "$t" : "$f") + id;
+        name = ((this.type == SemanticSymbol.SymbolType.SymbolInt) ? "t" : "f") + id;
     }
     private TempVar(Operand l, Operand r){
         if (l.type == SemanticSymbol.SymbolType.SymbolFloat
@@ -26,7 +26,7 @@ public class TempVar extends Var {
             this.type = SemanticSymbol.SymbolType.SymbolInt;
         }
         id = num++;
-        name = ((this.type == SemanticSymbol.SymbolType.SymbolInt) ? "$t" : "$f") + id;
+        name = ((this.type == SemanticSymbol.SymbolType.SymbolInt) ? "t" : "f") + id;
     }
 
 
@@ -52,10 +52,4 @@ public class TempVar extends Var {
     public String toString(){
         return name;
     }
-    @Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return "temp";
-    }
-    
 }

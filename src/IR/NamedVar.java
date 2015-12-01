@@ -25,10 +25,4 @@ public class NamedVar extends Var {
     public String toString(){
         return name;
     }
-    
-    @Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return "var";
-    }
-}
+ }

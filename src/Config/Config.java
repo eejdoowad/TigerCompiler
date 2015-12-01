@@ -3,10 +3,10 @@ package Config;
 
 public class Config {
 
-    public static String PARSE_TABLE_PATH = "ParseTable.csv";   // Specify the parse table file path
+    public static String PARSE_TABLE_PATH = "resources/ParseTable.csv";   // Specify the parse table file path
     // Note that the current implementation expects
     // a grammar augmented with semantic actions
-    public static String GRAMMAR_PATH = "Agrammar.txt";         // Specify the grammar file path
+    public static String GRAMMAR_PATH = "resources/Agrammar.txt";         // Specify the grammar file path
     public static String EPSILON = "EPSILON";                   // Specify the string used to denote epsilon in the grammar
 
     public enum RegAllocator { NAIVE, INTRABLOCK, EBB};

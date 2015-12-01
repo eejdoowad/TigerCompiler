@@ -81,7 +81,7 @@ public class RegAllocator {
                 // when a var is used without being defined (as in function parameters)
                 Map<Var, LinkedList<HashSet<Integer>>> liveRanges = new HashMap<>();
                 for (Var var : vars){
-                    liveRanges.put(var, new LinkedList<>()); // uninitialied definition
+                   // liveRanges.put(var, new LinkedList<>()); // uninitialied definition
 //                    liveRanges.get(var).add(new HashSet<>()); /// empty hashset
                 }
 
@@ -92,14 +92,14 @@ public class RegAllocator {
                     // add a range to its most recent definition
                     for (Var var : block.in(i)){
                         if (liveRanges.get(var).isEmpty()) // in the case of function parameters, no init before use, so add scope
-                            liveRanges.get(var).add( new HashSet<>());
+                      //      liveRanges.get(var).add( new HashSet<>());
                         liveRanges.get(var).getLast().add(i);
                     }
 
                     // If a variable is defined, add a new range
                     Var def = block.getInstruction(i).def();
                     if (def != null){
-                        liveRanges.get(def).add(new HashSet<>());
+                      //  liveRanges.get(def).add(new HashSet<>());
                         liveRanges.get(def).getLast().add(i);
                     }
                 }

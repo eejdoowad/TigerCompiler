@@ -30,7 +30,7 @@ public class LiveRanges {
         this.vars.addAll(vars);
     }
     private void startNewLiveRange(Var var){
-        liveRanges.get(var).add( new HashSet<>());
+        //liveRanges.get(var).add( new HashSet<>());
     }
     private void addLiveEntry(Var var, int line){
         liveRanges.get(var).getLast().add(line);
@@ -51,7 +51,7 @@ public class LiveRanges {
         // the first entry will correspond to the uninitialized live range
         // when a var is used without being defined (as in function parameters)
         for (Var var : vars){
-            liveRanges.put(var, new LinkedList<>());
+           // liveRanges.put(var, new LinkedList<>());
         }
 
         for (int i = 0; i < block.size(); i++){
