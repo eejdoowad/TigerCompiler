@@ -3,15 +3,14 @@ package RegisterAllocator;
 import IR.*;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
-import Util.Node;
+import Util.DiNode;
 
 // A Basic block is a stream of instructions that always execute together
 // A Basic block has a start label, however some basic blocks have no associated label
 // e.g. an instruciton immediately following a goto instruction
 
-public class BasicBlock extends Node{
+public class BasicBlock extends DiNode {
 
     private ArrayList<IR> instructions = new ArrayList<>();
 

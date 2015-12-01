@@ -47,10 +47,11 @@ public class RegAllocator {
 
                 block.calcLiveness();
                 LiveRanges ranges = new LiveRanges(block);
+                InterferenceGraph IG = new InterferenceGraph(ranges);
 
 
 
-
+                System.out.println("hello");
             }
             System.out.println("Calculated in and out sets");
 

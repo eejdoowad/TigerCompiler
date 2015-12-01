@@ -1,35 +1,32 @@
 package Util;
 
+
 import java.util.ArrayList;
 
-public abstract class Graph<T extends Node> {
+public abstract class Graph<T> {
 
-    private ArrayList<T> nodes = new ArrayList<>();
+    private ArrayList<Node<T>> nodes = new ArrayList<>();
 
-    public Graph() {
-
-    }
-
-    public ArrayList<T> getNodes(){
+    public ArrayList<Node<T>> getNodes(){
         return nodes;
     }
 
-    public  void addNode(T n){
+    public  void addNode(Node<T> n){
         nodes.add(n);
     }
 
-    public void addEdge(T from, T to){
-        if (nodes.contains(from) && nodes.contains(to))
-            from.addSucc(to);
+    public void connect(Node<T> node1, Node<T> node2){
+        if (nodes.contains(node1) && nodes.contains(node2))
+                node1.connect(node2);
         else{
             System.out.println("ERROR: GRAPH ADD EDGE");
             System.exit(1);
         }
     }
 
-    public void removeEdge(T from, T to){
-        if (nodes.contains(from) && nodes.contains(to)){
-            from.removeSucc(to);
+    public void disconnect(Node<T> node1, Node<T> node2){
+        if (nodes.contains(node1) && nodes.contains(node2)){
+            node1.disconnet(node2);
         }
         else{
             System.out.println("ERROR: GRAPH REMOVE EDGE");
@@ -37,7 +34,4 @@ public abstract class Graph<T extends Node> {
         }
     }
 
-    public void print(){
-
-    }
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 //2. Any statement that is the target of a branch is a leader
 //3. Any statement immediate following a branch or return statement is a leader
 
-public class FlowGraph extends Graph<BasicBlock>{
+public class FlowGraph extends DiGraph<BasicBlock> {
 
     public ArrayList<IR> instructions;
     public BasicBlock entryBlock;

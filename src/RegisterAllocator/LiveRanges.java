@@ -9,17 +9,30 @@ import java.util.*;
 
 public class LiveRanges {
 
-    private Map<Var, LinkedList<Set<Integer>>> liveRanges = new HashMap<>();
-    private Set<Var> vars = new HashSet<Var>();
+    private Map<Var, LinkedList<LiveRange>> liveRanges = new HashMap<>();
+    private LinkedHashSet<Var> vars = new LinkedHashSet<Var>();
 
     // returns variables used by Basic Block
-    public Set<Var> getVars(){
+    public LinkedHashSet<Var> getVars(){
         return vars;
     }
     // returns a list of live ranges of a variable,
     // every definition of a variable gets its own entry in the list
-    public LinkedList<Set<Integer>> getRanges(Var var){
+    public Map<Var, LinkedList<LiveRange>> getRanges(){
+        return liveRanges;
+    }
+    public LinkedList<LiveRange> getRangesForVar(Var var){
         return liveRanges.get(var);
+    }
+
+    public LinkedList<LiveRange> allRanges(){
+        LinkedList<LiveRange> out = new LinkedList<>();
+        for (LinkedList<LiveRange> liveRanges : getRanges().values()){
+            for (LiveRange range : liveRanges){
+                out.add(range);
+            }
+        }
+        return out;
     }
 
 
@@ -30,7 +43,7 @@ public class LiveRanges {
         this.vars.addAll(vars);
     }
     private void startNewLiveRange(Var var){
-        liveRanges.get(var).add( new HashSet<>());
+        liveRanges.get(var).add( new LiveRange(var));
     }
     private void addLiveEntry(Var var, int line){
         liveRanges.get(var).getLast().add(line);
