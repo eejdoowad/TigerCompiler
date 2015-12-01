@@ -11,8 +11,26 @@ public abstract class Graph<T> {
         return nodes;
     }
 
-    public  void addNode(Node<T> n){
+    public void addNode(Node<T> n){
         nodes.add(n);
+    }
+
+    public void removeNode(Node<T> n){
+        if (nodes.contains(n)){
+            for (Node<T> neighbor : n.getAdj()){
+                disconnect(n, neighbor);
+                nodes.remove(n);
+            }
+        }
+    }
+
+    // returns the Node that contains the referenced Var T
+    public Node<T> getNode(T t){
+        for (Node<T> node : getNodes()){
+            if (node.val == t)
+                return node;
+        }
+        return null;
     }
 
     public void connect(Node<T> node1, Node<T> node2){

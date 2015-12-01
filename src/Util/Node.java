@@ -8,6 +8,9 @@ public class Node<T> {
     public T val;
 
     public ArrayList<Node<T>> adj = new ArrayList<>();
+    public ArrayList<Node<T>> getAdj(){
+        return adj;
+    }
 
     public Node(T val){
         this.val = val;

@@ -91,7 +91,7 @@ public class LiveRanges {
             for (Integer i : lr.getLines()){
                 for (Var v : block.getInstruction(i).use()){
                     if (v == lr.var){
-                        lr.numUses++;
+                        lr.incrementUses();
                         break;
                     }
                 }

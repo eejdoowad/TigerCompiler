@@ -1,6 +1,6 @@
 let
-        var a : int;
-        var b, c, d, f : float;
+        var a, w, x, y, z : int;
+        var b, c, d, e, f : float;
 
 
         /*function twicef ( n : float ) : float begin
@@ -9,11 +9,18 @@ let
         end;*/
 
 in
-        a := a + 1;
-        a := a + 3;
+        a := w;
+        x := w;
+        y := w;
+        y := x;
+        z := w;
+        x := x;
+
+
         b := 1;
-        b := a;
-        c := 1 + 2;
+        c := b;
+        d := c;
+        f := b;
         d := c;
         d := c;
         d := c + c;
