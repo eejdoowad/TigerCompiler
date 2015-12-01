@@ -16,37 +16,11 @@ public class BasicBlock extends DiNode {
 
 
     private ArrayList<HashSet<Var>> live = new ArrayList<>();
-
-    private Boolean liveness_initialized = false;
-
-    public void calcLiveness(){
-
-        if (!liveness_initialized){
-            for (int i = 0; i <= size(); i++){
-                live.add(new HashSet<Var>());
-            }
-            liveness_initialized = true;
+    public void initLiveness(){
+        for (int i = 0; i <= size(); i++){
+            live.add(new HashSet<Var>());
         }
-
-        boolean changes;
-        do{
-            changes = false;
-
-            for (int i = 0; i < size(); i++){
-                HashSet<Var> additions = new HashSet<>();
-                additions.addAll(out(i));
-                additions.remove(getInstruction(i).def());
-                additions.addAll(getInstruction(i).use());
-                if (!in(i).containsAll(additions)){
-                    changes = true;
-                    in(i).addAll(additions);
-                }
-            }
-
-        } while (changes);
     }
-
-
     // get live variables before instruction i
     public HashSet<Var> in(int i){
         return live.get(i);
