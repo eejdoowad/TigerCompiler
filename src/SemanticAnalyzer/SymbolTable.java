@@ -111,6 +111,9 @@ public class SymbolTable {
     // Adds a symbol in the current scope
     public void put(String name, SemanticSymbol symbol) {
         scopeStack.peekFirst().put(name, symbol);
+        if (scopeStack.size() > 1) {
+            symbol.setIsLocal(true);
+        }
     }
 
     // Performs a lookup of a symbol in all the active scopes
