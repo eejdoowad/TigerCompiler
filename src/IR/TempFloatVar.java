@@ -10,7 +10,7 @@ public class TempFloatVar extends TempVar {
     protected TempFloatVar(){
         isInteger = false;
         id = num++;
-        name = "$f" + id;
+        name = "_f" + id;
     }
 
     public static TempFloatVar gen(){

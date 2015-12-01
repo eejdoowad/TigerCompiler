@@ -11,7 +11,7 @@ public class TempIntVar extends TempVar {
     protected TempIntVar(){
         isInteger = true;
         id = num++;
-        name = "$t" + id;
+        name = "_t" + id;
     }
 
     public static TempIntVar gen(){

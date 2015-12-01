@@ -301,7 +301,9 @@ public class IR2GenVisitor implements Visitor {
     }
     public void visit(FloatLit n){
         debugPrompt("FloatLit");
-        context.setRetVal(new FloatImmediate(n.val));
+        TempFloatVar dst = TempFloatVar.gen();
+        emit(new movfi(new FloatImmediate(n.val), dst));
+        context.setRetVal(dst);
     }
 
     // passed as one element array to sidestep pass by value

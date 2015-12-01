@@ -26,4 +26,5 @@ public interface IRVisitor{
     public void visit(FunctionLabel i);
 
     public void visit(intToFloat i);
+    public void visit(movfi i);
 }

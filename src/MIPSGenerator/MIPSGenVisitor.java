@@ -353,9 +353,11 @@ public class MIPSGenVisitor implements IRVisitor {
 
 	}
 
-
 	public void visit(intToFloat n){
 
 	}
 
+	public  void visit(movfi n) {
+
+	}
 }
