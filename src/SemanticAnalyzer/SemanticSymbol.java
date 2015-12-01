@@ -29,6 +29,9 @@ public class SemanticSymbol {
     // Name of symbol
     private String name;
 
+    // is a local variable
+    private boolean isLocal;
+
     public SemanticSymbol(String name, SymbolClass symClass) {
         this.name = name;
         this.symClass = symClass;
@@ -70,6 +73,14 @@ public class SemanticSymbol {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setIsLocal(boolean local) {
+        isLocal = local;
     }
 
     public SymbolClass getSymbolClass() {
@@ -138,6 +149,11 @@ public class SemanticSymbol {
 
     public SemanticSymbol getFunctionReturnType() {
         return functionReturnType;
+    }
+
+    // Unique string for hashing purposes
+    public String uniqueString() {
+        return name + "_" + isLocal + "_" + getInferredPrimitive().toString();
     }
 
     public String toString() {
