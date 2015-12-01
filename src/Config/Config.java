@@ -10,7 +10,7 @@ public class Config {
     public static String EPSILON = "EPSILON";                   // Specify the string used to denote epsilon in the grammar
 
     public enum RegAllocator { NAIVE, INTRABLOCK, EBB};
-    public static RegAllocator REG_ALLOCATOR = RegAllocator.NAIVE;
+    public static RegAllocator REG_ALLOCATOR = RegAllocator.INTRABLOCK;
 
     // If false, disables ALL debugging, HIGHEST PRIORITY
     private static boolean DEBUG_MASTER = true;
