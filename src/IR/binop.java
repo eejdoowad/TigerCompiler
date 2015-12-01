@@ -22,6 +22,13 @@ public abstract class binop extends regularInstruction {
         this.result = result;
     }
 
+    public binop(Operand left, Operand right, Operand result, Boolean isInteger){
+        this.left = left;
+        this.right = right;
+        this.result = result;
+        this.isInteger = isInteger;
+    }
+
     public Var def(){
         return (Var)result;
     }
@@ -31,5 +38,9 @@ public abstract class binop extends regularInstruction {
         if (left instanceof Var) uses.add((Var)left);
         if (right instanceof Var) uses.add((Var)right);
         return uses;
+    }
+    public abstract String op();
+    public String toString(){
+        return  op() + (isInt() ? "" : "f" ) + ", " + left + ", " + right + ", " + result;
     }
 }

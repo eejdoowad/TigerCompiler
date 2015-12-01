@@ -24,4 +24,6 @@ public interface IRVisitor{
     public void visit(brgeq i);
     public void visit(SharedLabel i);
     public void visit(FunctionLabel i);
+
+    public void visit(intToFloat i);
 }

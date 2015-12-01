@@ -14,8 +14,11 @@ let
         end;
 in
         f := b + c + d;
+        if (1 > 2.3) then
+            f := 1 + 2.5 * 3;
+        endif;
         a := 1 + 2 + 3;
-        b := 1.5 + 1.5 + 2.5 * 3.2;
+        b := 1.5 + 1.5 + 2.5 * 3.2 + 1;
         b := twicef(b);
         b := ignore(a);
         print(5);

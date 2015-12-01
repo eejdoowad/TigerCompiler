@@ -7,8 +7,10 @@ public class add extends binop {
     public add(Operand left, Operand right, Operand result){
         super(left, right, result);
     }
-    public String toString(){
-        return  "add, " + left + ", " + right + ", " + result;
+    public add(Operand left, Operand right, Operand result, Boolean isInteger){
+        super(left, right, result, isInteger);
     }
+
+    public String op(){ return "add"; }
     public void accept(IRVisitor v) { v.visit(this); }
 }

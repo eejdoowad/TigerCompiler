@@ -353,4 +353,9 @@ public class MIPSGenVisitor implements IRVisitor {
 
 	}
 
+
+	public void visit(intToFloat n){
+
+	}
+
 }

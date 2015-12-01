@@ -18,7 +18,7 @@ public class IRGen {
 
     // generates IR code using the AST
     public ArrayList<IR> generate(){
-        IRGenVisitor generator = new IRGenVisitor(ast);
+        IR2GenVisitor generator = new IR2GenVisitor(ast);
         instructions = generator.generateIR();
 
         //System.out.println(this.toString());

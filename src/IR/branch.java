@@ -13,6 +13,12 @@ public abstract class branch extends controlFlowInstruction {
         this.right = right;
         this.labelOp = labelOp;
     }
+    public branch(Operand left, Operand right, LabelOp labelOp, boolean isInteger){
+        this.left = left;
+        this.right = right;
+        this.labelOp = labelOp;
+        this.isInteger = isInteger;
+    }
 
     public Var def(){
         return null;
@@ -23,5 +29,11 @@ public abstract class branch extends controlFlowInstruction {
         if (left instanceof Var) uses.add((Var)left);
         if (right instanceof Var) uses.add((Var)right);
         return uses;
+    }
+
+    public abstract String op();
+
+    public String toString(){
+        return op() + (isInt() ? "" : "f") + ", " + left + ", " + right + ", " + labelOp;
     }
 }
