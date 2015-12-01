@@ -52,7 +52,7 @@ public class RegAllocator {
                 block.calcLiveness();
                 LiveRanges ranges = new LiveRanges(block);
                 InterferenceGraph IG = new InterferenceGraph(ranges);
-
+                Colorer colorer = new Colorer(block, IG);
 
 
                 System.out.println("END OF BLOCK ANALYSIS");
