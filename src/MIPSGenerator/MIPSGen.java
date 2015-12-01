@@ -12,10 +12,14 @@ public class MIPSGen {
 
         System.out.println("\nGENERATING MIPS CODE:\n");
 
-        MIPSGenVisitor v = new MIPSGenVisitor(instructions);
-        for (IR inst : instructions){
-            inst.accept(v);
+        MIPSGenVisitor v = new MIPSGenVisitor();
+
+        if (instructions != null){
+            for (IR inst : instructions){
+                inst.accept(v);
+            }
         }
+
 
         for (String s : v.mips){
             System.out.println(s);

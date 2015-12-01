@@ -11,7 +11,7 @@ public class MIPSGenVisitor implements IRVisitor {
         mips.add(mipsInstruction);
     }
 
-    public MIPSGenVisitor(ArrayList<IR> instructions){
+    public MIPSGenVisitor(){
 
     }
 

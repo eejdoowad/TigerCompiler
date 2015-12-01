@@ -1,8 +1,8 @@
 package RegisterAllocator;
 
 import IR.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+
+import java.util.*;
 
 import Config.*;
 
@@ -43,11 +43,12 @@ public class RegAllocator {
             // replace symbolic registers with fixed register set
             // by calculating liveness ranges
 
-            // for IntraBlock, calculate liveness on a per block basis
             for (BasicBlock block : flow.getNodes()){
-                block.initLiveness(); // all to dead
-            }
-            for (BasicBlock block : flow.getNodes()){
+
+                // all dead by default
+                block.initLiveness();
+
+                // calculate liveness by iteration
                 boolean changes;
                 do{
                     changes = false;
@@ -65,6 +66,48 @@ public class RegAllocator {
                     }
 
                 } while (changes);
+
+                Set<Var> vars = new HashSet<Var>();
+                for (IR instruction : block.instructions()){
+                    if (instruction.def() != null)
+                        vars.add(instruction.def());
+                    vars.addAll(instruction.use());
+                }
+
+                // now calculate live ranges
+                // maps a Var to a list of uses
+                // where each list entry corresponds to a different definition
+                // the first entry will correspond to the uninitialized live range
+                // when a var is used without being defined (as in function parameters)
+                Map<Var, LinkedList<HashSet<Integer>>> liveRanges = new HashMap<>();
+                for (Var var : vars){
+                    liveRanges.put(var, new LinkedList<>()); // uninitialied definition
+//                    liveRanges.get(var).add(new HashSet<>()); /// empty hashset
+                }
+
+
+                for (int i = 0; i < block.size(); i++){
+
+                    // If a variable is alive in this instruction
+                    // add a range to its most recent definition
+                    for (Var var : block.in(i)){
+                        if (liveRanges.get(var).isEmpty()) // in the case of function parameters, no init before use, so add scope
+                            liveRanges.get(var).add( new HashSet<>());
+                        liveRanges.get(var).getLast().add(i);
+                    }
+
+                    // If a variable is defined, add a new range
+                    Var def = block.getInstruction(i).def();
+                    if (def != null){
+                        liveRanges.get(def).add(new HashSet<>());
+                        liveRanges.get(def).getLast().add(i);
+                    }
+                }
+
+                System.out.println("Calculated in and out sets");
+
+
+
             }
             System.out.println("Calculated in and out sets");
 

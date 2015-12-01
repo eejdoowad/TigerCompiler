@@ -72,7 +72,7 @@ public class IRGenVisitor implements Visitor {
             Operand right = context.getRetVal();
 
             for (SemanticSymbol var : n.vars){
-                NamedVar left = new NamedVar(var);
+                NamedVar left = NamedVar.generateNamedVar(var);
                 if (var.isArray()){
                     IntImmediate arraySize = new IntImmediate(var.getArraySize());
                     emit(new array_assign(left, arraySize, right));
@@ -115,7 +115,7 @@ public class IRGenVisitor implements Visitor {
             emit(new call(fun, args));
         }
         else {
-            TempVar t = new TempVar(n.type.getInferredPrimitive());
+            TempVar t = TempVar.generateTempVar(n.type.getInferredPrimitive());
             emit(new callr(fun, t, args));
             context.setRetVal(t);
         }
@@ -134,7 +134,7 @@ public class IRGenVisitor implements Visitor {
     public void visit(AssignStat stat){
         debugPrompt("AssignStat");
 
-        NamedVar left = new NamedVar(stat.left);
+        NamedVar left = NamedVar.generateNamedVar(stat.left);
         stat.right.accept(this);
         Operand right = context.getRetVal();
 
@@ -217,7 +217,7 @@ public class IRGenVisitor implements Visitor {
         stat.end.accept(this);
         Operand endIndex = context.getRetVal();
 
-        NamedVar loopVar = new NamedVar(stat.var);
+        NamedVar loopVar = NamedVar.generateNamedVar(stat.var);
 
         emit(new assign(loopVar, startIndex));
         emit(before);
@@ -272,13 +272,13 @@ public class IRGenVisitor implements Visitor {
         debugPrompt("VarReference");
         // normal non-array access
         if (n.index == null){
-            context.setRetVal(new NamedVar(n.reference));
+            context.setRetVal(NamedVar.generateNamedVar(n.reference));
         }
         else {
             n.index.accept(this);
             Operand index = context.getRetVal();
-            TempVar left = new TempVar(n.reference.getInferredPrimitive());
-            NamedVar array = new NamedVar(n.reference);
+            TempVar left = TempVar.generateTempVar(n.reference.getInferredPrimitive());
+            NamedVar array = NamedVar.generateNamedVar(n.reference);
             emit(new array_load(left, array, index));
             context.setRetVal(left);
         }
@@ -301,7 +301,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = new TempVar(left, right);
+        TempVar result = TempVar.generateTempVar(left, right);
         emit(new add(left, right, result));
         context.setRetVal(result);
     }
@@ -313,7 +313,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = new TempVar(left, right);
+        TempVar result = TempVar.generateTempVar(left, right);
         emit(new sub(left, right, result));
         context.setRetVal(result);
     }
@@ -325,7 +325,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = new TempVar(left, right);
+        TempVar result = TempVar.generateTempVar(left, right);
         emit(new mult(left, right, result));
         context.setRetVal(result);
     }
@@ -337,7 +337,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = new TempVar(left, right);
+        TempVar result = TempVar.generateTempVar(left, right);
         emit(new div(left, right, result));
         context.setRetVal(result);
     }
@@ -350,7 +350,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = new TempVar();
+        TempVar result = TempVar.generateTempVar();
         emit(new and(left, right, result));
         context.setRetVal(result);
     }
@@ -362,7 +362,7 @@ public class IRGenVisitor implements Visitor {
         n.right.accept(this);
         Operand right = context.getRetVal();
 
-        TempVar result = new TempVar();
+        TempVar result = TempVar.generateTempVar();
         emit(new or(left, right, result));
         context.setRetVal(result);
     }

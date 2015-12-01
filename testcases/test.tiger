@@ -5,6 +5,7 @@ let
                 printi(n);
         end;
         function twicef ( n : float ) : float begin
+            a := 1 + 1 + 1;
             return n + n;
         end;
         function ignore ( n : int ) : float begin
