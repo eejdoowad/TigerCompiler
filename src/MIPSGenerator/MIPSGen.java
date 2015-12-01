@@ -21,11 +21,12 @@ public class MIPSGen {
         }
 
 
-        for (String s : v.mips){
-            System.out.println(s);
-        }
+       // for (String s : v.mips){
+       //     System.out.println(s);
+     //   }
 
-        return v.mips;
+     //   return v.mips;
+        return null;
     }
 
 }

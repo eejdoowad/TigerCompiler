@@ -229,7 +229,7 @@ public class IRGenVisitor implements Visitor {
         }
         context.breakLabels.pop();
 
-        emit(new add(loopVar, loopVar, new IntImmediate(1)));
+        emit(new add(loopVar, new IntImmediate(1), loopVar));
         emit(new goTo(new LabelOp(before)));
         emit(after);
     }

@@ -14,4 +14,10 @@ public class LabelOp extends Operand {
     public String toString(){
         return label.name;
     }
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "LabelOp";
+	}
 }
