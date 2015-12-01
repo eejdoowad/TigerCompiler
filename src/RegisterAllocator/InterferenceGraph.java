@@ -26,7 +26,5 @@ public class InterferenceGraph extends Graph<LiveRange> {
                 }
             }
         }
-
-        System.out.println("interference edges generated");
     }
 }

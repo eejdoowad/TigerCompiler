@@ -51,10 +51,8 @@ public class RegAllocator {
 
 
 
-                System.out.println("hello");
+                System.out.println("END OF BLOCK ANALYSIS");
             }
-            System.out.println("Calculated in and out sets");
-
             // then generating interference graphs
             // then coloring registers
         }
