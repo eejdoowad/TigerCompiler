@@ -45,7 +45,7 @@ public class RegAllocator {
 
             for (BasicBlock block : flow.getNodes()){
 
-                block.calcLiveness();
+                //block.calcLiveness();
                 LiveRanges ranges = new LiveRanges(block);
                 InterferenceGraph IG = new InterferenceGraph(ranges);
 

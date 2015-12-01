@@ -392,6 +392,9 @@ public class SemanticAnalyzer {
                 error("Semantic error: cannot convert float to int", fault);
                 return false;
             }
+            if (src.getName().equals("int") && dst.getName().equals("float")) {
+                return true;
+            }
             if (src.getName().equals("int")) {
                 if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolInt) {
                     error("Semantic error: cannot assign int to type " + dst.getName(), fault);
@@ -466,6 +469,9 @@ public class SemanticAnalyzer {
         if (src != dst) {
             if (src.getName().equals("float") && dst.getName().equals("int")) {
                 return false;
+            }
+            if (src.getName().equals("int") && dst.getName().equals("float")) {
+                return true;
             }
             if (src.getName().equals("int")) {
                 if (dst.getInferredPrimitive() != SemanticSymbol.SymbolType.SymbolInt) {
