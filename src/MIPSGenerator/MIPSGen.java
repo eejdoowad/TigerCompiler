@@ -21,9 +21,9 @@ public class MIPSGen {
         }
 
 
-       // for (String s : v.mips){
-       //     System.out.println(s);
-     //   }
+       for (AssemblyHelper s : v.assemblyHelp){
+            System.out.println(s);
+       }
 
      //   return v.mips;
         return null;

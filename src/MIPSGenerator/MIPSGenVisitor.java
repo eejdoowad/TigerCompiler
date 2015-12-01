@@ -16,195 +16,134 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(add i) {
-		// emit("Im an add and result is " + i.result.toString());
-
-		if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) {
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("add ", "$t0", "$t0", "$t1"));
-		} else if ((i.left.getType().equals("var"))
-				|| ((i.left.getType().equals("temp"))) && !(i.right.getType().equals("var"))) { // left is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("add ", "$t0", "$t0", i.right.toString()));
-
-		} else if (!(i.left.getType().equals("var"))
-				&& ((i.right.getType().equals("var")) || ((i.right.getType().equals("temp"))))) { // right is a variable
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("add ", "$t0", "$t0", i.left.toString()));
-
-		} else { // both numbers
-			emit(new AssemblyHelper("lw", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("add ", "$t0", "$t0", i.right.toString()));
+		if (i.isInt()) {
+			if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", i.result.toString(), "" + ((((IntImmediate) i.left).val) + ((IntImmediate) i.right).val), ""));
+			} else if (i.right instanceof IntImmediate) {
+				emit(new AssemblyHelper("addi", i.result.toString(), i.left.toString(), i.right.toString()));
+			} else if (i.left instanceof IntImmediate) {
+				emit(new AssemblyHelper("addi", i.result.toString(), i.right.toString(), i.left.toString()));
+			} else {
+				emit(new AssemblyHelper("add", i.result.toString(), i.left.toString(), i.right.toString()));
+			}
+		} else {
+			emit(new AssemblyHelper("add.s", i.result.toString(), i.left.toString(), i.right.toString()));
 		}
-		emit(new AssemblyHelper("sw", "$t0", i.result.toString(), ""));
 	}
 
 	public void visit(sub i) {
-		// both variables
-		if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) {
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("sub", "$t0", "$t0", "$t1"));
-		} else if ((i.left.getType().equals("var"))
-				|| ((i.left.getType().equals("temp"))) && !(i.right.getType().equals("var"))) { // left is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("sub", "$t0", "$t0", i.left.toString()));
-		} else if (!(i.left.getType().equals("var"))
-				&& ((i.right.getType().equals("var")) || ((i.right.getType().equals("temp"))))) {// right is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("sub", "$t0", "$t0", i.right.toString()));
-		} else { // both immidiates
-			emit(new AssemblyHelper("lw", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("sub", "$t0", "$t0", i.right.toString()));
-		}
-		emit(new AssemblyHelper("sw", "$t0", i.result.toString(), ""));
+        if (i.isInt()) {
+            if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", i.result.toString(), "" + ((((IntImmediate) i.left).val) - ((IntImmediate) i.right).val), ""));
+            } else if (i.right instanceof IntImmediate) {
+                emit(new AssemblyHelper("subi", i.result.toString(), i.left.toString(), i.right.toString()));
+            } else if (i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("subi", i.result.toString(), i.right.toString(), i.left.toString()));
+            } else {
+                emit(new AssemblyHelper("sub", i.result.toString(), i.left.toString(), i.right.toString()));
+            }
+        } else {
+            emit(new AssemblyHelper("sub.s", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
 	}
 
 	public void visit(mult i) {
-		// both variables
-		if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) {
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("mult", "$t0", "$t0", "$t1"));
-		} else if ((i.left.getType().equals("var"))
-				|| ((i.left.getType().equals("temp"))) && !(i.right.getType().equals("var"))) { // left is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("mult", "$t0", "$t0", i.left.toString()));
-		} else if (!(i.left.getType().equals("var"))
-				&& ((i.right.getType().equals("var")) || ((i.right.getType().equals("temp"))))) { // right is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("mult", "$t0", "$t0", i.right.toString()));
-		} else { // both immediate
-			emit(new AssemblyHelper("lw", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("mult", "$t0", "$t0", i.right.toString()));
-		}
-		emit(new AssemblyHelper("sw", "$t0", i.result.toString(), ""));
-
+        if (i.isInt()) {
+            if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.left.toString(), ""));
+                emit(new AssemblyHelper("li", "$t9", i.right.toString(), ""));
+                emit(new AssemblyHelper("mult", "$t8", "$t9", ""));
+            } else if (i.right instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.right.toString(), ""));
+                emit(new AssemblyHelper("mult", "$t8", i.left.toString(), ""));
+            } else if (i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.left.toString(), ""));
+                emit(new AssemblyHelper("mult", "$t8", i.right.toString(), ""));
+            } else {
+                emit(new AssemblyHelper("mult", i.left.toString(), i.right.toString(), ""));
+            }
+            emit(new AssemblyHelper("mflo", i.result.toString(), "", ""));
+        } else {
+            emit(new AssemblyHelper("mul.s", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
 	}
 
 	public void visit(div i) {
-		// both variables
-		if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) {
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("div", "$t0", "$t0", "$t1"));
-		} else if ((i.left.getType().equals("var"))
-				|| ((i.left.getType().equals("temp"))) && !(i.right.getType().equals("var"))) { // left is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("div", "$t0", "$t0", i.left.toString()));
-		} else if (!(i.left.getType().equals("var"))
-				&& ((i.right.getType().equals("var")) || ((i.right.getType().equals("temp"))))) {// right is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("div", "$t0", "$t0", i.right.toString()));
-		} else { // both immediate
-			emit(new AssemblyHelper("lw", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("div", "$t0", "$t0", i.right.toString()));
-		}
-		emit(new AssemblyHelper("sw", "$t0", i.result.toString(), ""));
+        if (i.isInt()) {
+            if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.left.toString(), ""));
+                emit(new AssemblyHelper("li", "$t9", i.right.toString(), ""));
+                emit(new AssemblyHelper("div", "$t8", "$t9", ""));
+            } else if (i.right instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.right.toString(), ""));
+                emit(new AssemblyHelper("div", i.left.toString(), "$t8", ""));
+            } else if (i.left instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.left.toString(), ""));
+                emit(new AssemblyHelper("div", "$t8", i.right.toString(), ""));
+            } else {
+                emit(new AssemblyHelper("div", i.left.toString(), i.right.toString(), ""));
+            }
+            emit(new AssemblyHelper("mflo", i.result.toString(), "", ""));
+        } else {
+            emit(new AssemblyHelper("div.s", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
 	}
 
 	public void visit(and i) {
-		if ((i.left.getType().equals("var")) || (i.left.getType().equals("temp"))
-				&& ((i.right.getType().equals("var")) || (i.right.getType().equals("temp")))) {// both variables
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("and", "$t0", "$t0", "$t1"));
-		} else if ((i.left.getType().equals("var"))
-				|| ((i.left.getType().equals("temp"))) && !(i.right.getType().equals("var"))) { // left is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("and", "$t0", "$t0", i.right.toString()));
-		} else if (!(i.left.getType().equals("var"))
-				&& ((i.right.getType().equals("var")) || ((i.right.getType().equals("temp"))))) { // right is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("and", "$t0", "$t0", i.left.toString()));
-		} else { // both numbers
-			emit(new AssemblyHelper("lw", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("and", "$t0", "$t0", i.right.toString()));
-		}
-		emit(new AssemblyHelper("sw", "$t0", i.result.toString(), ""));
+        if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
+            emit(new AssemblyHelper("li", i.result.toString(), "" + ((((IntImmediate) i.left).val) & ((IntImmediate) i.right).val), ""));
+        } else if (i.right instanceof IntImmediate) {
+            emit(new AssemblyHelper("andi", i.result.toString(), i.left.toString(), i.right.toString()));
+        } else if (i.left instanceof IntImmediate) {
+            emit(new AssemblyHelper("andi", i.result.toString(), i.right.toString(), i.left.toString()));
+        } else {
+            emit(new AssemblyHelper("and", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
 	}
 
 	public void visit(or i) {
-		// both variables
-		if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) {
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("or", "$t0", "$t0", "$t1"));
-		} else if ((i.left.getType().equals("var"))
-				|| ((i.left.getType().equals("temp"))) && !(i.right.getType().equals("var"))) { // left is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("or", "$t0", "$t0", i.left.toString()));
-		} else if (!(i.left.getType().equals("var"))
-				&& ((i.right.getType().equals("var")) || ((i.right.getType().equals("temp"))))) { // right is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("or", "$t0", "$t0", i.right.toString()));
-		} else { // both immediates
-			emit(new AssemblyHelper("lw", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("or", "$t0", "$t0", i.right.toString()));
-		}
-		emit(new AssemblyHelper("sw", "$t0", i.result.toString(), ""));
+        if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
+            emit(new AssemblyHelper("li", i.result.toString(), "" + ((((IntImmediate) i.left).val) | ((IntImmediate) i.right).val), ""));
+        } else if (i.right instanceof IntImmediate) {
+            emit(new AssemblyHelper("ori", i.result.toString(), i.left.toString(), i.right.toString()));
+        } else if (i.left instanceof IntImmediate) {
+            emit(new AssemblyHelper("ori", i.result.toString(), i.right.toString(), i.left.toString()));
+        } else {
+            emit(new AssemblyHelper("or", i.result.toString(), i.left.toString(), i.right.toString()));
+        }
 	}
 
 	public void visit(assign i) {
-		// TODO Auto-generated method stub
-		if (i.right.getType().equals("var") || i.right.getType().equals("temp")) { // right is a variable
-	
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("sw", "$t0", i.var.toString(), ""));
-		} else {
-			emit(new AssemblyHelper("add", "$t0", "$zero", i.right.toString()));
-			emit(new AssemblyHelper("sw", "$t0", i.var.toString(), ""));
-		}
-
+        if (i.isInt()) {
+            if (i.var instanceof Var && i.right instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", "$t8", i.right.toString(), ""));
+                emit(new AssemblyHelper("sw", "$t8", i.var.toString() + "($gp)", ""));
+            } else if (i.var instanceof Register && i.right instanceof IntImmediate) {
+                emit(new AssemblyHelper("li", i.var.toString(), i.right.toString(), ""));
+            } else if (i.var instanceof Var && i.right instanceof Var) {
+                emit(new AssemblyHelper("move", i.var.toString(), i.right.toString(), ""));
+            } else {
+                emit(new AssemblyHelper("sw", i.right.toString(), i.var.toString() + "($gp)", ""));
+            }
+        } else {
+            if (i.var instanceof Var) {
+                emit(new AssemblyHelper("s.s", i.right.toString(), i.var.toString(), ""));
+            } else {
+                emit(new AssemblyHelper("mov.s", i.var.toString(), i.right.toString(), ""));
+            }
+        }
 	}
 
 	public void visit(array_load i) {
-		// TODO Auto-generated method stub
-		if (i.index.getType().equals("var")) { // index is a variable
-			emit(new AssemblyHelper("lw", "$t1", i.index.toString(), ""));
-		} else { // index is a number
-			emit(new AssemblyHelper("add", "$t1", "$zero", i.index.toString()));
-		}
-		emit(new AssemblyHelper("mult", "$t1", "$t1", "4"));
-		emit(new AssemblyHelper("array_load", "$t0", i.var.toString(), "$t1"));
-		// naiveIR.add(new AssemblyHelper
-		emit(new AssemblyHelper("sw", "$t0", i.left.toString(), ""));
+        emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
+        emit(new AssemblyHelper("add", "$t8", "$t8", "$gp"));
+        emit(new AssemblyHelper("lw", i.left.toString(), i.var.toString() + "($t8)", ""));
 	}
 
 	public void visit(array_store i) {
-		// TODO Auto-generated method stub
-		if ((i.index.getType().equals("var")) && (i.right.getType().equals("var"))) { // both variables
-			emit(new AssemblyHelper("lw", "$t1", i.index.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t2", i.right.toString(), ""));
-		} else if (!(i.index.getType().equals("var")) && (i.right.getType().equals("var"))) { // right is a variable
-			emit(new AssemblyHelper("add", "$t1", "$zero", i.index.toString()));
-			emit(new AssemblyHelper("lw", "$t2", i.right.toString(), ""));
-		} else if ((i.index.getType().equals("var")) && !(i.right.getType().equals("var"))) { // index variables
-			emit(new AssemblyHelper("lw", "$t1", i.index.toString(), ""));
-			emit(new AssemblyHelper("add", "$t2", "$zero", i.right.toString()));
-		} else {// both numbers
-			emit(new AssemblyHelper("add", "$t1", "$zero", i.index.toString()));
-			emit(new AssemblyHelper("add", "$t2", "$zero", i.right.toString()));
-		}
-		emit(new AssemblyHelper("mult", "$t1", "$t1", "4"));
-		emit(new AssemblyHelper("array_store", "$t0|" + i.var.toString(), "$t1", "$t2"));
-
+        emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
+        emit(new AssemblyHelper("add", "$t8", "$t8", "$gp"));
+        emit(new AssemblyHelper("lw", i.right.toString(), i.var.toString() + "($t8)", ""));
 	}
 
 	public void visit(array_assign i) {
@@ -212,22 +151,16 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(goTo i) {
-		emit(new AssemblyHelper("goto", i.labelOp.toString(), "", ""));
+		emit(new AssemblyHelper("j", i.labelOp.toString(), "", ""));
 	}
 
 	public void visit(call i) {
-		// TODO Auto-generated method stub
-		if (i.args.get(0).getClass().equals("var") || i.args.get(0).getClass().equals("temp")) {
-			emit(new AssemblyHelper("lw", "$t0", i.args.toString(), ""));
-			emit(new AssemblyHelper("call", "$t0", i.fun.toString(), ""));
-		} else {
 			emit(new AssemblyHelper("call", i.args.toString(), i.fun.toString(), ""));
-		}
 	}
 
 	public void visit(callr i) {
-		emit(new AssemblyHelper("callr", "$t0", i.fun.toString(), ""));
-		emit(new AssemblyHelper("sw", "$t0", i.retVal.toString(), ""));
+		emit(new AssemblyHelper("callr", "$t8", i.fun.toString(), ""));
+		emit(new AssemblyHelper("sw", "$t8", i.retVal.toString(), ""));
 	}
 
 	public void visit(ret i) {
@@ -235,137 +168,59 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(breq i) {
-		// both variables
-		if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) {
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("breq", "$t0", "$t1", i.labelOp.toString()));
-		} else if (!(i.left.getType().equals("var"))
-				&& (i.right.getType().equals("var") || i.right.getType().equals("temp"))) { // right is a variable
-
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("breq", i.left.toString(), "$t0", i.labelOp.toString()));
-		} else if ((i.left.getType().equals("var") || i.left.getType().equals("temp"))
-				&& !(i.right.getType().equals("var"))) { // left is a variable
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("breq", "$t0", i.right.toString(), i.labelOp.toString()));
-		} else {
-			emit(new AssemblyHelper("add", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("breq", "$t0", i.right.toString(), i.labelOp.toString()));
-		}
+        emit(new AssemblyHelper("beq", i.left.toString(), i.right.toString(), i.labelOp.toString()));
 	}
 
 	public void visit(brneq i) {
-		// both variables
-		if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))){            
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-			emit(new AssemblyHelper("brgeq", "$t0", "$t1", i.labelOp.toString()));
-		} else if (!(i.left.getType().equals("var")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))) { //right is a variable
-			emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-			emit(new AssemblyHelper("brgeq", i.left.toString(), "$t0", i.labelOp.toString()));
-		} else if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && !(i.right.getType().equals("var"))) { //left is a variable
-			emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-			emit(new AssemblyHelper("brgeq", "$t0", i.right.toString(), i.labelOp.toString()));
-		} else {
-			emit(new AssemblyHelper("add", "$t0", "$zero", i.left.toString()));
-			emit(new AssemblyHelper("brgeq", "$t0", i.right.toString(), i.labelOp.toString()));
-		}	
+        emit(new AssemblyHelper("bne", i.left.toString(), i.right.toString(), i.labelOp.toString()));
 	}
 
 	public void visit(brlt i) {
-		// both variables
-			if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))){
-		        emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-		        emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-		        emit(new AssemblyHelper("brlt", "$t0", "$t1", i.labelOp.toString()));
-		    } else if (!(i.left.getType().equals("var")) && (i.right.getType().equals("var") || i.right.getType().equals("temp"))) { //right is a variable
-		        emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-		        emit(new AssemblyHelper("brlt", i.left.toString(), "$t0", i.labelOp.toString()));
-		   } else if ((i.left.getType().equals("var")|| i.left.getType().equals("temp")) && !(i.right.getType().equals("var"))) { //left is a variable
-		        emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-		        emit(new AssemblyHelper("brlt", "$t0", i.right.toString(), i.labelOp.toString()));
-		   } else {
-		        emit(new AssemblyHelper("add", "$t0", "$zero", i.left.toString()));
-		        emit(new AssemblyHelper("brlt", "$t0", i.right.toString(), i.labelOp.toString()));
-	       }
+        emit(new AssemblyHelper("blt", i.left.toString(), i.right.toString(), i.labelOp.toString()));
 	}
 
 	public void visit(brgt i) {
-		// both variables
-				if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))){            
-					emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-		            emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-		            emit(new AssemblyHelper("brgt", "$t0", "$t1", i.labelOp.toString()));
-		        } else if (!(i.left.getType().equals("var")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))) { //right is a variable
-		            emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-		            emit(new AssemblyHelper("brgt", i.left.toString(), "$t0", i.labelOp.toString()));
-		        } else if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && !(i.right.getType().equals("var"))) { //left is a variable
-		        	emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-		        	emit(new AssemblyHelper("brgt", "$t0", i.right.toString(), i.labelOp.toString()));
-		        } else {
-		        	emit(new AssemblyHelper("add", "$t0", "$zero", i.left.toString()));
-		        	emit(new AssemblyHelper("brgt", "$t0", i.right.toString(), i.labelOp.toString()));
-		        }
+        emit(new AssemblyHelper("bgt", i.left.toString(), i.right.toString(), i.labelOp.toString()));
 	}
 
 	public void visit(brleq i) {
-		if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))){
-            emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-            emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-            emit(new AssemblyHelper("brleq", "$t0", "$t1", i.labelOp.toString()));
-        } else if (!(i.left.getType().equals("var")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))) { //right is a variable
-            emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-            emit(new AssemblyHelper("brleq", i.left.toString(), "$t0", i.labelOp.toString()));
-        } else if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && !(i.right.getType().equals("var"))) { //left is a variable
-            emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-            emit(new AssemblyHelper("brleq", "$t0", i.right.toString(), i.labelOp.toString()));
-        } else {
-            emit(new AssemblyHelper("add", "$t0", "$zero", i.left.toString()));
-            emit(new AssemblyHelper("brleq", "$t0", i.right.toString(), i.labelOp.toString()));
-        }
+        emit(new AssemblyHelper("ble", i.left.toString(), i.right.toString(), i.labelOp.toString()));
 	}
 
 	public void visit(brgeq i) {
-		// both variables
-				if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))){           
-					emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-		            emit(new AssemblyHelper("lw", "$t1", i.right.toString(), ""));
-		            emit(new AssemblyHelper("brgeq", "$t0", "$t1", i.labelOp.toString()));
-		        } else if (!(i.left.getType().equals("var")) && (i.right.getType().equals("var")||i.right.getType().equals("temp"))) { //right is a variable
-		            emit(new AssemblyHelper("lw", "$t0", i.right.toString(), ""));
-		            emit(new AssemblyHelper("brgeq", i.left.toString(), "$t0", i.labelOp.toString()));
-		        } else if ((i.left.getType().equals("var")||i.left.getType().equals("temp")) && !(i.right.getType().equals("var"))) { //left is a variable
-		            emit(new AssemblyHelper("lw", "$t0", i.left.toString(), ""));
-		            emit(new AssemblyHelper("brgeq", "$t0", i.right.toString(), i.labelOp.toString()));
-		        } else {
-		            emit(new AssemblyHelper("add", "$t0", "$zero",i.left.toString()));
-		            emit(new AssemblyHelper("brgeq", "$t0", i.right.toString(), i.labelOp.toString()));
-		        }	
+        emit(new AssemblyHelper("bge", i.left.toString(), i.right.toString(), i.labelOp.toString()));
 	}
 
 	public void visit(SharedLabel i) {
-		 emit(new AssemblyHelper ("label", i.name.toString(), "",""));
+		 emit(new AssemblyHelper("label", i.name.toString(), "",""));
 	}
 
 	public void visit(FunctionLabel i) {
-
+        emit(new AssemblyHelper("function", i.name.toString(), "", ""));
 	}
 
 	public void visit(intToFloat n){
-
+        emit(new AssemblyHelper("mtc1", n.src.toString(), n.dest.toString(), ""));
+        emit(new AssemblyHelper("cvt.s.w", n.dest.toString(), n.dest.toString(), ""));
 	}
 
 	public void visit(movfi n) {
-
+        emit(new AssemblyHelper("li.s", n.dst.toString(), n.src.toString(), ""));
 	}
 
 	public void visit(load n) {
-
+        if (n.isInt()) {
+            emit(new AssemblyHelper("lw", n.dst.toString(), n.src.toString() + "($gp)", ""));
+        } else {
+            emit(new AssemblyHelper("lwc1", n.dst.toString(), n.src.toString() + "($gp)", ""));
+        }
 	}
 
 	public void visit(store n) {
-
+        if (n.isInt()) {
+            emit(new AssemblyHelper("sw", n.src.toString(), n.dst.toString() + "($gp)", ""));
+        } else {
+            emit(new AssemblyHelper("swc1", n.src.toString(), n.dst.toString() + "($gp)", ""));
+        }
 	}
 }
