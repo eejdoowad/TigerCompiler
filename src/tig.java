@@ -56,6 +56,9 @@ public class tig {
         ArrayList<IR> instructions1 = irgen.generate();
 
         ArrayList<IR> instructions2 = RegAllocator.allocate(instructions1);
+        for (IR i : instructions2) {
+            System.out.println(i);
+        }
 
         ArrayList<String> output = MIPSGen.generate(instructions2);
 

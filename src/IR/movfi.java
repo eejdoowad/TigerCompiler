@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class movfi extends instruction {
     public FloatImmediate src;
-    public Var dst;
+    public Operand dst;
 
     public movfi(FloatImmediate src, Var dst) {
         this.src = src;
@@ -16,12 +16,14 @@ public class movfi extends instruction {
     }
 
     public Var def() {
-        return dst;
+        return null;
     }
 
     public ArrayList<Var> use() {
         ArrayList<Var> uses = new ArrayList<>();
-        uses.add(dst);
+        if (dst instanceof Var) {
+            uses.add((Var)dst);
+        }
         return uses;
     }
 

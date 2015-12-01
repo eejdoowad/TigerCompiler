@@ -357,7 +357,15 @@ public class MIPSGenVisitor implements IRVisitor {
 
 	}
 
-	public  void visit(movfi n) {
+	public void visit(movfi n) {
+
+	}
+
+	public void visit(load n) {
+
+	}
+
+	public void visit(store n) {
 
 	}
 }

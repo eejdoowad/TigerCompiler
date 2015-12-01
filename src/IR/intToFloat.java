@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class intToFloat extends regularInstruction{
 
-    Operand src;
-    Operand dest;
+    public Operand src;
+    public Operand dest;
 
     public intToFloat(Operand src, Operand dest){
         this.src = src;

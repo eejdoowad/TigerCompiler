@@ -34,7 +34,11 @@ public class RegAllocator {
     }
 
     private static ArrayList<IR> naiveAllocator(ArrayList<IR> instructions){
-        return instructions;
+        NaiveAllocatorVisitor allocator = new NaiveAllocatorVisitor();
+        for (IR i : instructions) {
+            i.accept(allocator);
+        }
+        return allocator.instructions;
     }
 
     private static ArrayList<IR> intraBlockAllocator(ArrayList<IR> instructions){
