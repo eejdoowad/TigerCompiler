@@ -13,6 +13,7 @@ public class IR2GenVisitor implements Visitor {
     private ASTRoot ast;
     private ArrayList<IR> instructions = new ArrayList<>();
     private IRGenVisitorContext context = new IRGenVisitorContext();
+    private boolean inFunction = false;
 
     public IR2GenVisitor(ASTRoot ast){
         this.ast = ast;
@@ -35,7 +36,7 @@ public class IR2GenVisitor implements Visitor {
     }
 
     private TempFloatVar intToFloat(Operand op){
-        TempFloatVar dest = TempFloatVar.gen();
+        TempFloatVar dest = TempFloatVar.gen(inFunction);
         emit(new intToFloat(op, dest));
         return dest;
     }
@@ -96,11 +97,20 @@ public class IR2GenVisitor implements Visitor {
         }
     }
     public void visit(FunDec n){
-        debugPrompt("VarDec");
+        debugPrompt("FunDec");
 
-        Label funLabel = FunctionLabel.generate(n.function.getName());
+        Label funLabel = FunctionLabel.generate("_" + n.function.getName());
         emit(funLabel);
 
+        FunctionPrologue prologue = new FunctionPrologue();
+        for (SemanticSymbol s : n.function.getFunctionParameters()) {
+            NamedVar var = NamedVar.generateNamedVar(s);
+            var.isLocal = true;
+            prologue.arguments.add(var);
+        }
+        emit(prologue);
+
+        inFunction = true;
         for (Stat s : n.stats){
             s.accept(this);
         }
@@ -108,6 +118,12 @@ public class IR2GenVisitor implements Visitor {
         if (n.function.getFunctionReturnType() == null){
             emit(new ret(null));
         }
+        inFunction = false;
+
+        Label epilogueLabel = FunctionLabel.generate("_" + n.function.getName() + "_epilogue");
+        prologue.epilogueLabel = (FunctionLabel)epilogueLabel;
+        emit(epilogueLabel);
+        emit(new FunctionEpilogue());
     }
 
     public void visit(FunCall n){
@@ -120,14 +136,14 @@ public class IR2GenVisitor implements Visitor {
             args.add(context.getRetVal());
         }
 
-        LabelOp fun = new LabelOp(FunctionLabel.generate(n.func.getName()));
+        LabelOp fun = new LabelOp(FunctionLabel.generate("_" + n.func.getName()));
 
         // Check for return value
         if (n.type == null){
             emit(new call(fun, args));
         }
         else {
-            TempVar t = TempVar.gen(n.type.getInferredPrimitive());
+            TempVar t = TempVar.gen(n.type.getInferredPrimitive(), inFunction);
             emit(new callr(fun, t, args));
             context.setRetVal(t);
         }
@@ -168,11 +184,11 @@ public class IR2GenVisitor implements Visitor {
         else {
             if (stat.left.isFloatPrimitive() && right.isInt()) {
                 if (right instanceof IntImmediate) {
-                    TempIntVar t = TempIntVar.gen();
+                    TempIntVar t = TempIntVar.gen(inFunction);
                     emit(new assign(t, right, true));
                     right = t;
                 }
-                TempFloatVar temp = TempFloatVar.gen();
+                TempFloatVar temp = TempFloatVar.gen(inFunction);
                 emit(new intToFloat(right, temp));
                 right = temp;
             }
@@ -293,7 +309,7 @@ public class IR2GenVisitor implements Visitor {
         else {
             n.index.accept(this);
             Operand index = context.getRetVal();
-            TempVar left = TempVar.gen(n.reference.getInferredPrimitive());
+            TempVar left = TempVar.gen(n.reference.getInferredPrimitive(), inFunction);
             NamedVar array = NamedVar.generateNamedVar(n.reference);
             emit(new array_load(left, array, index));
             context.setRetVal(left);
@@ -305,7 +321,7 @@ public class IR2GenVisitor implements Visitor {
     }
     public void visit(FloatLit n){
         debugPrompt("FloatLit");
-        TempFloatVar dst = TempFloatVar.gen();
+        TempFloatVar dst = TempFloatVar.gen(inFunction);
         emit(new movfi(new FloatImmediate(n.val), dst));
         context.setRetVal(dst);
     }
@@ -324,7 +340,7 @@ public class IR2GenVisitor implements Visitor {
         if (!left[0].isInt() && right[0].isInt()){
             right[0] = intToFloat(right[0]);
         }
-        return TempVar.gen(left[0], right[0]);
+        return TempVar.gen(left[0], right[0], inFunction);
     }
 
     public void visit(Add n){

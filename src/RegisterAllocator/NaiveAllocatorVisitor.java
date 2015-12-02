@@ -226,6 +226,14 @@ public class NaiveAllocatorVisitor implements IRVisitor {
         emit(i);
     }
 
+    public void visit(FunctionPrologue i) {
+        emit(i);
+    }
+
+    public void visit(FunctionEpilogue i) {
+        emit(i);
+    }
+
     public void visit(intToFloat i) {
         if (i.src instanceof Var) {
             emit(new load(new Register(Register.Reg.T0), (Var)i.src, true));
