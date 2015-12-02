@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ret extends jump {
 
-    Operand retVal;
+    public Operand retVal;
 
     public ret(Operand retVal){
         this.retVal = retVal;

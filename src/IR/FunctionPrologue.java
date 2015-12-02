@@ -10,9 +10,9 @@ public class FunctionPrologue extends instruction {
     public HashMap<String, Integer> argumentOffsetMap = new HashMap<>();
     public HashMap<String, Integer> temporaryOffsetMap = new HashMap<>();
     public HashMap<Register.Reg, Integer> usedRegsOffsetMap = new HashMap<>();
-    int argumentCount = 0;
-    int temporaryCount = 0;
-    int usedRegsCount = 0;
+    public int argumentCount = 0;
+    public int temporaryCount = 0;
+    public int usedRegsCount = 0;
 
     public FunctionLabel epilogueLabel = null;
 

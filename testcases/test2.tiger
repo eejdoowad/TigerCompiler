@@ -1,8 +1,15 @@
 let
-
-        function print ( n : int ) begin
-                printi(n);
+        var a, b, c : int;
+        function fact ( n : int ) : int begin
+            if (n = 0) then
+                return 1;
+            endif;
+            if (n = 1) then
+                return 1;
+            endif;
+            a := fact(n - 1);
+            return n * a;
         end;
 in
-        print(5);
+    c := fact(6);
 end

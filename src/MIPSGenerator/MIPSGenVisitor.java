@@ -3,11 +3,14 @@ package MIPSGenerator;
 import IR.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.jar.Attributes;
 
 public class MIPSGenVisitor implements IRVisitor {
 
 	public ArrayList<AssemblyHelper> assemblyHelp = new ArrayList<>();
     public HashMap<String, Integer> dataSection = new HashMap<>();
+
+    private FunctionPrologue currentFunction = null;
 
 	private void emit(AssemblyHelper mipsInstruction) {
 		assemblyHelp.add(mipsInstruction);
@@ -41,9 +44,9 @@ public class MIPSGenVisitor implements IRVisitor {
             if (i.right instanceof IntImmediate && i.left instanceof IntImmediate) {
                 emit(new AssemblyHelper("li", i.result.toString(), "" + ((((IntImmediate) i.left).val) - ((IntImmediate) i.right).val), ""));
             } else if (i.right instanceof IntImmediate) {
-                emit(new AssemblyHelper("subi", i.result.toString(), i.left.toString(), i.right.toString()));
+                emit(new AssemblyHelper("sub", i.result.toString(), i.left.toString(), i.right.toString()));
             } else if (i.left instanceof IntImmediate) {
-                emit(new AssemblyHelper("subi", i.result.toString(), i.right.toString(), i.left.toString()));
+                emit(new AssemblyHelper("sub", i.result.toString(), i.right.toString(), i.left.toString()));
             } else {
                 emit(new AssemblyHelper("sub", i.result.toString(), i.left.toString(), i.right.toString()));
             }
@@ -137,17 +140,47 @@ public class MIPSGenVisitor implements IRVisitor {
         if (i.isInt()) {
             if (i.var instanceof Var && i.right instanceof IntImmediate) {
                 emit(new AssemblyHelper("li", "$t8", i.right.toString(), ""));
-                emit(new AssemblyHelper("sw", "$t8", i.var.toString(), ""));
+                if (((Var) i.var).isLocal) {
+                    int offset = currentFunction.argumentOffsetMap.get(((Var)i.var).name);
+                    if (offset <= 2) {
+                        emit(new AssemblyHelper("move", "$a" + offset, "$t8", ""));
+                    } else {
+                        offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                        emit(new AssemblyHelper("sw", "$t8", "" + offset + "($fp)", ""));
+                    }
+                } else {
+                    emit(new AssemblyHelper("sw", "$t8", i.var.toString(), ""));
+                }
             } else if (i.var instanceof Register && i.right instanceof IntImmediate) {
                 emit(new AssemblyHelper("li", i.var.toString(), i.right.toString(), ""));
-            } else if (i.var instanceof Var && i.right instanceof Var) {
+            } else if (i.var instanceof Register && i.right instanceof Register) {
                 emit(new AssemblyHelper("move", i.var.toString(), i.right.toString(), ""));
             } else {
-                emit(new AssemblyHelper("sw", i.right.toString(), i.var.toString(), ""));
+                if (((Var) i.var).isLocal) {
+                    int offset = currentFunction.argumentOffsetMap.get(((Var)i.var).name);
+                    if (offset <= 2) {
+                        emit(new AssemblyHelper("move", "$a" + offset, i.right.toString(), ""));
+                    } else {
+                        offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                        emit(new AssemblyHelper("sw", i.right.toString(), "" + offset + "($fp)", ""));
+                    }
+                } else {
+                    emit(new AssemblyHelper("sw", i.right.toString(), i.var.toString(), ""));
+                }
             }
         } else {
             if (i.var instanceof Var) {
-                emit(new AssemblyHelper("s.s", i.right.toString(), i.var.toString(), ""));
+                if (((Var) i.var).isLocal) {
+                    int offset = currentFunction.argumentOffsetMap.get(((Var)i.var).name);
+                    if (offset <= 2) {
+                        emit(new AssemblyHelper("mfc1", "$a" + offset, i.right.toString(), ""));
+                    } else {
+                        offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                        emit(new AssemblyHelper("s.s", i.right.toString(), "" + offset + "($fp)", ""));
+                    }
+                } else {
+                    emit(new AssemblyHelper("s.s", i.right.toString(), i.var.toString(), ""));
+                }
             } else {
                 emit(new AssemblyHelper("mov.s", i.var.toString(), i.right.toString(), ""));
             }
@@ -175,20 +208,177 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(goTo i) {
-		emit(new AssemblyHelper("j", i.labelOp.toString(), "", ""));
+		emit(new AssemblyHelper("j", i.labelOp.label.name, "", ""));
 	}
 
 	public void visit(call i) {
-			emit(new AssemblyHelper("call", i.args.toString(), i.fun.toString(), ""));
+        // If we are in a function, save our arguments before loading new ones
+        if (currentFunction != null) {
+            if (currentFunction.argumentCount > 0 && i.args.size() > 0) {
+                int baseOffset = currentFunction.usedRegsCount * 4 + 12;
+                emit(new AssemblyHelper("sw", "$a0", "" + baseOffset + "($fp)", ""));
+                if (currentFunction.argumentCount > 1 && i.args.size() > 1) {
+                    baseOffset += 4;
+                    emit(new AssemblyHelper("sw", "$a0", "" + baseOffset + "($fp)", ""));
+                    if (currentFunction.argumentCount > 2 && i.args.size() > 2) {
+                        baseOffset += 4;
+                        emit(new AssemblyHelper("sw", "$a0", "" + baseOffset + "($fp)", ""));
+                    }
+                }
+            }
+        }
+
+        // Expand stack to hold arguments
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "" + (currentFunction.argumentCount * 4)));
+
+        // Now load the arguments
+        int arg = 0;
+        for (Operand o : i.args) {
+            if (arg < 3) {
+                if (o instanceof Register) {
+                    if (o.isInt()) {
+                        emit(new AssemblyHelper("move", "$a" + arg, o.toString(), ""));
+                    } else {
+                        emit(new AssemblyHelper("mfc1", "$a" + arg, o.toString(), ""));
+                    }
+                } else if (o instanceof Immediate) {
+                    emit(new AssemblyHelper("li", "$a" + arg, o.toString(), ""));
+                } else {
+                    if (((Var)o).isLocal) {
+                        if (o instanceof NamedVar) {
+                            int baseOffset = currentFunction.usedRegsCount * 4 + 12;
+                            baseOffset += currentFunction.argumentOffsetMap.get(((NamedVar) o).name) * 4;
+                            emit(new AssemblyHelper("lw", "$a" + arg, "" + baseOffset + "($fp)", ""));
+                        } else {
+                            int baseOffset = -currentFunction.temporaryOffsetMap.get(((Var) o).name) * 4;
+                            emit(new AssemblyHelper("lw", "$a" + arg, "" + baseOffset + "($fp)", ""));
+                        }
+                    } else {
+                        emit(new AssemblyHelper("lw", "$a" + arg, o.toString(), ""));
+                    }
+                }
+            } else {
+                // TODO lol
+            }
+            arg++;
+        }
+
+        emit(new AssemblyHelper("jal", i.fun.label.name, "", ""));
+
+        // Restore our arguments
+        if (currentFunction != null) {
+            if (currentFunction.argumentCount > 0 && i.args.size() > 0) {
+                int baseOffset = currentFunction.usedRegsCount * 4 + 12;
+                emit(new AssemblyHelper("lw", "$a0", "" + baseOffset + "($fp)", ""));
+                if (currentFunction.argumentCount > 1 && i.args.size() > 1) {
+                    baseOffset += 4;
+                    emit(new AssemblyHelper("lw", "$a0", "" + baseOffset + "($fp)", ""));
+                    if (currentFunction.argumentCount > 2 && i.args.size() > 2) {
+                        baseOffset += 4;
+                        emit(new AssemblyHelper("lw", "$a0", "" + baseOffset + "($fp)", ""));
+                    }
+                }
+            }
+        }
+
+        emit(new AssemblyHelper("add", "$sp", "$sp", "" + (i.args.size() * 4)));
 	}
 
 	public void visit(callr i) {
-		emit(new AssemblyHelper("callr", "$t8", i.fun.toString(), ""));
-		emit(new AssemblyHelper("sw", "$t8", i.retVal.toString(), ""));
+        // If we are in a function, save our arguments before loading new ones
+        if (currentFunction != null) {
+            if (currentFunction.argumentCount > 0 && i.args.size() > 0) {
+                int baseOffset = currentFunction.usedRegsCount * 4 + 12;
+                emit(new AssemblyHelper("sw", "$a0", "" + baseOffset + "($fp)", ""));
+                if (currentFunction.argumentCount > 1 && i.args.size() > 1) {
+                    baseOffset += 4;
+                    emit(new AssemblyHelper("sw", "$a0", "" + baseOffset + "($fp)", ""));
+                    if (currentFunction.argumentCount > 2 && i.args.size() > 2) {
+                        baseOffset += 4;
+                        emit(new AssemblyHelper("sw", "$a0", "" + baseOffset + "($fp)", ""));
+                    }
+                }
+            }
+        }
+
+        // Expand stack to hold arguments
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "" + (i.args.size() * 4)));
+
+        // Now load the arguments
+        int arg = 0;
+        for (Operand o : i.args) {
+            if (arg < 3) {
+                if (o instanceof Register) {
+                    if (o.isInt()) {
+                        emit(new AssemblyHelper("move", "$a" + arg, o.toString(), ""));
+                    } else {
+                        emit(new AssemblyHelper("mfc1", "$a" + arg, o.toString(), ""));
+                    }
+                } else if (o instanceof Immediate) {
+                    emit(new AssemblyHelper("li", "$a" + arg, o.toString(), ""));
+                } else {
+                    if (((Var)o).isLocal) {
+                        if (o instanceof NamedVar) {
+                            int baseOffset = currentFunction.usedRegsCount * 4 + 12;
+                            baseOffset += currentFunction.argumentOffsetMap.get(((NamedVar) o).name) * 4;
+                            emit(new AssemblyHelper("lw", "$a" + arg, "" + baseOffset + "($fp)", ""));
+                        } else {
+                            int baseOffset = -currentFunction.temporaryOffsetMap.get(((Var) o).name) * 4;
+                            emit(new AssemblyHelper("lw", "$a" + arg, "" + baseOffset + "($fp)", ""));
+                        }
+                    } else {
+                        emit(new AssemblyHelper("lw", "$a" + arg, o.toString(), ""));
+                    }
+                }
+            } else {
+                // TODO lol
+            }
+            arg++;
+        }
+
+        emit(new AssemblyHelper("jal", i.fun.label.name, "", ""));
+
+        // Put the return value into the destination register
+        if (i.retVal instanceof Register) {
+            if (i.retVal.isInt()) {
+                emit(new AssemblyHelper("move", i.retVal.toString(), "$v0", ""));
+            } else {
+                emit(new AssemblyHelper("mtc1", "$v0", i.retVal.toString(), ""));
+            }
+        }
+
+        // Restore our arguments
+        if (currentFunction != null) {
+            if (currentFunction.argumentCount > 0 && i.args.size() > 0) {
+                int baseOffset = currentFunction.usedRegsCount * 4 + 12;
+                emit(new AssemblyHelper("lw", "$a0", "" + baseOffset + "($fp)", ""));
+                if (currentFunction.argumentCount > 1 && i.args.size() > 1) {
+                    baseOffset += 4;
+                    emit(new AssemblyHelper("lw", "$a0", "" + baseOffset + "($fp)", ""));
+                    if (currentFunction.argumentCount > 2 && i.args.size() > 2) {
+                        baseOffset += 4;
+                        emit(new AssemblyHelper("lw", "$a0", "" + baseOffset + "($fp)", ""));
+                    }
+                }
+            }
+        }
+
+        emit(new AssemblyHelper("add", "$sp", "$sp", "" + (i.args.size() * 4)));
 	}
 
 	public void visit(ret i) {
-
+        if (currentFunction != null) {
+            if (i.retVal instanceof Immediate) {
+                emit(new AssemblyHelper("li", "$v0", i.retVal.toString(), ""));
+            } else if (i.retVal instanceof Register) {
+                if (i.retVal.isInt()) {
+                    emit(new AssemblyHelper("move", "$v0", i.retVal.toString(), ""));
+                } else {
+                    emit(new AssemblyHelper("mfc1", "$v0", i.retVal.toString(), ""));
+                }
+            }
+            emit(new AssemblyHelper("j", currentFunction.epilogueLabel.name, "", ""));
+        }
 	}
 
 	public void visit(breq i) {
@@ -254,9 +444,59 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
     public void visit(FunctionEpilogue i) {
+        // Restore sp
+        emit(new AssemblyHelper("move", "$sp", "$fp", ""));
+
+        // Restore saved temporary registers
+        for (Register.Reg reg : currentFunction.usedRegsOffsetMap.keySet()) {
+            if (reg.isIntegerReg()) {
+                emit(new AssemblyHelper("lw", reg.toString(), ""
+                        + ((currentFunction.usedRegsOffsetMap.get(reg))*4+4) + "($sp)", ""));
+            } else {
+                emit(new AssemblyHelper("lwc1", reg.toString(), ""
+                        + ((currentFunction.usedRegsOffsetMap.get(reg))*4+4) + "($sp)", ""));
+            }
+        }
+        emit(new AssemblyHelper("add", "$sp", "$sp", "" + ((currentFunction.usedRegsCount) * 4)));
+
+        // Pop frame pointer and return address
+        emit(new AssemblyHelper("add", "$sp", "$sp", "4"));
+        emit(new AssemblyHelper("lw", "$fp", "0($sp)", ""));
+        emit(new AssemblyHelper("add", "$sp", "$sp", "4"));
+        emit(new AssemblyHelper("lw", "$ra", "0($sp)", ""));
+
+        // Return
+        emit(new AssemblyHelper("jr", "$ra", "", ""));
+
+        currentFunction = null;
     }
 
     public void visit(FunctionPrologue i) {
+        // Push the return address
+        emit(new AssemblyHelper("sw", "$ra", "0($sp)", ""));
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "4"));
+
+        // Push the frame pointer
+        emit(new AssemblyHelper("sw", "$fp", "0($sp)", ""));
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "4"));
+
+        // Save all the gp registers we use
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "" + ((i.usedRegsCount) * 4)));
+        for (Register.Reg reg : i.usedRegsOffsetMap.keySet()) {
+            if (reg.isIntegerReg()) {
+                emit(new AssemblyHelper("sw", reg.toString(), "" + ((i.usedRegsOffsetMap.get(reg))*4+4) + "($sp)", ""));
+            } else {
+                emit(new AssemblyHelper("swc1", reg.toString(), "" + ((i.usedRegsOffsetMap.get(reg))*4+4) + "($sp)", ""));
+            }
+        }
+
+        // Set the frame pointer
+        emit(new AssemblyHelper("move", "$fp", "$sp", ""));
+
+        // Allocate space for all our temporaries
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "" + ((i.temporaryCount) * 4)));
+
+        currentFunction = i;
     }
 
 	public void visit(intToFloat n) {
@@ -274,20 +514,74 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(load n) {
-        if (n.isInt()) {
-            emit(new AssemblyHelper("lw", n.dst.toString(), n.src.toString(), ""));
+        if (n.src.isLocal) {
+            if (n.src instanceof NamedVar) {
+                int offset = currentFunction.argumentOffsetMap.get(n.src.name);
+                if (offset <= 2) {
+                    if (n.isInt()) {
+                        emit(new AssemblyHelper("move", n.dst.toString(), "$a" + offset, ""));
+                    } else {
+                        emit(new AssemblyHelper("mtc1", "$a" + offset, n.dst.toString(), ""));
+                    }
+                } else {
+                    offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                    if (n.isInt()) {
+                        emit(new AssemblyHelper("lw", n.dst.toString(), "" + offset + "($fp)", ""));
+                    } else {
+                        emit(new AssemblyHelper("lwc1", n.dst.toString(), "" + offset + "($fp)", ""));
+                    }
+                }
+            } else {
+                int offset = -currentFunction.temporaryOffsetMap.get(n.src.name) * 4;
+                if (n.isInt()) {
+                    emit(new AssemblyHelper("lw", n.dst.toString(), "" + offset + "($fp)", ""));
+                } else {
+                    emit(new AssemblyHelper("lwc1", n.dst.toString(), "" + offset + "($fp)", ""));
+                }
+            }
         } else {
-            emit(new AssemblyHelper("lwc1", n.dst.toString(), n.src.toString(), ""));
+            if (n.isInt()) {
+                emit(new AssemblyHelper("lw", n.dst.toString(), n.src.toString(), ""));
+            } else {
+                emit(new AssemblyHelper("lwc1", n.dst.toString(), n.src.toString(), ""));
+            }
+            dataSection.putIfAbsent(n.src.name, 1);
         }
-        dataSection.putIfAbsent(n.src.name, 1);
 	}
 
 	public void visit(store n) {
-        if (n.isInt()) {
-            emit(new AssemblyHelper("sw", n.src.toString(), n.dst.toString(), ""));
+        if (n.dst.isLocal) {
+            if (n.dst instanceof NamedVar) {
+                int offset = currentFunction.argumentOffsetMap.get(n.dst.name);
+                if (offset <= 2) {
+                    if (n.isInt()) {
+                        emit(new AssemblyHelper("move", "$a" + offset, n.src.toString(), ""));
+                    } else {
+                        emit(new AssemblyHelper("mfc1", "$a" + offset, n.src.toString(), ""));
+                    }
+                } else {
+                    offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                    if (n.isInt()) {
+                        emit(new AssemblyHelper("sw", n.src.toString(), "" + offset + "($fp)", ""));
+                    } else {
+                        emit(new AssemblyHelper("swc1", n.src.toString(), "" + offset + "($fp)", ""));
+                    }
+                }
+            } else {
+                int offset = -currentFunction.temporaryOffsetMap.get(n.dst.name) * 4;
+                if (n.isInt()) {
+                    emit(new AssemblyHelper("sw", n.src.toString(), "" + offset + "($fp)", ""));
+                } else {
+                    emit(new AssemblyHelper("swc1", n.src.toString(), "" + offset + "($fp)", ""));
+                }
+            }
         } else {
-            emit(new AssemblyHelper("swc1", n.src.toString(), n.dst.toString(), ""));
+            if (n.isInt()) {
+                emit(new AssemblyHelper("sw", n.src.toString(), n.dst.toString(), ""));
+            } else {
+                emit(new AssemblyHelper("swc1", n.src.toString(), n.dst.toString(), ""));
+            }
+            dataSection.putIfAbsent(n.dst.name, 1);
         }
-        dataSection.putIfAbsent(n.dst.name, 1);
 	}
 }

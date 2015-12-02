@@ -115,9 +115,6 @@ public class IR2GenVisitor implements Visitor {
             s.accept(this);
         }
 
-        if (n.function.getFunctionReturnType() == null){
-            emit(new ret(null));
-        }
         inFunction = false;
 
         Label epilogueLabel = FunctionLabel.generate("_" + n.function.getName() + "_epilogue");

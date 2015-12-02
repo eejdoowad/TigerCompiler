@@ -67,7 +67,7 @@ public class Colorer {
 
         // generate new IR for every instruction, include loads and stores
         for (int i = 0; i < block.instructions().size(); i++){
-            LoadStore ls = loadStores[i];
+            LoadStore ls = loadStores.get(i);
 
             //TODO HANDLE FUNCTION ARGS IN CALLR
 
@@ -143,7 +143,7 @@ public class Colorer {
                 }
             }
             if (lr.getColor() == null){
-                System.out.println("NO COLOR AVAILABLE. ERROR. GRAPH SHOULD BE COLORABLE AT THIS STAGE")
+                System.out.println("NO COLOR AVAILABLE. ERROR. GRAPH SHOULD BE COLORABLE AT THIS STAGE");
             }
         }
 

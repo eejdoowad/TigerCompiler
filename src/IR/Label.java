@@ -16,7 +16,7 @@ public abstract class Label extends IR {
         return new ArrayList<>();
     }
 
-    public String toString(){
+    public String toString() {
         return name + ":";
     }
 }

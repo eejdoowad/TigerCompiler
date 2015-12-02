@@ -5,11 +5,12 @@ let
 
         function twicef ( n : float ) : float begin
             a := 1 + 1 + 1;
+            n := 2.0 + 3.0;
             return n + n + 1.0;
         end;
 
         function stupid( i : int ) begin
-            i := 2;
+            i := 2 + i;
         end;
 
 in

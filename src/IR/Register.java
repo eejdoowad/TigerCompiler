@@ -5,79 +5,85 @@ package IR;
  */
 public class Register extends Operand {
     public enum Reg {
-        ZERO ("$zero"),
-        AT ("$at"),
-        V0 ("$v0"),
-        V1 ("$v1"),
-        A0 ("$a0"),
-        A1 ("$a1"),
-        A2 ("$a2"),
-        A3 ("$a3"),
-        T0 ("$t0"),
-        T1 ("$t1"),
-        T2 ("$t2"),
-        T3 ("$t3"),
-        T4 ("$t4"),
-        T5 ("$t5"),
-        T6 ("$t6"),
-        T7 ("$t7"),
-        T8 ("$t8"),
-        T9 ("$t9"),
-        S0 ("$s0"),
-        S1 ("$s1"),
-        S2 ("$s2"),
-        S3 ("$s3"),
-        S4 ("$s4"),
-        S5 ("$s5"),
-        S6 ("$s6"),
-        S7 ("$s7"),
-        K0 ("$k0"),
-        K1 ("$k1"),
-        GP ("$gp"),
-        SP ("$sp"),
-        FP ("$fp"),
-        RA ("$ra"),
-        F0 ("$f0"),
-        F1 ("$f1"),
-        F2 ("$f2"),
-        F3 ("$f3"),
-        F4 ("$f4"),
-        F5 ("$f5"),
-        F6 ("$f6"),
-        F7 ("$f7"),
-        F8 ("$f8"),
-        F9 ("$f9"),
-        F10 ("$f10"),
-        F11 ("$f11"),
-        F12 ("$f12"),
-        F13 ("$f13"),
-        F14 ("$f14"),
-        F15 ("$f15"),
-        F16 ("$f16"),
-        F17 ("$f17"),
-        F18 ("$f18"),
-        F19 ("$f19"),
-        F20 ("$f20"),
-        F21 ("$f21"),
-        F22 ("$f22"),
-        F23 ("$f23"),
-        F24 ("$f24"),
-        F25 ("$f25"),
-        F26 ("$f26"),
-        F27 ("$f27"),
-        F28 ("$f28"),
-        F29 ("$f29"),
-        F30 ("$f30"),
-        F31 ("$f31"),
-        F32 ("$f32");
+        ZERO ("$zero", true),
+        AT ("$at", true),
+        V0 ("$v0", true),
+        V1 ("$v1", true),
+        A0 ("$a0", true),
+        A1 ("$a1", true),
+        A2 ("$a2", true),
+        A3 ("$a3", true),
+        T0 ("$t0", true),
+        T1 ("$t1", true),
+        T2 ("$t2", true),
+        T3 ("$t3", true),
+        T4 ("$t4", true),
+        T5 ("$t5", true),
+        T6 ("$t6", true),
+        T7 ("$t7", true),
+        T8 ("$t8", true),
+        T9 ("$t9", true),
+        S0 ("$s0", true),
+        S1 ("$s1", true),
+        S2 ("$s2", true),
+        S3 ("$s3", true),
+        S4 ("$s4", true),
+        S5 ("$s5", true),
+        S6 ("$s6", true),
+        S7 ("$s7", true),
+        K0 ("$k0", true),
+        K1 ("$k1", true),
+        GP ("$gp", true),
+        SP ("$sp", true),
+        FP ("$fp", true),
+        RA ("$ra", true),
+        F0 ("$f0", false),
+        F1 ("$f1", false),
+        F2 ("$f2", false),
+        F3 ("$f3", false),
+        F4 ("$f4", false),
+        F5 ("$f5", false),
+        F6 ("$f6", false),
+        F7 ("$f7", false),
+        F8 ("$f8", false),
+        F9 ("$f9", false),
+        F10 ("$f10", false),
+        F11 ("$f11", false),
+        F12 ("$f12", false),
+        F13 ("$f13", false),
+        F14 ("$f14", false),
+        F15 ("$f15", false),
+        F16 ("$f16", false),
+        F17 ("$f17", false),
+        F18 ("$f18", false),
+        F19 ("$f19", false),
+        F20 ("$f20", false),
+        F21 ("$f21", false),
+        F22 ("$f22", false),
+        F23 ("$f23", false),
+        F24 ("$f24", false),
+        F25 ("$f25", false),
+        F26 ("$f26", false),
+        F27 ("$f27", false),
+        F28 ("$f28", false),
+        F29 ("$f29", false),
+        F30 ("$f30", false),
+        F31 ("$f31", false),
+        F32 ("$f32", false);
 
         private String name;
-        private Reg(String text) {
+        private boolean isInt;
+        private Reg(String text, boolean isInt) {
             name = text;
+            this.isInt = isInt;
         }
 
         public String toString() {
             return name;
+        }
+
+        public boolean isIntegerReg() {
+            return isInt;
         }
     }
 
@@ -85,6 +91,7 @@ public class Register extends Operand {
 
     public Register(Reg reg) {
         register = reg;
+        isInteger = reg.isIntegerReg();
     }
 
     public String getType() {
