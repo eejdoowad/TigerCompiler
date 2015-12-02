@@ -5,7 +5,7 @@ import MIPSGenerator.MIPSGen;
 import Parser.Parser;
 import Parser.TigerScanner;
 import AST.ASTRoot;
-import IR.IR;
+import IR.*;
 import RegisterAllocator.RegAllocator;
 import Util.Util;
 import java.util.ArrayList;
@@ -58,10 +58,14 @@ public class tig {
         ArrayList<IR> instructions2 = RegAllocator.allocate(instructions1);
         System.out.println(".text");
         for (IR i : instructions2) {
-            System.out.println(i);
+            if (i instanceof Label)
+                System.out.println("" + i);
+            else
+                System.out.println(i);
         }
 
         ArrayList<String> output = MIPSGen.generate(instructions2);
+
 
 
     }

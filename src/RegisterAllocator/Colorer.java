@@ -206,16 +206,18 @@ public class Colorer {
             // if the definition line has a definition
             if (block.def(definitionLine) == var){
 
-                // if that definition is never used, assign a temp and store it
+                // if that definition is never used, assign to reserved var then store it
                 if (liveRange.getLines().size() == 0){
                     Register res1 = Register.res1(var.isInt());
-                    block.getInstruction(definitionLine).replaceDef(liveRange.var, res1);
-                    loadStores.get(definitionLine).addStore(res1, var);
+                    block.getInstruction(definitionLine).replaceDef(var, res1);
+                    if (!(var instanceof TempVar))
+                        loadStores.get(definitionLine).addStore(res1, var);
                 }
                 // if that definition is used, assign its color and store it
                 else{
-                    block.getInstruction(definitionLine).replaceDef(liveRange.var, reg);
-                    loadStores.get(definitionLine).addStore(reg, var);
+                    block.getInstruction(definitionLine).replaceDef(var, reg);
+                    if (!(var instanceof TempVar))
+                        loadStores.get(definitionLine).addStore(reg, var);
                 }
             }
             // if the definition line has no definition, this indicates a var is used without being defined
