@@ -202,6 +202,16 @@ public class IR2GenVisitor implements Visitor {
 
         stat.retVal.accept(this);
         Operand retVal = context.getRetVal();
+        if (retVal.isInt() && stat.type.isFloatPrimitive()) {
+            if (retVal instanceof IntImmediate) {
+                TempIntVar t = TempIntVar.gen(inFunction);
+                emit(new assign(t, retVal, true));
+                retVal = t;
+            }
+            TempFloatVar temp = TempFloatVar.gen(inFunction);
+            emit(new intToFloat(retVal, temp));
+            retVal = temp;
+        }
 
         emit(new ret(retVal));
     }
