@@ -17,23 +17,38 @@ public class BasicBlock extends DiNode {
 
     private ArrayList<HashSet<Var>> live = new ArrayList<>();
 
+
     private boolean liveness_initialized = false;
+    public void initLiveness(){
+        if (!liveness_initialized){
+            for (int i = 0; i <= size(); i++){
+                live.add(new HashSet<Var>());
+            }
+            liveness_initialized = true;
+        }
+    }
+    public boolean makeChanges(){
+        boolean changes = false;
+        for (int i = 0; i < size(); i++){
+            HashSet<Var> additions = new HashSet<>();
+            additions.addAll(out(i));
+            additions.remove(getInstruction(i).def());
+            additions.addAll(getInstruction(i).use());
+            if (!in(i).containsAll(additions)){
+                changes = true;
+                in(i).addAll(additions);
+            }
+        }
+        return changes;
+    }
+
     public void calcLiveness(){
+
+        initLiveness();
 
         boolean changes;
         do{
-            changes = false;
-
-            for (int i = 0; i < size(); i++){
-                HashSet<Var> additions = new HashSet<>();
-                additions.addAll(out(i));
-                additions.remove(getInstruction(i).def());
-                additions.addAll(getInstruction(i).use());
-                if (!in(i).containsAll(additions)){
-                    changes = true;
-                    in(i).addAll(additions);
-                }
-            }
+            changes = makeChanges();
 
         } while (changes);
     }
@@ -65,22 +80,10 @@ public class BasicBlock extends DiNode {
 
     public BasicBlock(int startIndex){
         this.startIndex = startIndex;
-        initLiveness();
     }
     public BasicBlock(Label startLabel, int startIndex){
         this.startLabel = startLabel;
         this.startIndex = startIndex;
-        initLiveness();
-    }
-
-    private void initLiveness(){
-        if (!liveness_initialized){
-            for (int i = 0; i <= size(); i++){
-                live.add(new HashSet<Var>());
-            }
-            liveness_initialized = true;
-        }
-
     }
 
     public void addInstruction(IR instruction){

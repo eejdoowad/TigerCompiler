@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public abstract class DiNode {
 
+    public ArrayList<DiNode> getSucc(){return succ;}
     private ArrayList<DiNode> succ = new ArrayList<>();
     private ArrayList<DiNode> pred = new ArrayList<>();
 

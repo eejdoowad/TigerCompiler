@@ -4,6 +4,7 @@ import IR.*;
 import Util.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 // A Control Flow Graph Used for liveness analysis
 // Implemented as a Graph where nodes are of subtype BasicBlock
@@ -18,9 +19,38 @@ public class FlowGraph extends DiGraph<BasicBlock> {
     public BasicBlock entryBlock;
     public BasicBlock exitBlock;
 
-    public void initGlobalLiveness(){
+    public void calcGlobalLiveness(){
 
+        for (BasicBlock block : getNodes()){
+            block.initLiveness();
+        }
+
+        boolean changes;
+        do{
+            changes = false;
+
+            // compute changes for all instructions within block
+            for (BasicBlock block : getNodes()){
+                boolean blockChanged = block.makeChanges();
+                if (blockChanged) changes = true;
+            }
+
+            // now compute changes for all instructions between blocks
+            for (BasicBlock block : getNodes()){
+                HashSet<Var> additions = new HashSet<>();
+                for (DiNode succn : block.getSucc()){
+                    BasicBlock succ = (BasicBlock)succn;
+                    additions.addAll(succ.in(0));
+                }
+                if (!block.out(block.size()-1).containsAll(additions)){
+                    changes = true;
+                    block.out(block.size()-1).addAll(additions);
+                }
+            }
+
+        } while (changes);
     }
+
 
     public FlowGraph(ArrayList<IR> instructions){
 

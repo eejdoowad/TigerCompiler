@@ -1,0 +1,26 @@
+let
+        var a, b, c, d, e, f, g, h, cat : int;
+        var i, j, k, l, m, n, o, p : float;
+
+in
+    a := 1;
+    b := 1;
+    c := 1;
+    d := 1;
+    e := 1;
+    f := 1;
+    g := 1;
+    h := 1;
+
+
+
+    cat := a;
+    cat := b;
+    cat := c;
+    cat := d;
+    cat := e;
+    cat := f;
+    cat := g;
+    cat := h;
+
+end

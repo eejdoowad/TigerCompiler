@@ -22,7 +22,7 @@ public class RegAllocator {
             System.out.println("DOING INTRABLOCK ALLOCATION\n");
             return intraBlockAllocator(instructions);
         }
-        else if (Config.REG_ALLOCATOR == Config.RegAllocator.EBB){
+        else if (Config.REG_ALLOCATOR == Config.RegAllocator.GLOBAL){
             System.out.println("DOING EBB ALLOCATION\n");
             return EBBAllocator(instructions);
         }
