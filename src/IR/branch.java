@@ -31,6 +31,14 @@ public abstract class branch extends controlFlowInstruction {
         return uses;
     }
 
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR branch.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        if (left == old) left = n;
+        if (right == old) right = n;
+    }
+
     public abstract String op();
 
     public String toString(){

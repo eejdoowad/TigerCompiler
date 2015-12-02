@@ -30,6 +30,13 @@ public class array_assign extends regularInstruction {
         return null;
     }
 
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR NO SUPPORT array_assign.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        System.out.println("ERROR NO SUPPORT array_assign.replaceDef()");
+    }
+
     public String toString(){
         return "assign, " + var + ", " + count + ", " + val;
     }

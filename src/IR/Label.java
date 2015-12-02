@@ -15,6 +15,8 @@ public abstract class Label extends IR {
     public  ArrayList<Var> use(){
         return new ArrayList<>();
     }
+    public  void replaceDef(Var old, Register n){}
+    public  void replaceUses(Var old, Register n){}
 
     public String toString() {
         return name + ":";

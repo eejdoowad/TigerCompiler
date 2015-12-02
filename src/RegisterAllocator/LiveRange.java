@@ -62,6 +62,7 @@ public class LiveRange {
             l += line.toString();
             first = false;
         }
-        return var.toString() + "#" + rangeID + ": " + l + " [" + numUses + " uses]";
+        return var.toString() + "#" + rangeID + ": "
+                + l + " [" + numUses + " uses][" + (var.isInt() ? "int" : "float") + "][Reg=" + color + "]";
     }
 }

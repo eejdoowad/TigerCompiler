@@ -18,6 +18,13 @@ public class goTo extends jumpLabel {
         return uses;
     }
 
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR goTo.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        return;
+    }
+
     public String toString(){
         return "goto, " + labelOp.label.name;
     }

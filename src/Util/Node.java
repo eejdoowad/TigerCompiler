@@ -39,6 +39,6 @@ public class Node<T> {
         return adj.contains(n);
     }
     public String toString(){
-        return val.toString();
+        return val.toString() + "[Deg=" + getAdj().size() + "]";
     }
 }

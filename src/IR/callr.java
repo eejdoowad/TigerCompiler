@@ -4,9 +4,7 @@ import java.util.ArrayList;
 
 public class callr extends callInstruction {
 
-    public LabelOp fun;
     public Operand retVal;
-    public ArrayList<Operand> args;
 
     public callr(LabelOp fun, Operand retVal, ArrayList<Operand> args){
         this.fun = fun;
@@ -27,6 +25,19 @@ public class callr extends callInstruction {
             }
         }
         return uses;
+    }
+
+    public void replaceDef(Var old, Register n){
+        if (retVal == old) retVal = n;
+        else System.out.println("ERROR: callr.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        for (int i = 0; i < args.size(); i++){
+            if (args.get(i) == old){
+                args.remove(i);
+                args.add(i, n);
+            }
+        }
     }
 
     public String toString(){

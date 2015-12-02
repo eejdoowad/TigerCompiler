@@ -5,9 +5,7 @@ import java.util.ArrayList;
 public class array_store extends regularInstruction {
 
     // the l-value is always Named
-    // wouldn't make sense to assign to a temp
-    public NamedVar var;
-    //
+    public Var var;
     public Operand index;
     // the right hand side could be anything
     public Operand right;
@@ -29,6 +27,16 @@ public class array_store extends regularInstruction {
         if (index instanceof Var) uses.add((Var)index);
         return uses;
     }
+
+    public void replaceDef(Var old, Register n){
+        if (right == old) right = n;
+        else System.out.println("ERROR array_store.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        if (var == old) var = n;
+        if (index == old) index = n;
+    }
+
 
     public String toString(){
         return "array_store, " + var + ", " + index + ", " + right;

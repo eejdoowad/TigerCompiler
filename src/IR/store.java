@@ -2,9 +2,7 @@ package IR;
 
 import java.util.ArrayList;
 
-/**
- * Created by ian on 12/1/15.
- */
+
 public class store extends instruction {
     public Register src;
     public Var dst;
@@ -24,6 +22,15 @@ public class store extends instruction {
         uses.add(dst);
         return uses;
     }
+
+    // ACTUALLY THESE ARE STUPID AND SHOULD NEVER BE REACHED
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR store.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+       System.out.println("ERROR store.replaceDef store");
+    }
+
 
     public String toString() {
         return "store" + (!isInteger ? "f" : "") + ", " + src.toString() + ", " + dst.toString();

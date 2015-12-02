@@ -13,6 +13,14 @@ public class FunctionEpilogue extends instruction {
         return new ArrayList<>();
     }
 
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR NO SUPPORT functionEpilogue.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        System.out.println("ERROR NO SUPPORT FunctionEpilogue.replaceDef()");
+    }
+
+
     public void accept(IRVisitor v) {
         v.visit(this);
     }

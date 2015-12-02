@@ -25,6 +25,14 @@ public class load extends instruction {
         return uses;
     }
 
+    // ACTUALLY THESE ARE STUPID AND SHOULD NEVER BE REACHED
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR load.replaceDef() ");
+    }
+    public void replaceUses(Var old, Register n){
+        System.out.println("ERROR load.replaceDef");
+    }
+
     public String toString() {
         return "load" + (!isInteger ? "f" : "") + ", " + dst.toString() + ", " + src.toString();
     }

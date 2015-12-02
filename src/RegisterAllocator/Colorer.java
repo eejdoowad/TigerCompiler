@@ -12,6 +12,20 @@ class LoadStore {
     public load iload2;
     public ArrayList<load> iloadargs = new ArrayList<>(); // any loads needed for array args
     public store istore;
+    public String toString(){
+        String out = "";
+        if (istore != null) out += "[" + istore + "]";
+        if (iload1 != null) out += "[" + iload1 + "]";
+        if (iload2 != null) out += "[" + iload2 + "]";
+        if (!iloadargs.isEmpty()){
+            out += "[";
+            for (load l : iloadargs){
+                out += l + ", ";
+            }
+            out += "]";
+        }
+        return out;
+    }
 }
 
 public class Colorer {
@@ -25,7 +39,7 @@ public class Colorer {
     private LinkedHashSet<Register.Reg> intRegs = new LinkedHashSet<>();
     private LinkedHashSet<Register.Reg> floatRegs = new LinkedHashSet<>();
     private int numIntColors(){
-        return 1; // intRegs.size();
+        return intRegs.size(); // intRegs.size();
     }
     private int numFloatColors(){
         return floatRegs.size();
@@ -73,14 +87,19 @@ public class Colorer {
 
             // insert loads before
             if (ls != null) {
-                if (ls.iload1 != null) out.add(ls.iload1);
-                if (ls.iload1 != null) out.add(ls.iload2);
+                if (ls.iload1 != null)
+                    out.add(ls.iload1);
+                if (ls.iload2 != null)
+                    out.add(ls.iload2);
             }
             // the actuall instruction
-            out.add(block.instructions().get(i));
+            out.add(block.getInstruction(i));
 
             // insert stores after
-            if (ls != null) {if (ls.istore != null) out.add(ls.istore);}
+            if (ls != null) {
+                if (ls.istore != null)
+                    out.add(ls.istore);
+            }
         }
 
         return out;
@@ -91,9 +110,14 @@ public class Colorer {
         // the working graph that we will modify, leave the original intact
         // exclude the float nodes
         workGraph = IG.copy();
-        for (Node<LiveRange> node : colorInteger ? workGraph.getFloatNodes() : workGraph.getIntNodes()){
-            workGraph.removeNode(node);
+        for (int i = workGraph.size() - 1; i >= 0; i--){
+            // if the node is of the opposite type, remove it
+            boolean temp = workGraph.get(i).val.var.isInt() != colorInteger;
+            if (workGraph.get(i).val.var.isInt() != colorInteger){
+                workGraph.remove(i);
+            }
         }
+
         InterferenceGraph workGraphOriginal = workGraph.copy();
 
         // stack of Live ranges that have to be assigned colors
@@ -104,11 +128,17 @@ public class Colorer {
 
             // Remove nodes that have degree < N
             // Push the removed nodes onto a stack
-            for (int i = 0; i < workGraph.size(); i++){
-                if (workGraph.get(i).degree() < (colorInteger ? numIntColors() : numFloatColors())){
+            for (int i = 0; i < workGraph.size();){
+                Var curVar = workGraph.get(i).val.var;
+                int degree = workGraph.get(i).degree();
+                int numColors = (colorInteger ? numIntColors() : numFloatColors());
+                if (degree < numColors){
                     colorStack.push(workGraph.get(i).val); // push Live Range onto stack
                     workGraph.remove(i); // remove node and all its edges from interference graph
                     i = 0; // restart search
+                }
+                else{
+                    i++;
                 }
             }
             // When all the nodes have degree >= N
@@ -131,6 +161,7 @@ public class Colorer {
 
             Node<LiveRange> node = workGraphOriginal.getNode(lr);
 
+            // Cycle through colors until an available one is found
             for (Register.Reg color : colorInteger ? intRegs : floatRegs ){
                 boolean colorUsed = false;
                 for (Node<LiveRange> neighbor : node.getAdj()){
@@ -140,12 +171,16 @@ public class Colorer {
                 }
                 if (!colorUsed){
                     lr.setColor(color);
+                    break;
                 }
             }
             if (lr.getColor() == null){
                 System.out.println("NO COLOR AVAILABLE. ERROR. GRAPH SHOULD BE COLORABLE AT THIS STAGE");
             }
         }
+
+        System.out.println("Starting color allocation");
+        // now replace instances of variables with their assigned color.
 
     }
 
@@ -154,20 +189,26 @@ public class Colorer {
 
         for (Integer i : liveRange.getLines()){
             // insert store for def
-            if (block.def(i) == liveRange.var){
+            if ((i - 1 >= 0) && block.def(i - 1) == liveRange.var){
                 boolean isInt = liveRange.var.isInt();
-                loadStores.get(i).istore = new store(Register.res1(isInt), liveRange.var, isInt);
+                loadStores.get(i - 1).istore = new store(Register.res1(isInt), liveRange.var, isInt);
+                block.getInstruction(i - 1).replaceDef(liveRange.var, Register.res1(isInt));
             }
             // insert load before use, for non-function-call instructions
             if (!(block.getInstruction(i) instanceof callInstruction)){
                 boolean isInt = liveRange.var.isInt();
                 // only use res2 if res1 is occupied
-                if (loadStores.get(i).iload1 == null)
+                if (loadStores.get(i).iload1 == null){
                     loadStores.get(i).iload1 = new load(Register.res1(isInt), liveRange.var, isInt);
-                else if (loadStores.get(i).iload2 == null)
+                    block.getInstruction(i).replaceUses(liveRange.var, Register.res1(isInt));
+                }
+                else if (loadStores.get(i).iload2 == null){
                     loadStores.get(i).iload2 = new load(Register.res2(isInt), liveRange.var, isInt);
-                else
+                    block.getInstruction(i).replaceUses(liveRange.var, Register.res2(isInt));
+                }
+                else{
                     System.out.println("WTH? BOTH LOADS ARE USED.");
+                }
             }
             // TODO: need to do something about function arguments
             else{
@@ -176,4 +217,10 @@ public class Colorer {
 
         }
     }
+
+
+
+
+
+
 }
