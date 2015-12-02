@@ -38,6 +38,14 @@ public class FunctionPrologue extends instruction {
         }
     }
 
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR NO SUPPORT FunctionPrologue.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        System.out.println("ERROR NO SUPPORT FunctionPrologue.replaceDef()");
+    }
+
+
     public Var def() {
         return null;
     }
