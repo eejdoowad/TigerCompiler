@@ -14,8 +14,9 @@ public class TempIntVar extends TempVar {
         name = "__t" + id;
     }
 
-    public static TempIntVar gen(){
+    public static TempIntVar gen(boolean inFunction){
         TempIntVar var = new TempIntVar();
+        var.isLocal = inFunction;
         getVars().add(var);
         getNames().put(var.name, var);
         return var;

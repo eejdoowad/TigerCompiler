@@ -13,8 +13,9 @@ public class TempFloatVar extends TempVar {
         name = "__f" + id;
     }
 
-    public static TempFloatVar gen(){
+    public static TempFloatVar gen(boolean inFunction) {
         TempFloatVar var = new TempFloatVar();
+        var.isLocal = inFunction;
         getVars().add(var);
         getNames().put(var.name, var);
         return var;

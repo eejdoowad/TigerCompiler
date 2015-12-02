@@ -253,6 +253,12 @@ public class MIPSGenVisitor implements IRVisitor {
         emit(new AssemblyHelper(i.name.toString() + ":", "", "", ""));
 	}
 
+    public void visit(FunctionEpilogue i) {
+    }
+
+    public void visit(FunctionPrologue i) {
+    }
+
 	public void visit(intToFloat n) {
         if (n.src instanceof IntImmediate) {
             emit(new AssemblyHelper("li", "$t8", n.src.toString(), ""));

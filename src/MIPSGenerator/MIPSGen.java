@@ -12,9 +12,14 @@ public class MIPSGen {
 
         System.out.println("\nGENERATING MIPS CODE:\n");
 
+        FunctionSetupVisitor setup = new FunctionSetupVisitor();
         MIPSGenVisitor v = new MIPSGenVisitor();
 
         if (instructions != null){
+            // Perform analysis on functions before generating the code
+            for (IR inst : instructions) {
+                inst.accept(setup);
+            }
             for (IR inst : instructions){
                 inst.accept(v);
             }
