@@ -2,7 +2,7 @@ package IR;
 
 import java.util.ArrayList;
 
-public class call extends jumpLabel {
+public class call extends callInstruction {
 
     public LabelOp fun;
     public ArrayList<Operand> args;

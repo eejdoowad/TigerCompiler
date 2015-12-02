@@ -15,6 +15,21 @@ public abstract class Graph<T> {
         nodes.add(n);
     }
 
+    public boolean isEmpty(){
+        return size() == 0;
+    }
+
+    public int size(){
+        return nodes.size();
+    }
+
+    public Node<T> get(int i){
+        return nodes.get(i);
+    }
+    public void remove(int i){
+        nodes.remove(i);
+    }
+
     public void removeNode(Node<T> n){
         if (nodes.contains(n)){
             for (Node<T> neighbor : n.getAdj()){

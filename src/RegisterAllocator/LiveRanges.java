@@ -77,12 +77,14 @@ public class LiveRanges {
                 addLiveEntry(var, i);
             }
 
-            // If a variable is defined, and the definition is used
-            // add a new range starting at proceeding instruction
+            // If a variable is defined, add a new live range
             Var def = block.getInstruction(i).def();
-            if (def != null && block.out(i).contains(def)){
+            if (def != null){
                 startNewLiveRange(def);
-                addLiveEntry(def, i+1);
+                // It is possible that the definition is never used
+                // in which case the live range is empty
+                // this line might be redundant, figure it out TODO
+                if (block.out(i).contains(def)) addLiveEntry(def, i+1);
             }
         }
 
