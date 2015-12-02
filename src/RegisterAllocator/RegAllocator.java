@@ -23,11 +23,11 @@ public class RegAllocator {
             return intraBlockAllocator(instructions);
         }
         else if (Config.REG_ALLOCATOR == Config.RegAllocator.GLOBAL){
-            System.out.println("DOING EBB ALLOCATION\n");
-            return EBBAllocator(instructions);
+            System.out.println("DOING GLOBAL ALLOCATION\n");
+            return globalAllocator(instructions);
         }
         else{
-            System.out.println("WTH SORT OF ALLOCATION YOU DOING BOY\n");
+            System.out.println("WTH SORT OF ALLOCATION YOU DOING\n");
             System.exit(1);
             return null;
         }
@@ -67,11 +67,15 @@ public class RegAllocator {
         return out;
     }
 
-    private static ArrayList<IR> EBBAllocator(ArrayList<IR> instructions){
+    private static ArrayList<IR> globalAllocator(ArrayList<IR> instructions){
         ArrayList<IR> out = new ArrayList<>();
 
         ArrayList<FlowGraph> flows = FlowGraphGen.generate(instructions);
+
         for (FlowGraph flow : flows){
+
+            flow.calcGlobalLiveness();
+
             for (BasicBlock block : flow.getNodes()){
                 // don't do anything for dummy entry/exit blocks
                 if (block.size() > 0){
