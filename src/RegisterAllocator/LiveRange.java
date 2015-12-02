@@ -15,6 +15,7 @@ public class LiveRange {
     private Set<Integer> lines = new LinkedHashSet<>();
     public static int rangeNum = 0;
     public int rangeID;
+    public BasicBlock block;
 
     private Register.Reg color;
     public Register.Reg getColor(){
@@ -35,6 +36,29 @@ public class LiveRange {
     public LiveRange(Var var){
         this.var = var;
         this.rangeID = rangeNum++;
+    }
+
+    // TODO: for global, need to do a store in every block following
+    // in which the first line isn't in the liveRange
+    // a var should be stored at its last use in its live range
+    public boolean isLastUse(int line){
+        for (Integer i : lines){
+            // last use if set doesn't contain next line
+            if (!getLines().contains(line+1)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isFirstUse(int line){
+        for (Integer i : lines){
+            // first use if set doesn't contain previous line
+            if (!getLines().contains(line-1)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public Set<Integer> getLines(){

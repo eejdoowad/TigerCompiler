@@ -9,7 +9,7 @@ import java.util.*;
 
 public class InterferenceGraph extends Graph<LiveRange> {
 
-    private LiveRanges ranges;
+    public LiveRanges ranges;
 
 
     // a graph where each node represents a live range for a particular variable

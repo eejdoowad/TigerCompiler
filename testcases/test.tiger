@@ -2,7 +2,7 @@ let
         var a, w, x, y, z : int;
         var b, c, d, e, f : float;
 
-
+/*
         function twicef ( n : float ) : float begin
             a := 1 + 1 + 1;
             n := 2.0 + 3.0;
@@ -12,10 +12,11 @@ let
         function stupid( i : int ) begin
             i := 2 + i;
         end;
+*/
 
 in
         a := w;
-        x := w;
+        x := 1 + 2 + 3;
         y := w;
         y := x;
         z := w;
@@ -29,12 +30,4 @@ in
         d := c;
         d := c;
         d := c + c;
-
-        f := b + c + d;
-        if (1 > 2.3) then
-            f := 1 + 2.5 * 3;
-        endif;
-        a := 1 + 2 + 3;
-        b := 1.5 + 1.5 + 2.5 * 3.2 + 1;
-        b := twicef(b);
 end

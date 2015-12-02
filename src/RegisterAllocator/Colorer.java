@@ -3,28 +3,43 @@ package RegisterAllocator;
 import IR.*;
 import Util.Node;
 
+import javax.sound.sampled.Line;
 import java.util.*;
 
 // List of loads that will be inserted before an instruction
 // store that will be inserted after an instruction
 class LoadStore {
-    public load iload1;
-    public load iload2;
-    public ArrayList<load> iloadargs = new ArrayList<>(); // any loads needed for array args
-    public store istore;
+    public ArrayList<load> iloads = new ArrayList<>(); // any loads before instruction
+    public ArrayList<store> istores = new ArrayList<>(); // any stores after instruction
+
     public String toString(){
         String out = "";
-        if (istore != null) out += "[" + istore + "]";
-        if (iload1 != null) out += "[" + iload1 + "]";
-        if (iload2 != null) out += "[" + iload2 + "]";
-        if (!iloadargs.isEmpty()){
+        if (!iloads.isEmpty()){
             out += "[";
-            for (load l : iloadargs){
+            for (load l : iloads){
                 out += l + ", ";
             }
             out += "]";
         }
+        if (!istores.isEmpty()){
+            out += "[";
+            for (store s : istores){
+                out += s + ", ";
+            }
+            out += "]";
+        }
         return out;
+    }
+
+    // returns the  the size of loads after addition
+    public int addLoad(Var src, Register dst){
+        iloads.add(new load(dst, src, src.isInt()));
+        return iloads.size();
+    }
+    // returns the size of stores after addition
+    public int addStore(Register src, Var dst){
+        istores.add(new store(src, dst, dst.isInt()));
+        return istores.size();
     }
 }
 
@@ -77,31 +92,26 @@ public class Colorer {
         colorForType(true); // first color integers
         colorForType(false); // then color floats
 
+        allocate(); // now use colors to rewrite IR with new regs and loads/stores
+
         ArrayList<IR> out = new ArrayList<>();
 
         // generate new IR for every instruction, include loads and stores
         for (int i = 0; i < block.instructions().size(); i++){
             LoadStore ls = loadStores.get(i);
 
-            //TODO HANDLE FUNCTION ARGS IN CALLR
-
             // insert loads before
-            if (ls != null) {
-                if (ls.iload1 != null)
-                    out.add(ls.iload1);
-                if (ls.iload2 != null)
-                    out.add(ls.iload2);
+            for (load iload : ls.iloads){
+                out.add(iload);
             }
-            // the actuall instruction
+            // the actual instruction
             out.add(block.getInstruction(i));
 
             // insert stores after
-            if (ls != null) {
-                if (ls.istore != null)
-                    out.add(ls.istore);
+            for (store istore : ls.istores){
+                out.add(istore);
             }
         }
-
         return out;
     }
 
@@ -179,31 +189,67 @@ public class Colorer {
             }
         }
 
-        System.out.println("Starting color allocation");
-        // now replace instances of variables with their assigned color.
+    }
 
+    private void allocate(){
+        System.out.println("Starting color allocation");
+
+        // For every live Range
+        for (LiveRange liveRange : IG.ranges.allRanges()){
+            Var var = liveRange.var;
+            Register reg = new Register(liveRange.getColor());
+            boolean isInt = var.isInt();
+
+            // For every line in the live range
+            for (Integer i : liveRange.getLines()){
+
+                // Replace all uses of var with reg
+                block.getInstruction(i).replaceUses(var, reg);
+
+                // If start of live range
+                if (liveRange.isFirstUse(i)){
+                    // If the previous instruction defined the variable, replace the var with reg
+                    // then store the reg to the var
+                    boolean defined = ((i - 1 >= 0) && block.def(i - 1) == liveRange.var);
+                    if (defined){
+                        block.getInstruction(i - 1).replaceDef(liveRange.var, reg);
+                        loadStores.get(i - 1).addStore(reg, var);
+                    }
+                    // Otherwise load the variable from memory into reg
+                    else{
+                        loadStores.get(i).addLoad(var, reg);
+                    }
+                }
+            }
+
+        }
     }
 
     // To spill, insert a load before every use and a store after every def
+    // and replace every use and every def with the appropriate instruction
     private void spill(LiveRange liveRange){
+
+        Var var = liveRange.var;
+        Register res1 = Register.res1(var.isInt());
+        Register res2 = Register.res2(var.isInt());
 
         for (Integer i : liveRange.getLines()){
             // insert store for def
             if ((i - 1 >= 0) && block.def(i - 1) == liveRange.var){
                 boolean isInt = liveRange.var.isInt();
-                loadStores.get(i - 1).istore = new store(Register.res1(isInt), liveRange.var, isInt);
+                loadStores.get(i - 1).addStore(res1, var);
                 block.getInstruction(i - 1).replaceDef(liveRange.var, Register.res1(isInt));
             }
             // insert load before use, for non-function-call instructions
             if (!(block.getInstruction(i) instanceof callInstruction)){
                 boolean isInt = liveRange.var.isInt();
                 // only use res2 if res1 is occupied
-                if (loadStores.get(i).iload1 == null){
-                    loadStores.get(i).iload1 = new load(Register.res1(isInt), liveRange.var, isInt);
+                if (loadStores.get(i).iloads.size() == 0){
+                    loadStores.get(i).addLoad(var, res1);
                     block.getInstruction(i).replaceUses(liveRange.var, Register.res1(isInt));
                 }
-                else if (loadStores.get(i).iload2 == null){
-                    loadStores.get(i).iload2 = new load(Register.res2(isInt), liveRange.var, isInt);
+                else if (loadStores.get(i).iloads.size() == 1){
+                    loadStores.get(i).addLoad(var, res2);
                     block.getInstruction(i).replaceUses(liveRange.var, Register.res2(isInt));
                 }
                 else{
