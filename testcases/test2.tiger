@@ -1,5 +1,6 @@
 let
         var a, b, c : int;
+        var d, e, f : float;
         function fact ( n : int ) : int begin
             if (n = 0) then
                 return 1;
@@ -10,6 +11,19 @@ let
             a := fact(n - 1);
             return n * a;
         end;
+        function factf ( n : float ) : float begin
+            if (n <= 0) then
+                return 1;
+            endif;
+            if (n <= 1) then
+                return 1;
+            endif;
+            d := factf(n - 1);
+            return n * d;
+        end;
 in
     c := fact(6);
+    printi(c);
+    f := factf(6.0);
+    printf(f);
 end

@@ -141,11 +141,16 @@ public class MIPSGenVisitor implements IRVisitor {
             if (i.var instanceof Var && i.right instanceof IntImmediate) {
                 emit(new AssemblyHelper("li", "$t8", i.right.toString(), ""));
                 if (((Var) i.var).isLocal) {
-                    int offset = currentFunction.argumentOffsetMap.get(((Var)i.var).name);
-                    if (offset <= 2) {
-                        emit(new AssemblyHelper("move", "$a" + offset, "$t8", ""));
+                    if (i.var instanceof NamedVar) {
+                        int offset = currentFunction.argumentOffsetMap.get(((Var) i.var).name);
+                        if (offset <= 2) {
+                            emit(new AssemblyHelper("move", "$a" + offset, "$t8", ""));
+                        } else {
+                            offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                            emit(new AssemblyHelper("sw", "$t8", "" + offset + "($fp)", ""));
+                        }
                     } else {
-                        offset = currentFunction.usedRegsCount * 4 + 12 + (offset * 4);
+                        int offset = -currentFunction.temporaryOffsetMap.get(((Var) i.var).name) * 4;
                         emit(new AssemblyHelper("sw", "$t8", "" + offset + "($fp)", ""));
                     }
                 } else {
@@ -229,7 +234,7 @@ public class MIPSGenVisitor implements IRVisitor {
         }
 
         // Expand stack to hold arguments
-        emit(new AssemblyHelper("sub", "$sp", "$sp", "" + (currentFunction.argumentCount * 4)));
+        emit(new AssemblyHelper("sub", "$sp", "$sp", "" + (i.args.size() * 4)));
 
         // Now load the arguments
         int arg = 0;

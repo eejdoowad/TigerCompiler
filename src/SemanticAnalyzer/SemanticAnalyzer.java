@@ -832,6 +832,7 @@ public class SemanticAnalyzer {
             return;
         }
         node.retVal = ret;
+        node.type = currentFunction.getFunctionReturnType();
         semanticStack.addFirst(node);
     }
 

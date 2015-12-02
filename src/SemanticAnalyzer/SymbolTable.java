@@ -70,6 +70,14 @@ public class SymbolTable {
         printi.setFunctionParameters(args);
         put("printi", printi);
 
+        SemanticSymbol printf = new SemanticSymbol("printf", SemanticSymbol.SymbolClass.FunctionDeclatation);
+        printf.setFunctionReturnType(null);
+        num = new SemanticSymbol("num", SemanticSymbol.SymbolClass.VarDeclaration);
+        num.setSymbolType(floatSymbol);
+        args = new ArrayList<>();
+        args.add(num);
+        printf.setFunctionParameters(args);
+        put("printf", printf);
 
 //      SILLY IAN
 //        // not(i)

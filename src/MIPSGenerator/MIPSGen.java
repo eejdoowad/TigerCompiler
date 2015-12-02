@@ -15,6 +15,8 @@ public class MIPSGen {
         FunctionSetupVisitor setup = new FunctionSetupVisitor();
         MIPSGenVisitor v = new MIPSGenVisitor();
 
+        StringBuilder assembly = new StringBuilder();
+
         if (instructions != null){
             // Perform analysis on functions before generating the code
             for (IR inst : instructions) {
@@ -25,21 +27,51 @@ public class MIPSGen {
             }
         }
 
-        System.out.println(".text");
+        assembly.append(".text\n");
+
+        // Generate printi
+        assembly.append("_printi:\n");
+        assembly.append("li $v0, 1\n");
+        assembly.append("syscall\n");
+        assembly.append("jal $ra\n");
+
+        // Generate printf
+        assembly.append("_printf:\n");
+        assembly.append("swc1 $f12, 0($sp)\n");
+        assembly.append("mtc1 $a0, $f12\n");
+        assembly.append("li $v0, 2\n");
+        assembly.append("syscall\n");
+        assembly.append("lwc1 $f12, 0($sp)\n");
+        assembly.append("jal $ra\n");
+
+        // Generate actual assembly
         for (AssemblyHelper s : v.assemblyHelp){
-            System.out.println(s);
-        }
-        System.out.println("\n.data");
-        for (String s : v.dataSection.keySet()) {
-            String entry = s + ": ";
-            int size = v.dataSection.get(s);
-            if (size > 1) {
-                entry = entry + ".space " + size;
-            } else {
-                entry = entry + ".word 0";
+            if (s.getOpcode().equals("main:")) {
+                assembly.append(".globl main\n");
             }
-            System.out.println(entry);
+            assembly.append(s.toString() + "\n");
+            if (s.getOpcode().equals("main:")) {
+                assembly.append("sw $ra, 0($sp)\n");
+                assembly.append("sub $sp, $sp, 4\n");
+            }
         }
+        assembly.append("add $sp, $sp, 4\n");
+        assembly.append("lw $ra, 0($sp)\n");
+        assembly.append("jal $ra\n");
+        assembly.append("\n.data\n");
+        for (String s : v.dataSection.keySet()) {
+            if (s != null) {
+                String entry = s + ": ";
+                int size = v.dataSection.get(s);
+                if (size > 1) {
+                    entry = entry + ".space " + size + "\n";
+                } else {
+                    entry = entry + ".word 0\n";
+                }
+                assembly.append(entry);
+            }
+        }
+        System.out.print(assembly.toString());
 
      //   return v.mips;
         return null;
