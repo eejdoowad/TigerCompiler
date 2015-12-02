@@ -42,6 +42,8 @@ public class RegAllocator {
     }
 
     private static ArrayList<IR> intraBlockAllocator(ArrayList<IR> instructions){
+        ArrayList<IR> out = new ArrayList<>();
+
         ArrayList<FlowGraph> flows = FlowGraphGen.generate(instructions);
         for (FlowGraph flow : flows){
             // replace symbolic registers with fixed register set
@@ -50,26 +52,27 @@ public class RegAllocator {
             for (BasicBlock block : flow.getNodes()){
                 // don't do anything for dummy entry/exit blocks
                 if (block.size() > 0){
+
                     block.calcLiveness();
                     LiveRanges ranges = new LiveRanges(block);
                     InterferenceGraph IG = new InterferenceGraph(ranges);
                     Colorer colorer = new Colorer(block, IG);
                     ArrayList<IR> newIR = colorer.color();
 
-                    System.out.println("For Block " + block.startLabel + " IR OUTPUT:");
-                    for (IR i : newIR){
-                        System.out.println(i);
-                    }
+                    out.add(block.startLabel);
+                    out.addAll(newIR);
 
-                    System.out.println("END OF BLOCK ANALYSIS");
+
+//                    System.out.println("For Block " + block.startLabel + " IR OUTPUT:");
+//                    for (IR i : newIR){
+//                        System.out.println(i);
+//                    }
+
+//                    System.out.println("END OF BLOCK ANALYSIS");
                 }
             }
-            // then generating interference graphs
-            // then coloring registers
         }
-        System.out.println("INTRABLOCK NOT YET IMPLEMENTED. ABORTING");
-        System.exit(1);
-        return null;
+        return out;
     }
 
     private static ArrayList<IR> EBBAllocator(ArrayList<IR> instructions){

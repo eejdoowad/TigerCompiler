@@ -199,27 +199,36 @@ public class Colorer {
             Var var = liveRange.var;
             Register reg = new Register(liveRange.getColor());
             boolean isInt = var.isInt();
+            int definitionLine = liveRange.definitionLine;
+
+            // it is not necessary for the definition line to actually contain the def
+
+            // if the definition line has a definition
+            if (block.def(definitionLine) == var){
+
+                // if that definition is never used, assign a temp and store it
+                if (liveRange.getLines().size() == 0){
+                    Register res1 = Register.res1(var.isInt());
+                    block.getInstruction(definitionLine).replaceDef(liveRange.var, res1);
+                    loadStores.get(definitionLine).addStore(res1, var);
+                }
+                // if that definition is used, assign its color and store it
+                else{
+                    block.getInstruction(definitionLine).replaceDef(liveRange.var, reg);
+                    loadStores.get(definitionLine).addStore(reg, var);
+                }
+            }
+            // if the definition line has no definition, this indicates a var is used without being defined
+            // so load it from mem in next line
+            else{
+                if (definitionLine + 1 >= block.size()) System.out.println("ERROR: allocate() tried to add load past end of block");
+                else loadStores.get(definitionLine).addLoad(var, reg);
+            }
+
 
             // For every line in the live range
             for (Integer i : liveRange.getLines()){
-
-                // Replace all uses of var with reg
                 block.getInstruction(i).replaceUses(var, reg);
-
-                // If start of live range
-                if (liveRange.isFirstUse(i)){
-                    // If the previous instruction defined the variable, replace the var with reg
-                    // then store the reg to the var
-                    boolean defined = ((i - 1 >= 0) && block.def(i - 1) == liveRange.var);
-                    if (defined){
-                        block.getInstruction(i - 1).replaceDef(liveRange.var, reg);
-                        loadStores.get(i - 1).addStore(reg, var);
-                    }
-                    // Otherwise load the variable from memory into reg
-                    else{
-                        loadStores.get(i).addLoad(var, reg);
-                    }
-                }
             }
 
         }

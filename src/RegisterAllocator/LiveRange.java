@@ -11,6 +11,7 @@ import java.util.Set;
 // A Live Range is a variable and the lines on which it is used
 public class LiveRange {
 
+    public int definitionLine;
     public Var var;
     private Set<Integer> lines = new LinkedHashSet<>();
     public static int rangeNum = 0;
@@ -33,9 +34,10 @@ public class LiveRange {
         return numUses;
     }
 
-    public LiveRange(Var var){
+    public LiveRange(Var var, int definitionLine){
         this.var = var;
         this.rangeID = rangeNum++;
+        this.definitionLine = definitionLine;
     }
 
     // TODO: for global, need to do a store in every block following

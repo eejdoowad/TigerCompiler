@@ -42,7 +42,7 @@ public abstract class binop extends regularInstruction {
 
     public void replaceDef(Var old, Register n){
         if (result == old) result = n;
-        System.out.println("ERROR binop.replaceDef()");
+        else System.out.println("ERROR binop.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
         if (left == old) left = n;

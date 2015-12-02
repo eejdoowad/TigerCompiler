@@ -42,8 +42,8 @@ public class LiveRanges {
     private void addVars(ArrayList<Var> vars){
         this.vars.addAll(vars);
     }
-    private void startNewLiveRange(Var var){
-        liveRanges.get(var).add( new LiveRange(var));
+    private void startNewLiveRange(Var var, int definitionLine){
+        liveRanges.get(var).add( new LiveRange(var, definitionLine));
     }
     private void addLiveEntry(Var var, int line){
         liveRanges.get(var).getLast().add(line);
@@ -73,14 +73,14 @@ public class LiveRanges {
             // add a range to its most recent definition
             for (Var var : block.in(i)){
                 if (liveRanges.get(var).isEmpty()) // in the case of function parameters, no init before use, so add scope
-                    startNewLiveRange(var);
+                    startNewLiveRange(var, i);
                 addLiveEntry(var, i);
             }
 
             // If a variable is defined, add a new live range
             Var def = block.getInstruction(i).def();
             if (def != null){
-                startNewLiveRange(def);
+                startNewLiveRange(def, i);
                 // It is possible that the definition is never used
                 // in which case the live range is empty
                 // this line might be redundant, figure it out TODO
