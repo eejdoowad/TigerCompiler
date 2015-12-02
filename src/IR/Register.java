@@ -94,4 +94,14 @@ public class Register extends Operand {
     public String toString() {
         return register.toString();
     }
+
+    // reserved registers for spilling load/stores
+    public static Register res1(boolean isInteger){
+        if (isInteger)  return new Register(Reg.T8);
+        else return new Register(Reg.F8);
+    }
+    public static Register res2(boolean isInteger){
+        if (isInteger)  return new Register(Reg.T9);
+        else return new Register(Reg.F9);
+    }
 }
