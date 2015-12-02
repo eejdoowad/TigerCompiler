@@ -79,8 +79,6 @@ public class RegAllocator {
             for (BasicBlock block : flow.getNodes()){
                 // don't do anything for dummy entry/exit blocks
                 if (block.size() > 0){
-
-                    block.calcLiveness();
                     LiveRanges ranges = new LiveRanges(block);
                     int i = 1;
                     InterferenceGraph IG = new InterferenceGraph(ranges);

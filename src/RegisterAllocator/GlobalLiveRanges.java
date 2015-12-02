@@ -7,7 +7,7 @@ import IR.Var;
 
 import java.util.*;
 
-public class LiveRanges {
+public class GlobalLiveRanges {
 
     private Map<Var, LinkedList<LiveRange>> liveRanges = new HashMap<>();
     private LinkedHashSet<Var> vars = new LinkedHashSet<Var>();
@@ -49,13 +49,16 @@ public class LiveRanges {
         liveRanges.get(var).getLast().add(line);
     }
 
-    public LiveRanges(BasicBlock block){
+    public GlobalLiveRanges(FlowGraph flow){
+
 
         // initialize vars
-        for (IR instruction : block.instructions()){
-            if (instruction.def() != null)
-                addVar(instruction.def());
-            addVars(instruction.use());
+        for (BasicBlock block : flow.getNodes()){
+            for (IR instruction : block.instructions()){
+                if (instruction.def() != null)
+                    addVar(instruction.def());
+                addVars(instruction.use());
+            }
         }
 
         // now calculate live ranges
@@ -67,39 +70,39 @@ public class LiveRanges {
             liveRanges.put(var, new LinkedList<>());
         }
 
-        for (int i = 0; i < block.size(); i++){
-
-            // If a variable is alive in this instruction
-            // add a range to its most recent definition
-            for (Var var : block.in(i)){
-                if (liveRanges.get(var).isEmpty()) // in the case of function parameters, no init before use, so add scope
-                    startNewLiveRange(var, i - 1); // with definitionLine starting at previous line (could be -1)
-                addLiveEntry(var, i);
-            }
-
-            // If a variable is defined, add a new live range
-            Var def = block.getInstruction(i).def();
-            if (def != null){
-                startNewLiveRange(def, i);
-                // It is possible that the definition is never used
-                // in which case the live range is empty
-                // this line might be redundant, figure it out TODO
-                if (block.out(i).contains(def)) addLiveEntry(def, i+1);
-            }
-        }
-
-        // calculate number of uses for each live range
-        for (LiveRange lr : allRanges()){
-            for (Integer i : lr.getLines()){
-                for (Var v : block.getInstruction(i).use()){
-                    if (v == lr.var){
-                        lr.incrementUses();
-                        break;
-                    }
-                }
-
-            }
-        }
+//        for (int i = 0; i < block.size(); i++){
+//
+//            // If a variable is alive in this instruction
+//            // add a range to its most recent definition
+//            for (Var var : block.in(i)){
+//                if (liveRanges.get(var).isEmpty()) // in the case of function parameters, no init before use, so add scope
+//                    startNewLiveRange(var, i);
+//                addLiveEntry(var, i);
+//            }
+//
+//            // If a variable is defined, add a new live range
+//            Var def = block.getInstruction(i).def();
+//            if (def != null){
+//                startNewLiveRange(def, i);
+//                // It is possible that the definition is never used
+//                // in which case the live range is empty
+//                // this line might be redundant, figure it out TODO
+//                if (block.out(i).contains(def)) addLiveEntry(def, i+1);
+//            }
+//        }
+//
+//        // calculate number of uses for each live range
+//        for (LiveRange lr : allRanges()){
+//            for (Integer i : lr.getLines()){
+//                for (Var v : block.getInstruction(i).use()){
+//                    if (v == lr.var){
+//                        lr.incrementUses();
+//                        break;
+//                    }
+//                }
+//
+//            }
+//        }
 
 
     }

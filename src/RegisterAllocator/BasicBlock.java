@@ -108,6 +108,7 @@ public class BasicBlock extends DiNode {
     }
 
     public Var def(int i){
+        if (i < 0) return null;
         return instructions.get(i).def();
     }
 

@@ -222,8 +222,11 @@ public class Colorer {
             // if the definition line has no definition, this indicates a var is used without being defined
             // so load it from mem in next line
             else{
-                if (definitionLine + 1 >= block.size()) System.out.println("ERROR: allocate() tried to add load past end of block");
-                else loadStores.get(definitionLine).addLoad(var, reg);
+                // a variable is used on line 0 without being defined
+                // so load it on definition line
+                if (definitionLine + 1 >= block.size())
+                    System.out.println("ERROR: allocate() tried to add load past end of block");
+                else loadStores.get(definitionLine + 1).addLoad(var, reg);
             }
 
 
@@ -245,6 +248,7 @@ public class Colorer {
 
         for (Integer i : liveRange.getLines()){
             // insert store for def
+            // TODO should probably move this out of loop
             if ((i - 1 >= 0) && block.def(i - 1) == liveRange.var){
                 boolean isInt = liveRange.var.isInt();
                 loadStores.get(i - 1).addStore(res1, var);
@@ -269,6 +273,7 @@ public class Colorer {
             // TODO: need to do something about function arguments
             else{
                 System.out.println("RegisterAllocator.Colorer.spill(): NO LOADING OF FUNCTION ARGS SUPPORTED");
+
             }
 
         }
