@@ -18,6 +18,10 @@ public class FlowGraph extends DiGraph<BasicBlock> {
     public BasicBlock entryBlock;
     public BasicBlock exitBlock;
 
+    public void initGlobalLiveness(){
+
+    }
+
     public FlowGraph(ArrayList<IR> instructions){
 
         // Associate FlowGraph instructions with passed instruction stream

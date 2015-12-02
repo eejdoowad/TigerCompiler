@@ -2,20 +2,24 @@ let
         var a, w, x, y, z : int;
         var b, c, d, e, f : float;
 
-/*
         function twicef ( n : float ) : float begin
-            a := 1 + 1 + 1;
-            n := 2.0 + 3.0;
-            return n + n + 1.0;
+            return n + n;
         end;
 
+        function twiced ( n : int ) : int begin
+            return n + n;
+        end;
+
+/*
         function stupid( i : int ) begin
             i := 2 + i;
         end;
 */
 
 in
-        a := 1 + 2 + 3; /*
+        a := twiced(7);
+
+         /*
         b := 1.5 + 2.5 + a;
         a := a + a; */
 end

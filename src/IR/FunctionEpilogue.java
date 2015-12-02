@@ -26,6 +26,6 @@ public class FunctionEpilogue extends instruction {
     }
 
     public String toString() {
-        return "";
+        return "FunctionEpilogue";
     }
 }

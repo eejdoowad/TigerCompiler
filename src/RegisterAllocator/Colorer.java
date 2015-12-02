@@ -192,7 +192,6 @@ public class Colorer {
     }
 
     private void allocate(){
-        System.out.println("Starting color allocation");
 
         // For every live Range
         for (LiveRange liveRange : IG.ranges.allRanges()){

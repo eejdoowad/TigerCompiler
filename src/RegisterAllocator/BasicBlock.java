@@ -20,13 +20,6 @@ public class BasicBlock extends DiNode {
     private boolean liveness_initialized = false;
     public void calcLiveness(){
 
-        if (!liveness_initialized){
-            for (int i = 0; i <= size(); i++){
-                live.add(new HashSet<Var>());
-            }
-            liveness_initialized = true;
-        }
-
         boolean changes;
         do{
             changes = false;
@@ -72,10 +65,22 @@ public class BasicBlock extends DiNode {
 
     public BasicBlock(int startIndex){
         this.startIndex = startIndex;
+        initLiveness();
     }
     public BasicBlock(Label startLabel, int startIndex){
         this.startLabel = startLabel;
         this.startIndex = startIndex;
+        initLiveness();
+    }
+
+    private void initLiveness(){
+        if (!liveness_initialized){
+            for (int i = 0; i <= size(); i++){
+                live.add(new HashSet<Var>());
+            }
+            liveness_initialized = true;
+        }
+
     }
 
     public void addInstruction(IR instruction){
