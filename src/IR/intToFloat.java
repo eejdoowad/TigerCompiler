@@ -23,8 +23,13 @@ public class intToFloat extends regularInstruction{
         return uses;
     }
 
-
-
+    public void replaceDef(Var old, Register n){
+        if (dest == old) dest = n;
+        else System.out.println("ERROR intToFloat.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        if (src == old) src = n;
+    }
 
     public String toString(){
         return "intToFloat, " + src + ", " + dest;

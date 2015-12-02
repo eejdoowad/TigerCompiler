@@ -21,6 +21,13 @@ public class ret extends jump {
         return uses;
     }
 
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR ret.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        if (retVal == old) retVal = n;
+    }
+
     public String toString(){
         return  "return, " + (retVal == null ? "" : retVal) + ", ,";
     }

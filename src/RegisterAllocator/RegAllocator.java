@@ -48,14 +48,21 @@ public class RegAllocator {
             // by calculating liveness ranges
 
             for (BasicBlock block : flow.getNodes()){
+                // don't do anything for dummy entry/exit blocks
+                if (block.size() > 0){
+                    block.calcLiveness();
+                    LiveRanges ranges = new LiveRanges(block);
+                    InterferenceGraph IG = new InterferenceGraph(ranges);
+                    Colorer colorer = new Colorer(block, IG);
+                    ArrayList<IR> newIR = colorer.color();
 
-                block.calcLiveness();
-                LiveRanges ranges = new LiveRanges(block);
-                InterferenceGraph IG = new InterferenceGraph(ranges);
-                Colorer colorer = new Colorer(block, IG);
-                colorer.color();
+                    System.out.println("For Block " + block.startLabel + " IR OUTPUT:");
+                    for (IR i : newIR){
+                        System.out.println(i);
+                    }
 
-                System.out.println("END OF BLOCK ANALYSIS");
+                    System.out.println("END OF BLOCK ANALYSIS");
+                }
             }
             // then generating interference graphs
             // then coloring registers

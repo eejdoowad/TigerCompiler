@@ -29,6 +29,15 @@ public class array_load extends regularInstruction {
         return uses;
     }
 
+    public void replaceDef(Var old, Register n){
+        if (left == old) left = n;
+        else System.out.println("ERROR array_load.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        if (var == old) var = n;
+        if (index == old) index = n;
+    }
+
 
     public String toString(){
         return "array_load, " + left + ", " + var + ", " + index;

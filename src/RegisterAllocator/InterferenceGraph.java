@@ -10,14 +10,7 @@ import java.util.*;
 public class InterferenceGraph extends Graph<LiveRange> {
 
     private LiveRanges ranges;
-    private ArrayList<Node<LiveRange>> intNodes = new ArrayList<>();
-    private ArrayList<Node<LiveRange>> floatNodes = new ArrayList<>();
-    public ArrayList<Node<LiveRange>> getIntNodes(){
-        return intNodes;
-    }
-    public ArrayList<Node<LiveRange>> getFloatNodes(){
-        return floatNodes;
-    }
+
 
     // a graph where each node represents a live range for a particular variable
     public InterferenceGraph(LiveRanges ranges) {
@@ -37,14 +30,22 @@ public class InterferenceGraph extends Graph<LiveRange> {
                 }
             }
         }
+    }
 
-        // separate into int and float nodes
-        for (Node<LiveRange> node : getNodes()){
-            if (node.val.var.isInt()){
-                intNodes.add(node);
-            }
-            else{
-                floatNodes.add(node);
+    public InterferenceGraph(InterferenceGraph other){
+        ranges = other.ranges; // ranges are shallow copied
+
+        // Add a node in the graph for every node in other graph
+        for (Node<LiveRange> lr : other.getNodes()) {
+            addNode(new Node<LiveRange>(lr.val));
+        }
+
+        // add interference edges
+        for (Node<LiveRange> lr1 : this.getNodes()) {
+            for (Node<LiveRange> lr2 : this.getNodes()) {
+                if (lr1.val.interferesWith(lr2.val)) {
+                    connect(lr1, lr2);
+                }
             }
         }
     }
@@ -52,6 +53,6 @@ public class InterferenceGraph extends Graph<LiveRange> {
     // creates an interference graph in which each node
     // gets deep copied (but LiveRanges within node are shallow copied)
     public InterferenceGraph copy(){
-        return new InterferenceGraph(ranges);
+        return new InterferenceGraph(this);
     }
 }

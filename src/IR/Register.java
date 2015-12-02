@@ -1,9 +1,6 @@
 package IR;
 
-/**
- * Created by ian on 12/1/15.
- */
-public class Register extends Operand {
+public class Register extends Var {
     public enum Reg {
         ZERO ("$zero"),
         AT ("$at"),

@@ -30,6 +30,13 @@ public class assign extends regularInstruction {
         return uses;
     }
 
+    public void replaceDef(Var old, Register n){
+        if (var == old) var = n;
+        else System.out.println("ERROR assign.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        if (right == old) right = n;
+    }
 
     public String toString(){
         return (isInt() ? "assign, " : "assignf, ") + var + ", " + right;

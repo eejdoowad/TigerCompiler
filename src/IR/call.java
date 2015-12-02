@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 public class call extends callInstruction {
 
-    public LabelOp fun;
-    public ArrayList<Operand> args;
-
     public call(LabelOp fun, ArrayList<Operand> args){
         this.fun = fun;
         this.args = args;
@@ -24,6 +21,18 @@ public class call extends callInstruction {
             }
         }
         return uses;
+    }
+
+    public void replaceDef(Var old, Register n){
+        System.out.println("ERROR call.replaceDef()");
+    }
+    public void replaceUses(Var old, Register n){
+        for (int i = 0; i < args.size(); i++){
+            if (args.get(i) == old){
+                args.remove(i);
+                args.add(i, n);
+            }
+        }
     }
 
     public String toString(){
