@@ -191,10 +191,19 @@ public class Colorer {
 
     }
 
+
     private void allocate() {
 
         // For every live Range
         for (LiveRange liveRange : IG.ranges.allRanges()) {
+
+            // don't reallocate spilled variables
+            // that are already assigned colors
+            if (liveRange.getColor() != null){
+                continue;
+            }
+
+
             Var var = liveRange.var;
             if (liveRange.getColor() == null){
                 int j = 1;
@@ -241,8 +250,13 @@ public class Colorer {
         }
     }
 
-    // To spill, insert a load before every use and a store after every def
-    // and replace every use and every def with the appropriate instruction
+    // To spill:
+    // For the given live range
+    // For every line in the live range:
+    //  if var is used in the instruction at that line
+    //      1. insert a load to a reserved var before line
+    //      2. insert a store from the same reserved var after line
+    //  insert a store after the first definition, if there was one
     private void spill(LiveRange liveRange){
 
         Var var = liveRange.var;
