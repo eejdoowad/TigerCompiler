@@ -18,23 +18,21 @@ public class array_store extends regularInstruction {
     }
 
     public Var def(){
-        if (right instanceof Var) return (Var)right;
-        else return null;
+        return null;
     }
 
     public ArrayList<Var> use(){
         ArrayList<Var> uses = new ArrayList<>();
-        if (var instanceof Var) uses.add((Var)var);
+        if (right instanceof Var) uses.add((Var)right);
         if (index instanceof Var) uses.add((Var)index);
         return uses;
     }
 
     public void replaceDef(Var old, Register n){
-        if (right == old) right = n;
-        else System.out.println("ERROR array_store.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
         if (index == old) index = n;
+        if (right == old) right = n;
     }
 
 

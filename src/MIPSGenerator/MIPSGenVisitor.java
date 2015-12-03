@@ -196,15 +196,35 @@ public class MIPSGenVisitor implements IRVisitor {
 	}
 
 	public void visit(array_load i) {
-        emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
-        emit(new AssemblyHelper("addi", "$t8", "$t8", i.var.toString()));
-        emit(new AssemblyHelper("lw", i.left.toString(), "0($t8)", ""));
+        if (i.index instanceof IntImmediate) {
+            emit(new AssemblyHelper("li", "$t8", i.index.toString(),""));
+            emit(new AssemblyHelper("sll", "$t8", "$t8", "2"));
+        } else {
+            emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
+        }
+        emit(new AssemblyHelper("la", "$t9", i.var.toString(), ""));
+        emit(new AssemblyHelper("add", "$t8", "$t8", "$t9"));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("lw", i.left.toString(), "0($t8)", ""));
+        } else {
+            emit(new AssemblyHelper("lwc1", i.left.toString(), "0($t8)", ""));
+        }
 	}
 
 	public void visit(array_store i) {
-        emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
-        emit(new AssemblyHelper("addi", "$t8", "$t8", i.var.toString()));
-        emit(new AssemblyHelper("sw", i.right.toString(), "0($t8)", ""));
+        if (i.index instanceof IntImmediate) {
+            emit(new AssemblyHelper("li", "$t8", i.index.toString(),""));
+            emit(new AssemblyHelper("sll", "$t8", "$t8", "2"));
+        } else {
+            emit(new AssemblyHelper("sll", "$t8", i.index.toString(), "2"));
+        }
+        emit(new AssemblyHelper("la", "$t9", i.var.toString(), ""));
+        emit(new AssemblyHelper("add", "$t8", "$t8", "$t9"));
+        if (i.isInt()) {
+            emit(new AssemblyHelper("sw", i.right.toString(), "0($t8)", ""));
+        } else {
+            emit(new AssemblyHelper("swc1", i.right.toString(), "0($t8)", ""));
+        }
 	}
 
 	public void visit(array_assign i) {

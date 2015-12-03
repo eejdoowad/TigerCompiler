@@ -82,6 +82,18 @@ public class IR2GenVisitor implements Visitor {
                 if (var.isArray()){
                     IntImmediate arraySize = new IntImmediate(var.getArraySize());
                     emit(new array_assign(left, arraySize, right, left.isInt()));
+                    TempIntVar temp = TempIntVar.gen(inFunction);
+                    SharedLabel label = new SharedLabel(left.name + "_assign");
+                    if (right.isInt() && !left.isInt()) {
+                        TempFloatVar conv = TempFloatVar.gen(inFunction);
+                        emit(new intToFloat(right, conv));
+                        right = conv;
+                    }
+                    emit(new assign(temp, new IntImmediate(0), true));
+                    emit(label);
+                    emit(new array_store(left, temp, right, left.isInt()));
+                    emit(new add(temp, new IntImmediate(1), temp, true));
+                    emit(new brneq(temp, arraySize, new LabelOp(label), true));
                 }
                 else {
                     emit(new assign(left, right, left.isInt()));

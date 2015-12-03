@@ -3,7 +3,11 @@ let
 	var A : ArrayFloat := 2.5;
 	var i : int := 0;
 in
-	A[4] = 1.5;
+	A[4] := 1.5;
+	A[1] := 0.75;
+    A[2] := 0.85;
+    A[3] := 0.95;
+	A[0] := 0.5;
 	for i := 0 to 5 do
 		printf(A[i]);
 	enddo;

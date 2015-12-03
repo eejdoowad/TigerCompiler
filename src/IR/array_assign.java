@@ -20,26 +20,20 @@ public class array_assign extends regularInstruction {
     }
 
     public Var def(){
-        System.out.println("WE ARE NOT SUPPORTING ARRAY_ASSIGN, ONLY FOR INIT IN DATA SECTION");
-        System.exit(1);
         return null;
     }
 
     public ArrayList<Var> use(){
-        System.out.println("WE ARE NOT SUPPORTING ARRAY_ASSIGN, ONLY FOR INIT IN DATA SECTION");
-        System.exit(1);
-        return null;
+        return new ArrayList<>();
     }
 
     public void replaceDef(Var old, Register n){
-        System.out.println("ERROR NO SUPPORT array_assign.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
-        System.out.println("ERROR NO SUPPORT array_assign.replaceDef()");
     }
 
     public String toString(){
-        return "assign, " + var + ", " + count + ", " + val;
+        return "array_assign, " + var + ", " + count + ", " + val;
     }
     public void accept(IRVisitor v) { v.visit(this); }
 }

@@ -25,7 +25,6 @@ public class array_load extends regularInstruction {
 
     public ArrayList<Var> use(){
         ArrayList<Var> uses = new ArrayList<>();
-        if (var instanceof Var) uses.add((Var)var);
         if (index instanceof Var) uses.add((Var)index);
         return uses;
     }
@@ -35,7 +34,6 @@ public class array_load extends regularInstruction {
         else System.out.println("ERROR array_load.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
-        if (left == old) left = n;
         if (index == old) index = n;
     }
 

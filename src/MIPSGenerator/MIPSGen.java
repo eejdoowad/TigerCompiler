@@ -64,7 +64,7 @@ public class MIPSGen {
                 String entry = s + ": ";
                 int size = v.dataSection.get(s);
                 if (size > 1) {
-                    entry = entry + ".space " + size + "\n";
+                    entry = entry + ".space " + size*4 + "\n";
                 } else {
                     entry = entry + ".word 0\n";
                 }
