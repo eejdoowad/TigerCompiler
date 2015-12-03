@@ -191,7 +191,9 @@ public class Colorer {
 
     }
 
-
+    // After a color has been assigned to every live range
+    // go through them and insert loads and stores form the var
+    // to the colored register
     private void allocate() {
 
         // For every live Range
@@ -199,7 +201,7 @@ public class Colorer {
 
             // don't reallocate spilled variables
             // that are already assigned colors
-            if (liveRange.getColor() != null){
+            if (liveRange.spilled){
                 continue;
             }
 
@@ -258,7 +260,7 @@ public class Colorer {
     //      2. insert a store from the same reserved var after line
     //  insert a store after the first definition, if there was one
     private void spill(LiveRange liveRange){
-
+        liveRange.spilled = true;
         Var var = liveRange.var;
         boolean isInt = var.isInt();
         Register res1 = Register.res1(var.isInt());

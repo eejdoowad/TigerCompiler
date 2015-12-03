@@ -34,6 +34,9 @@ public class LiveRange {
         return numUses;
     }
 
+    public boolean spilled = false;
+
+
     public LiveRange(Var var, int definitionLine){
         this.var = var;
         this.rangeID = rangeNum++;
