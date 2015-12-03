@@ -34,7 +34,7 @@ public class array_load extends regularInstruction {
         else System.out.println("ERROR array_load.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
-        if (var == old) var = n;
+        if (left == old) left = n;
         if (index == old) index = n;
     }
 

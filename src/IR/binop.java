@@ -30,7 +30,11 @@ public abstract class binop extends regularInstruction {
     }
 
     public Var def(){
-        return (Var)result;
+        if (result instanceof Var) {
+            return (Var) result;
+        } else {
+            return null;
+        }
     }
 
     public ArrayList<Var> use(){
