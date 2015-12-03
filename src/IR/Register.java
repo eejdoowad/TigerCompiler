@@ -101,11 +101,11 @@ public class Register extends Operand {
 
     // reserved registers for spilling load/stores
     public static Register res1(boolean isInteger){
-        if (isInteger)  return new Register(Reg.T8);
+        if (isInteger)  return new Register(Reg.S0);
         else return new Register(Reg.F8);
     }
     public static Register res2(boolean isInteger){
-        if (isInteger)  return new Register(Reg.T9);
+        if (isInteger)  return new Register(Reg.S1);
         else return new Register(Reg.F9);
     }
 }

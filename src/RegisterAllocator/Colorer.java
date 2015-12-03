@@ -76,6 +76,12 @@ public class Colorer {
         intRegs.add(Register.Reg.T5);
         intRegs.add(Register.Reg.T6);
         intRegs.add(Register.Reg.T7);
+        intRegs.add(Register.Reg.S2);
+        intRegs.add(Register.Reg.S3);
+        intRegs.add(Register.Reg.S4);
+        intRegs.add(Register.Reg.S5);
+        intRegs.add(Register.Reg.S6);
+        intRegs.add(Register.Reg.S7);
 
         floatRegs.add(Register.Reg.F0);
         floatRegs.add(Register.Reg.F1);
@@ -296,8 +302,10 @@ public class Colorer {
                         System.out.println("WTH? BOTH LOADS ARE USED.");
                     }
 
-                    // insert store after use, for non-function-call instructions
-                    loadStores.get(i).addStore(usingRes2 ? res2 : res1, var);
+                    // insert store after use if it is a destination, for non-function-call instructions
+                    if (liveRange.var == block.getInstruction(i).def()) {
+                        loadStores.get(i).addStore(usingRes2 ? res2 : res1, var);
+                    }
                 }
                 // TODO: need to do something about function arguments
                 else{
