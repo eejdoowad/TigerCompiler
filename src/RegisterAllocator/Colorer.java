@@ -196,6 +196,9 @@ public class Colorer {
         // For every live Range
         for (LiveRange liveRange : IG.ranges.allRanges()) {
             Var var = liveRange.var;
+            if (liveRange.getColor() == null){
+                int j = 1;
+            }
             Register reg = new Register(liveRange.getColor());
             boolean isInt = var.isInt();
             int definitionLine = liveRange.definitionLine;
@@ -243,40 +246,63 @@ public class Colorer {
     private void spill(LiveRange liveRange){
 
         Var var = liveRange.var;
+        boolean isInt = var.isInt();
         Register res1 = Register.res1(var.isInt());
         Register res2 = Register.res2(var.isInt());
+        int definitionLine = liveRange.definitionLine;
+        boolean usingRes2 = false; // only use res2 if res1 is occupied
 
+        // add load and store for every use line if actually used
+
+        // for every line in live range
         for (Integer i : liveRange.getLines()){
-            // insert store for def
-            // TODO should probably move this out of loop
-            if ((i - 1 >= 0) && block.def(i - 1) == liveRange.var){
-                boolean isInt = liveRange.var.isInt();
-                loadStores.get(i - 1).addStore(res1, var);
-                block.getInstruction(i - 1).replaceDef(liveRange.var, Register.res1(isInt));
-            }
-            // insert load before use, for non-function-call instructions
-            if (!(block.getInstruction(i) instanceof callInstruction)){
-                boolean isInt = liveRange.var.isInt();
-                // only use res2 if res1 is occupied
-                if (loadStores.get(i).iloads.size() == 0){
-                    loadStores.get(i).addLoad(var, res1);
-                    block.getInstruction(i).replaceUses(liveRange.var, Register.res1(isInt));
+
+            // if the var is used on that line
+            boolean used = block.getInstruction(i).use().contains(var);
+
+            if (block.getInstruction(i).use().contains(var)){
+
+
+                if (!(block.getInstruction(i) instanceof callInstruction)){
+
+                    // insert load before use, for non-function-call instructions
+
+                    if (loadStores.get(i).iloads.size() == 0){
+                        loadStores.get(i).addLoad(var, res1);
+                        block.getInstruction(i).replaceUses(liveRange.var, res1);
+                        liveRange.setColor(res1.register);
+                    }
+                    else if (loadStores.get(i).iloads.size() == 1){
+                        loadStores.get(i).addLoad(var, res2);
+                        block.getInstruction(i).replaceUses(liveRange.var, res2);
+                        liveRange.setColor(res2.register);
+                        usingRes2 = true;
+                    }
+                    else{
+                        System.out.println("WTH? BOTH LOADS ARE USED.");
+                    }
+
+                    // insert store after use, for non-function-call instructions
+                    loadStores.get(i).addStore(usingRes2 ? res2 : res1, var);
                 }
-                else if (loadStores.get(i).iloads.size() == 1){
-                    loadStores.get(i).addLoad(var, res2);
-                    block.getInstruction(i).replaceUses(liveRange.var, Register.res2(isInt));
-                }
+                // TODO: need to do something about function arguments
                 else{
-                    System.out.println("WTH? BOTH LOADS ARE USED.");
+                    System.out.println("RegisterAllocator.Colorer.spill(): NO LOADING OF FUNCTION ARGS SUPPORTED");
+
                 }
-            }
-            // TODO: need to do something about function arguments
-            else{
-                System.out.println("RegisterAllocator.Colorer.spill(): NO LOADING OF FUNCTION ARGS SUPPORTED");
 
             }
 
         }
+
+        // add store for definition line
+        // if there is in fact a definition (recall there may be no definiton)
+        if (block.def(definitionLine) == var){
+            block.getInstruction(definitionLine).replaceDef(var, res1);
+            loadStores.get(definitionLine).addStore(res1, var);
+        }
+
+
     }
 
 
