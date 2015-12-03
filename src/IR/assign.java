@@ -8,16 +8,11 @@ public class assign extends regularInstruction {
     // the right hand side could be anything
     public Operand right;
 
-    public assign(Operand var, Operand right) {
-        this.var = var;
-        this.right = right;
-        this.isInteger = true;
-    }
 
-    public assign(Operand var, Operand right, boolean isInt) {
+    public assign(Operand var, Operand right, boolean isInteger) {
         this.var = var;
         this.right = right;
-        this.isInteger = isInt;
+        this.isInteger = isInteger;
     }
 
     public Var def() {

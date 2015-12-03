@@ -2,9 +2,6 @@ package IR;
 
 public class div extends binop {
 
-    public div(Operand left, Operand right, Operand result){
-        super(left, right, result);
-    }
     public div(Operand left, Operand right, Operand result, Boolean isInteger){
         super(left, right, result, isInteger);
     }

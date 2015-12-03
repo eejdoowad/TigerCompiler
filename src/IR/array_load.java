@@ -11,10 +11,11 @@ public class array_load extends regularInstruction {
     public Operand var;
     public Operand index;
 
-    public array_load(Operand left, NamedVar var, Operand index){
+    public array_load(Operand left, NamedVar var, Operand index, boolean isInteger){
         this.left = left;
         this.var = var;
         this.index = index;
+        this.isInteger = isInteger;
     }
 
     public Var def(){

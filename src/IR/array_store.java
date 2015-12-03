@@ -10,10 +10,11 @@ public class array_store extends regularInstruction {
     // the right hand side could be anything
     public Operand right;
 
-    public array_store(NamedVar var, Operand index, Operand right){
+    public array_store(NamedVar var, Operand index, Operand right, boolean isInteger){
         this.var = var;
         this.index = index;
         this.right = right;
+        this.isInteger = isInteger;
     }
 
     public Var def(){

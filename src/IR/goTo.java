@@ -6,6 +6,7 @@ public class goTo extends jumpLabel {
 
 
     public goTo(LabelOp labelOp){
+        this.isInteger = true;
         this.labelOp = labelOp;
     }
 

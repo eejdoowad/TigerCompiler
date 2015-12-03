@@ -7,6 +7,7 @@ public class ret extends jump {
     public Operand retVal;
 
     public ret(Operand retVal){
+        this.isInteger = (retVal == null ? true : retVal.isInteger);
         this.retVal = retVal;
 
     }

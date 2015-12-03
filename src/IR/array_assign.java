@@ -12,10 +12,11 @@ public class array_assign extends regularInstruction {
     public IntImmediate count;
     public Operand val;
 
-    public array_assign(NamedVar var, IntImmediate count, Operand val){
+    public array_assign(NamedVar var, IntImmediate count, Operand val, boolean isInteger){
         this.var = var;
         this.count = count;
         this.val = val;
+        this.isInteger = isInteger;
     }
 
     public Var def(){

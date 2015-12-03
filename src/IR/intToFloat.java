@@ -8,6 +8,7 @@ public class intToFloat extends regularInstruction{
     public Operand dest;
 
     public intToFloat(Operand src, Operand dest){
+        this.isInteger = false;
         this.src = src;
         this.dest = dest;
     }

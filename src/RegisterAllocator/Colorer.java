@@ -76,12 +76,12 @@ public class Colorer {
         intRegs.add(Register.Reg.T5);
         intRegs.add(Register.Reg.T6);
         intRegs.add(Register.Reg.T7);
-        intRegs.add(Register.Reg.S2);
-        intRegs.add(Register.Reg.S3);
-        intRegs.add(Register.Reg.S4);
-        intRegs.add(Register.Reg.S5);
-        intRegs.add(Register.Reg.S6);
-        intRegs.add(Register.Reg.S7);
+//        intRegs.add(Register.Reg.S2);
+//        intRegs.add(Register.Reg.S3);
+//        intRegs.add(Register.Reg.S4);
+//        intRegs.add(Register.Reg.S5);
+//        intRegs.add(Register.Reg.S6);
+//        intRegs.add(Register.Reg.S7);
 
         floatRegs.add(Register.Reg.F0);
         floatRegs.add(Register.Reg.F1);
@@ -211,9 +211,7 @@ public class Colorer {
 
 
             Var var = liveRange.var;
-            if (liveRange.getColor() == null){
-                continue;
-            }
+
             Register reg = new Register(liveRange.getColor());
             boolean isInt = var.isInt();
             int definitionLine = liveRange.definitionLine;
@@ -223,18 +221,19 @@ public class Colorer {
             // if the definition line has a definition
             if (block.def(definitionLine) == var) {
 
+                // FOR INTRABLOCK ALLOCATION, YOU DO HAVE TO STORE TEMPORARIES AS THEY MAY BE
+                // USED IN A DIFFERENT BASIC BLOCK
+
                 // if that definition is never used, assign to reserved var then store it
                 if (liveRange.getLines().size() == 0) {
                     Register res1 = Register.res1(var.isInt());
                     block.getInstruction(definitionLine).replaceDef(var, res1);
-                    if (!(var instanceof TempVar))
-                        loadStores.get(definitionLine).addStore(res1, var);
+                    loadStores.get(definitionLine).addStore(res1, var);
                 }
                 // if that definition is used, assign its color and store it
                 else {
                     block.getInstruction(definitionLine).replaceDef(var, reg);
-                    if (!(var instanceof TempVar))
-                        loadStores.get(definitionLine).addStore(reg, var);
+                    loadStores.get(definitionLine).addStore(reg, var);
                 }
             }
             // if the definition line has no definition, this indicates a var is used without being defined

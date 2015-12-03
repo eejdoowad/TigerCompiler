@@ -1,0 +1,9 @@
+let
+    var count : int := 10;
+    var i : int;
+in
+	for i := 1 to count + 1 do
+        printi(i);
+    enddo;
+
+end

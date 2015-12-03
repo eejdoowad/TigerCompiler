@@ -7,7 +7,7 @@ public class FloatImmediate extends Immediate {
     public float val;
 
     public FloatImmediate(float val){
-        isInteger = false;
+        this.isInteger = false;
         this.val = val;
     }
     public String toString(){

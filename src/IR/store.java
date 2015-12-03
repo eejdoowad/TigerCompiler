@@ -7,10 +7,10 @@ public class store extends instruction {
     public Register src;
     public Var dst;
 
-    public store(Register src, Var dst, boolean isInt) {
+    public store(Register src, Var dst, boolean isInteger) {
         this.dst = dst;
         this.src = src;
-        this.isInteger = isInt;
+        this.isInteger = isInteger;
     }
 
     public Var def() {

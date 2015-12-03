@@ -16,11 +16,6 @@ public abstract class binop extends regularInstruction {
     public Operand right;
     public Operand result;
 
-    public binop(Operand left, Operand right, Operand result){
-        this.left = left;
-        this.right = right;
-        this.result = result;
-    }
 
     public binop(Operand left, Operand right, Operand result, Boolean isInteger){
         this.left = left;

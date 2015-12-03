@@ -35,7 +35,7 @@ public class IR2GenVisitor implements Visitor {
         return false;
     }
 
-    private TempFloatVar intToFloat(Operand op){
+    private TempFloatVar genIntToFloat(Operand op){
         TempFloatVar dest = TempFloatVar.gen(inFunction);
         emit(new intToFloat(op, dest));
         return dest;
@@ -61,14 +61,7 @@ public class IR2GenVisitor implements Visitor {
         for (Stat s : n.stats){
             s.accept(this);
         }
-//        emit(new UniqueLabel("initialization"));
-//        for (VarDec d : n.varDecs){
-//            d.accept(this);
-//        }
-//        emit(new UniqueLabel("main"));
-//        for (Stat s : n.stats){
-//            s.accept(this);
-//        }
+
         emit(new ret(null));
     }
     // no action done by IR CodeGen for TypeDecs
@@ -88,10 +81,10 @@ public class IR2GenVisitor implements Visitor {
                 NamedVar left = NamedVar.generateNamedVar(var);
                 if (var.isArray()){
                     IntImmediate arraySize = new IntImmediate(var.getArraySize());
-                    emit(new array_assign(left, arraySize, right));
+                    emit(new array_assign(left, arraySize, right, left.isInt()));
                 }
                 else {
-                    emit(new assign(left, right));
+                    emit(new assign(left, right, left.isInt()));
                 }
             }
         }
@@ -165,13 +158,13 @@ public class IR2GenVisitor implements Visitor {
             // no index, so generate array_assign
             if (stat.index == null){
                 IntImmediate arrSize = new IntImmediate(stat.left.getArraySize());
-                emit(new array_assign(left, arrSize, right));
+                emit(new array_assign(left, arrSize, right, left.isInt()));
             }
             // index, so generate array_store
             else {
                 stat.index.accept(this);
                 Operand index = context.getRetVal();
-                emit(new array_store(left, index, right));
+                emit(new array_store(left, index, right, left.isInt()));
             }
         }
         // Normal non-array named variable, generate normal assign
@@ -255,9 +248,9 @@ public class IR2GenVisitor implements Visitor {
 
         NamedVar loopVar = NamedVar.generateNamedVar(stat.var);
 
-        emit(new assign(loopVar, startIndex));
+        emit(new assign(loopVar, startIndex, loopVar.isInt()));
         emit(before);
-        emit(new brgeq(loopVar, endIndex, new LabelOp(after)));
+        emit(new brgeq(loopVar, endIndex, new LabelOp(after), loopVar.isInt()));
 
         context.breakLabels.push(after);
         for (Stat s : stat.stats){
@@ -265,7 +258,7 @@ public class IR2GenVisitor implements Visitor {
         }
         context.breakLabels.pop();
 
-        emit(new add(loopVar, new IntImmediate(1), loopVar));
+        emit(new add(loopVar, new IntImmediate(1), loopVar, loopVar.isInt()));
         emit(new goTo(new LabelOp(before)));
         emit(after);
     }
@@ -315,7 +308,7 @@ public class IR2GenVisitor implements Visitor {
             Operand index = context.getRetVal();
             TempVar left = TempVar.gen(n.reference.getInferredPrimitive(), inFunction);
             NamedVar array = NamedVar.generateNamedVar(n.reference);
-            emit(new array_load(left, array, index));
+            emit(new array_load(left, array, index, left.isInt()));
             context.setRetVal(left);
         }
     }
@@ -339,10 +332,10 @@ public class IR2GenVisitor implements Visitor {
         right[0] = context.getRetVal();
 
         if (!right[0].isInt() && left[0].isInt()){
-            left[0] = intToFloat(left[0]);
+            left[0] = genIntToFloat(left[0]);
         }
         if (!left[0].isInt() && right[0].isInt()){
-            right[0] = intToFloat(right[0]);
+            right[0] = genIntToFloat(right[0]);
         }
         return TempVar.gen(left[0], right[0], inFunction);
     }
@@ -411,10 +404,10 @@ public class IR2GenVisitor implements Visitor {
         right[0] = context.getRetVal();
 
         if (!right[0].isInt() && left[0].isInt()){
-            left[0] = intToFloat(left[0]);
+            left[0] = genIntToFloat(left[0]);
         }
         if (!left[0].isInt() && right[0].isInt()){
-            right[0] = intToFloat(right[0]);
+            right[0] = genIntToFloat(right[0]);
         }
     }
 

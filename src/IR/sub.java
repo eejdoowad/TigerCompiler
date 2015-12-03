@@ -2,9 +2,6 @@ package IR;
 
 public class sub extends binop {
 
-    public sub(Operand left, Operand right, Operand result){
-        super(left, right, result);
-    }
     public sub(Operand left, Operand right, Operand result, Boolean isInteger){
         super(left, right, result, isInteger);
     }

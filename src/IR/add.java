@@ -4,9 +4,6 @@ import IR.IRVisitor;
 
 public class add extends binop {
 
-    public add(Operand left, Operand right, Operand result){
-        super(left, right, result);
-    }
     public add(Operand left, Operand right, Operand result, Boolean isInteger){
         super(left, right, result, isInteger);
     }
