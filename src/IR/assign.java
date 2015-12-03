@@ -20,8 +20,12 @@ public class assign extends regularInstruction {
         this.isInteger = isInt;
     }
 
-    public Var def(){
-        return (Var)var;
+    public Var def() {
+        if (var instanceof Var) {
+            return (Var) var;
+        } else {
+            return null;
+        }
     }
 
     public ArrayList<Var> use(){

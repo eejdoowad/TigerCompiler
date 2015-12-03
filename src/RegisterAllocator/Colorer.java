@@ -191,10 +191,10 @@ public class Colorer {
 
     }
 
-    private void allocate(){
+    private void allocate() {
 
         // For every live Range
-        for (LiveRange liveRange : IG.ranges.allRanges()){
+        for (LiveRange liveRange : IG.ranges.allRanges()) {
             Var var = liveRange.var;
             Register reg = new Register(liveRange.getColor());
             boolean isInt = var.isInt();
@@ -203,17 +203,17 @@ public class Colorer {
             // it is not necessary for the definition line to actually contain the def
 
             // if the definition line has a definition
-            if (block.def(definitionLine) == var){
+            if (block.def(definitionLine) == var) {
 
                 // if that definition is never used, assign to reserved var then store it
-                if (liveRange.getLines().size() == 0){
+                if (liveRange.getLines().size() == 0) {
                     Register res1 = Register.res1(var.isInt());
                     block.getInstruction(definitionLine).replaceDef(var, res1);
                     if (!(var instanceof TempVar))
                         loadStores.get(definitionLine).addStore(res1, var);
                 }
                 // if that definition is used, assign its color and store it
-                else{
+                else {
                     block.getInstruction(definitionLine).replaceDef(var, reg);
                     if (!(var instanceof TempVar))
                         loadStores.get(definitionLine).addStore(reg, var);
@@ -221,7 +221,7 @@ public class Colorer {
             }
             // if the definition line has no definition, this indicates a var is used without being defined
             // so load it from mem in next line
-            else{
+            else {
                 // a variable is used on line 0 without being defined
                 // so load it on definition line
                 if (definitionLine + 1 >= block.size())

@@ -1,0 +1,22 @@
+let
+	var A, B, C, D, E : int := 0;
+in
+	A := A + 0;
+	B := B + 1;
+	C := C + 2;
+	D := D + 3;
+	E := E + 4;
+	if B <> 0 then
+		A := 0;
+		B := 1;
+		C := 2;
+	else
+		D := 3;
+		E := 4;
+	endif;
+	printi(A);
+	printi(B);
+	printi(C);
+	printi(D);
+	printi(E);
+end

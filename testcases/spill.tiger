@@ -1,0 +1,38 @@
+let
+	var X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19, X20, X21, X22, X23, X24, X25, X26, X27, X28, X29, X30, X31, X32 : int := 0;
+	var Y : int := 0;
+in
+	Y := X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9 + X10 + X11 + X12 + X13 + X14 + X15 + X16 + X17 + X18 + X19 + X20 + X21 + X22 + X23 + X24 + X25 + X26 + X27 + X28 + X29 + X30 + X31 + X32;
+	printi(X1);
+	printi(X2);
+	printi(X3);
+	printi(X4);
+	printi(X5);
+	printi(X6);
+	printi(X7);
+	printi(X8);
+	printi(X9);
+	printi(X10);
+	printi(X11);
+	printi(X12);
+	printi(X13);
+	printi(X14);
+	printi(X15);
+	printi(X16);
+	printi(X17);
+	printi(X18);
+	printi(X19);
+	printi(X20);
+	printi(X21);
+	printi(X22);
+	printi(X23);
+	printi(X24);
+	printi(X25);
+	printi(X26);
+	printi(X27);
+	printi(X28);
+	printi(X29);
+	printi(X30);
+	printi(X31);
+	printi(X32);
+end
