@@ -198,8 +198,8 @@ public class Colorer {
         for (LiveRange liveRange : IG.ranges.allRanges()) {
 
             // don't reallocate spilled variables
-            // that are already assigned colors
-            if (liveRange.getColor() == null){
+            // that are already assigned colors.
+            if (liveRange.spilled){
                 continue;
             }
 
@@ -258,7 +258,7 @@ public class Colorer {
     //      2. insert a store from the same reserved var after line
     //  insert a store after the first definition, if there was one
     private void spill(LiveRange liveRange){
-
+        liveRange.spilled = true;
         Var var = liveRange.var;
         boolean isInt = var.isInt();
         Register res1 = Register.res1(var.isInt());

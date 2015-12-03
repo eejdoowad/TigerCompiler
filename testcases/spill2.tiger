@@ -1,0 +1,10 @@
+let
+	var X1, X2, X3, X4 : int := 0;
+	var Y : int := 0;
+in
+	Y := X1 + X2 + X3 + X4;
+	printi(X1);
+	printi(X2);
+	printi(X3);
+	printi(X4);
+end
