@@ -200,7 +200,7 @@ public class Colorer {
         for (LiveRange liveRange : IG.ranges.allRanges()) {
 
             // don't reallocate spilled variables
-            // that are already assigned colors
+            // that are already assigned colors.
             if (liveRange.spilled){
                 continue;
             }
