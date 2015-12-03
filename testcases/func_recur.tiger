@@ -1,0 +1,13 @@
+let
+	var m : int := 5;
+	function print ( n : int ) begin
+		if n <> 1 then
+			print(n - 1);
+			printi(n);
+		else
+			printi(n);
+		endif;
+	end;
+in
+	print(m);
+end
