@@ -59,7 +59,8 @@ public class RegAllocator {
                     Colorer colorer = new Colorer(block, IG);
                     ArrayList<IR> newIR = colorer.color();
 
-                    out.add(block.startLabel);
+                    if (block.startLabel != null)
+                        out.add(block.startLabel);
                     out.addAll(newIR);
                 }
             }
