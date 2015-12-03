@@ -8,6 +8,8 @@ import AST.ASTRoot;
 import IR.*;
 import RegisterAllocator.RegAllocator;
 import Util.Util;
+
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 
@@ -64,7 +66,19 @@ public class tig {
                 System.out.println(i);
         }
 
-        ArrayList<String> output = MIPSGen.generate(instructions2);
+        String mipscode = MIPSGen.generate(instructions2);
+
+        String outfile = file.replace(".tiger", ".s");
+        try {
+            PrintWriter writer = new PrintWriter(outfile, "UTF-8");
+            writer.println(mipscode);
+            writer.close();
+        }
+        catch (Exception e){
+            System.out.println("ERROR writing to " + outfile);
+            System.out.println(e);
+        }
+
 
 
 

@@ -8,7 +8,7 @@ public class MIPSGen {
 
     private MIPSGen(){}
 
-    public static ArrayList<String> generate(ArrayList<IR> instructions){
+    public static String generate(ArrayList<IR> instructions){
 
         System.out.println("\nGENERATING MIPS CODE:\n");
 
@@ -73,8 +73,7 @@ public class MIPSGen {
         }
         System.out.print(assembly.toString());
 
-     //   return v.mips;
-        return null;
+        return assembly.toString();
     }
 
 }

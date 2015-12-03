@@ -302,9 +302,9 @@ public class Colorer {
                     }
 
                     // insert store after use if it is a destination, for non-function-call instructions
-                    if (liveRange.var == block.getInstruction(i).def()) {
-                        loadStores.get(i).addStore(usingRes2 ? res2 : res1, var);
-                    }
+//                    if (liveRange.var == block.getInstruction(i).def()) {
+//                        loadStores.get(i).addStore(usingRes2 ? res2 : res1, var);
+//                    }
                 }
                 // TODO: need to do something about function arguments
                 else{
