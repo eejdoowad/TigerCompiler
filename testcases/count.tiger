@@ -1,9 +1,11 @@
 let
     var count : int := 10;
     var i : int;
+    var dummy : int;
 in
+    dummy := dummy; /* should be alive in every block henceforth */
 	for i := 1 to count + 1 do
         printi(i);
     enddo;
-
+    dummy := dummy;
 end

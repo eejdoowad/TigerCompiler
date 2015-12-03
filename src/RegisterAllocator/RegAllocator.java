@@ -33,6 +33,7 @@ public class RegAllocator {
         }
     }
 
+    // No liveness analysis
     private static ArrayList<IR> naiveAllocator(ArrayList<IR> instructions){
         NaiveAllocatorVisitor allocator = new NaiveAllocatorVisitor();
         for (IR i : instructions) {
@@ -41,6 +42,7 @@ public class RegAllocator {
         return allocator.instructions;
     }
 
+    // Does liveness analysis at the BasicBlock level
     private static ArrayList<IR> intraBlockAllocator(ArrayList<IR> instructions){
         ArrayList<IR> out = new ArrayList<>();
 
@@ -68,15 +70,30 @@ public class RegAllocator {
         return out;
     }
 
+    // Does liveness analysis at the procedure level
+
+
+    // 1. Generate Control Flow Graph For each Procedure, where the nodes of
+    // the control flow graph are basic blocks
+    // 2. Generate global live ranges, where live ranges correspond to the absolute line numbering
+    //    and not the relative line numbering
+    //    also generate list of definitions per live range
+    //    Do a store after every definition (resolve the case where one web merges into next
+    // 3. Generate Global Interference Graph from global live range
+    // 4. Color at the global level
     private static ArrayList<IR> globalAllocator(ArrayList<IR> instructions){
         ArrayList<IR> out = new ArrayList<>();
 
+        // Generate control flow graph
         ArrayList<FlowGraph> flows = FlowGraphGen.generate(instructions);
 
         for (FlowGraph flow : flows){
 
             flow.calcGlobalLiveness();
+//            GlobalLiveRanges ranges = new GlobalLiveRanges(flow, instructions);
 
+//            ArrayList<GlobalLiveRanges>
+/*
             for (BasicBlock block : flow.getNodes()){
                 // don't do anything for dummy entry/exit blocks
                 if (block.size() > 0){
@@ -90,6 +107,7 @@ public class RegAllocator {
                     out.addAll(newIR);
                 }
             }
+          */
         }
         return out;
     }

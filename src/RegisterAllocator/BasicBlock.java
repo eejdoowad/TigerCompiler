@@ -12,6 +12,7 @@ import Util.DiNode;
 
 public class BasicBlock extends DiNode {
 
+
     private ArrayList<IR> instructions = new ArrayList<>();
 
 
@@ -117,7 +118,18 @@ public class BasicBlock extends DiNode {
     }
 
     public String toString(){
-        return "BB: " + ((startLabel == null) ? "unnamed" : startLabel);
+        String out = "BB[";
+        // Dummy entry/exit block
+        if (size() == 0){
+            out += "empty";
+        }
+        // Regular block
+        else{
+            out += "line  " + startIndex + "-" + (startIndex + size() - 1);
+        }
+        out += "]";
+        out += ((startLabel == null) ? "unnamed" : startLabel);
+        return out;
     }
 
 }

@@ -9,50 +9,46 @@ import java.util.*;
 
 public class GlobalLiveRanges {
 
-    private Map<Var, LinkedList<LiveRange>> liveRanges = new HashMap<>();
-    private LinkedHashSet<Var> vars = new LinkedHashSet<Var>();
-
-    // returns variables used by Basic Block
-    public LinkedHashSet<Var> getVars(){
+    // The set of Vars (including temporaries) used in the program
+    private Set<Var> vars = new LinkedHashSet<Var>();
+    public Set<Var> getVars(){
         return vars;
     }
-    // returns a list of live ranges of a variable,
-    // every definition of a variable gets its own entry in the list
-    public Map<Var, LinkedList<LiveRange>> getRanges(){
-        return liveRanges;
-    }
-    public LinkedList<LiveRange> getRangesForVar(Var var){
-        return liveRanges.get(var);
-    }
-
-    public LinkedList<LiveRange> allRanges(){
-        LinkedList<LiveRange> out = new LinkedList<>();
-        for (LinkedList<LiveRange> liveRanges : getRanges().values()){
-            for (LiveRange range : liveRanges){
-                out.add(range);
-            }
-        }
-        return out;
-    }
-
-
     private void addVar(Var v){
         vars.add(v);
     }
     private void addVars(ArrayList<Var> vars){
         this.vars.addAll(vars);
     }
+
+    // Maps a var to its  Global Live Ranges (spans across blocks)
+    private Map<Var, LinkedList<GlobalLiveRange>> liveRanges = new HashMap<>();
+    public Map<Var, LinkedList<GlobalLiveRange>> getRanges(){ return liveRanges;}
+
+    // Returns a Linked List of all live ranges within the flow graph
+    public LinkedList<GlobalLiveRange> allRanges(){
+        LinkedList<GlobalLiveRange> out = new LinkedList<>();
+        for (LinkedList<GlobalLiveRange> liveRanges : getRanges().values()){
+            for (GlobalLiveRange range : liveRanges){
+                out.add(range);
+            }
+        }
+        return out;
+    }
+
+    //TODO
+/*
     private void startNewLiveRange(Var var, int definitionLine){
-        liveRanges.get(var).add( new LiveRange(var, definitionLine));
+        liveRanges.get(var).add( new GlobalLiveRange(var, definitionLine));
     }
     private void addLiveEntry(Var var, int line){
         liveRanges.get(var).getLast().add(line);
     }
-
+*/
     public GlobalLiveRanges(FlowGraph flow){
 
 
-        // initialize vars
+        // initialize vars with all vars among all basic blocks in flow graph
         for (BasicBlock block : flow.getNodes()){
             for (IR instruction : block.instructions()){
                 if (instruction.def() != null)
@@ -62,6 +58,21 @@ public class GlobalLiveRanges {
         }
 
         // now calculate live ranges
+
+
+        // For every line:
+        //  if live in current line,
+        //      add to output this line
+        //  if def in current line, recursively repeat search with new live range
+        //      starting from entry line, follows every path into the next line
+        //  else:
+        //      addAll(repeat Search next line for all that are live for this var)
+
+
+        // until:
+        //  1. not live in any possible next instruction
+        //  2. defined in current instruction
+
         // maps a Var to a list of uses
         // where each list entry corresponds to a different definition
         // the first entry will correspond to the uninitialized live range
