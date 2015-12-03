@@ -199,14 +199,14 @@ public class Colorer {
 
             // don't reallocate spilled variables
             // that are already assigned colors
-            if (liveRange.getColor() != null){
+            if (liveRange.getColor() == null){
                 continue;
             }
 
 
             Var var = liveRange.var;
             if (liveRange.getColor() == null){
-                int j = 1;
+                continue;
             }
             Register reg = new Register(liveRange.getColor());
             boolean isInt = var.isInt();

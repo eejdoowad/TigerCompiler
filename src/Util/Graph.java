@@ -27,14 +27,18 @@ public abstract class Graph<T> {
         return nodes.get(i);
     }
     public void remove(int i){
+        Node<T> n = nodes.get(i);
+
+        for (Node<T> neighbor : n.getAdj()){
+            neighbor.getAdj().remove(n);
+        }
         nodes.remove(i);
     }
 
     public void removeNode(Node<T> n){
         if (nodes.contains(n)){
             for (Node<T> neighbor : n.getAdj()){
-                disconnect(n, neighbor);
-                nodes.remove(n);
+                disconnect(neighbor, n);
             }
         }
     }
@@ -58,7 +62,7 @@ public abstract class Graph<T> {
     }
 
     public void disconnect(Node<T> node1, Node<T> node2){
-        if (nodes.contains(node1) && nodes.contains(node2)){
+        if (nodes.contains(node1)){
             node1.disconnet(node2);
         }
         else{
