@@ -4,9 +4,10 @@ import java.util.HashMap;
 
 public class FunctionLabel extends Label {
 
-    private static HashMap<String, FunctionLabel> uniqueLabels = new HashMap<>();
+    protected static HashMap<String, FunctionLabel> uniqueLabels = new HashMap<>();
 
-    private FunctionLabel(String name){
+    protected FunctionLabel() {}
+    protected FunctionLabel(String name){
         this.name = name;
     }
 

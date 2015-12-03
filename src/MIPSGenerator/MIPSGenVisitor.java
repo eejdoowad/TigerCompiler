@@ -477,6 +477,9 @@ public class MIPSGenVisitor implements IRVisitor {
     }
 
     public void visit(FunctionPrologue i) {
+        // Emit label
+        emit(new AssemblyHelper(i.name.toString() + ":", "", "", ""));
+
         // Push the return address
         emit(new AssemblyHelper("sw", "$ra", "0($sp)", ""));
         emit(new AssemblyHelper("sub", "$sp", "$sp", "4"));

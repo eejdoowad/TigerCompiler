@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 // Stores critical information about a function for use in codegen
-public class FunctionPrologue extends instruction {
+public class FunctionPrologue extends FunctionLabel {
     public ArrayList<NamedVar> arguments = new ArrayList<>();
     public HashMap<String, Integer> argumentOffsetMap = new HashMap<>();
     public HashMap<String, Integer> temporaryOffsetMap = new HashMap<>();
@@ -14,7 +14,11 @@ public class FunctionPrologue extends instruction {
     public int temporaryCount = 0;
     public int usedRegsCount = 0;
 
-    public FunctionLabel epilogueLabel = null;
+    public SharedLabel epilogueLabel = null;
+
+    protected FunctionPrologue(String name) {
+        this.name = name;
+    }
 
     public void addOperand(Operand var) {
         if (var instanceof TempVar && ((TempVar) var).isLocal) {
@@ -38,27 +42,18 @@ public class FunctionPrologue extends instruction {
         }
     }
 
-    public void replaceDef(Var old, Register n){
-        System.out.println("ERROR NO SUPPORT FunctionPrologue.replaceDef()");
-    }
-    public void replaceUses(Var old, Register n){
-        System.out.println("ERROR NO SUPPORT FunctionPrologue.replaceDef()");
-    }
-
-
-    public Var def() {
-        return null;
-    }
-
-    public ArrayList<Var> use() {
-        return new ArrayList<>();
-    }
-
     public void accept(IRVisitor v) {
         v.visit(this);
     }
 
-    public String toString() {
-        return "";
+    public static FunctionLabel generate(String name){
+        if (uniqueLabels.containsKey(name)){
+            return uniqueLabels.get(name);
+        }
+        else{
+            FunctionLabel newLabel = new FunctionPrologue(name);
+            uniqueLabels.put(name, newLabel);
+            return newLabel;
+        }
     }
 }

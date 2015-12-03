@@ -33,7 +33,6 @@ public class array_store extends regularInstruction {
         else System.out.println("ERROR array_store.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
-        if (var == old) var = n;
         if (index == old) index = n;
     }
 

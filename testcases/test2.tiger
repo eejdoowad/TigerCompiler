@@ -26,4 +26,7 @@ in
     printi(c);
     f := factf(6.0);
     printf(f);
+    if (c = f) then
+        printi(1);
+    endif;
 end

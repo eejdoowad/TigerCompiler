@@ -99,10 +99,7 @@ public class IR2GenVisitor implements Visitor {
     public void visit(FunDec n){
         debugPrompt("FunDec");
 
-        Label funLabel = FunctionLabel.generate("_" + n.function.getName());
-        emit(funLabel);
-
-        FunctionPrologue prologue = new FunctionPrologue();
+        FunctionPrologue prologue = (FunctionPrologue) FunctionPrologue.generate("_" + n.function.getName());
         for (SemanticSymbol s : n.function.getFunctionParameters()) {
             NamedVar var = NamedVar.generateNamedVar(s);
             var.isLocal = true;
@@ -117,8 +114,8 @@ public class IR2GenVisitor implements Visitor {
 
         inFunction = false;
 
-        Label epilogueLabel = FunctionLabel.generate("_" + n.function.getName() + "_epilogue");
-        prologue.epilogueLabel = (FunctionLabel)epilogueLabel;
+        Label epilogueLabel = new SharedLabel("_" + n.function.getName() + "_epilogue");
+        prologue.epilogueLabel = (SharedLabel)epilogueLabel;
         emit(epilogueLabel);
         emit(new FunctionEpilogue());
     }

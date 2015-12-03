@@ -1,6 +1,6 @@
 package IR;
 
-public class Register extends Var {
+public class Register extends Operand {
     public enum Reg {
         ZERO ("$zero", true),
         AT ("$at", true),
