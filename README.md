@@ -16,11 +16,11 @@ Components include:
 
 * Register Allocation Code for:
 
-** Naive register allocation
+  * Naive register allocation
 
-** Intra-BasicBlock register allocation
+  * Intra-BasicBlock register allocation
 
-** Global register allocation
+  * Global register allocation
 
 * MIPs code generator (output runs on SPIM simulator)
 
