@@ -66,6 +66,9 @@ public class FlowGraph extends DiGraph<BasicBlock> {
         // Then create a basic block for each leader
         String startLabel = ((Label)instructions.get(0)).name;
         entryBlock = new BasicBlock(FunctionLabel.generate("ENTRY_" + startLabel), -1);
+        if (instructions.get(0) instanceof FunctionPrologue) {
+            entryBlock.functionPrologue = ((FunctionPrologue) instructions.get(0));
+        }
         exitBlock = new BasicBlock(FunctionLabel.generate("EXIT_" + startLabel), -1);
         addNode(entryBlock);
         addNode(exitBlock);

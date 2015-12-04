@@ -4,6 +4,7 @@ import IR.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Function;
 
 import Util.DiNode;
 
@@ -58,6 +59,8 @@ public class BasicBlock extends DiNode {
 
     private boolean builtLiveness = false;
 
+    public FunctionPrologue functionPrologue = null;
+
     // Used to detect cycles in loops and break out of them
     // All the blocks in a cycle should have set a variable to
     // live in all instructions by the end
@@ -68,10 +71,21 @@ public class BasicBlock extends DiNode {
             return;
         }
         builtLiveness = true;
+        // Function prologue adds argument definitions
+        if (functionPrologue != null) {
+            for (Var arg : functionPrologue.arguments) {
+                lastDef.put(arg, 0);
+                lastUse.put(arg, 0);
+                defsOut.add(arg);
+                continue;
+            }
+        }
         // Set of variables that must be live the entire block
         // because previous iterations of the loop are referenced
         HashSet<Var> loopVars = new HashSet<>();
         for (int i = 0; i < size(); i++) {
+            if (getInstruction(i) instanceof FunctionPrologue) {
+            }
             Var def = getInstruction(i).def();
             ArrayList<Var> uses = getInstruction(i).use();
             // Start a new live range
