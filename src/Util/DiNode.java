@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public abstract class DiNode {
 
     public ArrayList<DiNode> getSucc(){return succ;}
-    private ArrayList<DiNode> succ = new ArrayList<>();
-    private ArrayList<DiNode> pred = new ArrayList<>();
+    protected ArrayList<DiNode> succ = new ArrayList<>();
+    protected ArrayList<DiNode> pred = new ArrayList<>();
 
     public void addSucc(DiNode n){
         succ.add(n);

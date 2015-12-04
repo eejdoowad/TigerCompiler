@@ -2,6 +2,7 @@ package RegisterAllocator;
 
 import IR.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import Util.DiNode;
@@ -41,6 +42,129 @@ public class BasicBlock extends DiNode {
             }
         }
         return changes;
+    }
+
+    // Stores the last use of a var in the block
+    private HashMap<Var, Integer> lastUse = new HashMap<>();
+
+    // Stores the last definition of a var in the block
+    private HashMap<Var, Integer> lastDef = new HashMap<>();
+
+    // Variable definitions that are inherited from ancestors
+    public HashSet<Var> defsIn = new HashSet<>();
+
+    // Variable definitions that are used by the successors
+    public HashSet<Var> defsOut = new HashSet<>();
+
+    private boolean builtLiveness = false;
+
+    // Used to detect cycles in loops and break out of them
+    // All the blocks in a cycle should have set a variable to
+    // live in all instructions by the end
+    private boolean cycleDetect = false;
+
+    public void buildLivenessGlobal() {
+        if (builtLiveness) {
+            return;
+        }
+        builtLiveness = true;
+        // Set of variables that must be live the entire block
+        // because previous iterations of the loop are referenced
+        HashSet<Var> loopVars = new HashSet<>();
+        for (int i = 0; i < size(); i++) {
+            Var def = getInstruction(i).def();
+            ArrayList<Var> uses = getInstruction(i).use();
+            // Start a new live range
+            if (def != null) {
+                lastDef.put(def, i);
+                lastUse.put(def, i);
+                live.get(i).add(def);
+            }
+            // If there is a use extend from the last use
+            for (Var use : uses) {
+                int start = 0;
+                if (lastDef.containsKey(use)) {
+                    start = lastDef.get(use).intValue() + 1;
+                } else {
+                    // No previous blocks to look for definition means an error
+                    if (pred.isEmpty()) {
+                        System.out.println("Error: " + use.name + " is used without initialization");
+                        System.exit(1);
+                    }
+                    // No definition in this block so look in previous blocks
+                    cycleDetect = true;
+                    for (DiNode p : pred) {
+                        if (((BasicBlock)p).useVarBySuccessor(use)) {
+                            // The whole block becomes live
+                            loopVars.add(use);
+                        }
+                    }
+                    cycleDetect = false;
+                    defsIn.add(use);
+                }
+                for (int j = start; j <= i; j++) {
+                    live.get(i).add(use);
+                }
+                lastUse.put(def, i);
+            }
+        }
+        for (Var c : loopVars) {
+            defsIn.add(c);
+            defsOut.add(c);
+            for (int i = 0; i < size(); i++) {
+                live.get(i).add(c);
+            }
+            lastUse.put(c, size() - 1);
+        }
+    }
+
+    // Called when a successor uses a var
+    // Returns if there is a cycle (and the var has to be marked live the entire block
+    public boolean useVarBySuccessor(Var var) {
+        // Leave if we are in a cycle
+        if (cycleDetect) {
+            return true;
+        }
+        // Make sure our liveness is calculated
+        buildLivenessGlobal();
+
+        // Find the last use
+        if (lastUse.containsKey(var)) {
+            // Simply extend the liveness to the end of the block
+            for (int i = lastUse.get(var).intValue() + 1; i < size(); i++) {
+                live.get(i).add(var);
+            }
+        } else {
+            if (pred.isEmpty()) {
+                System.out.println("Error: " + var.name + " is used without initialization");
+                System.exit(1);
+            }
+            // No definition in this block so look in previous blocks
+            cycleDetect = true;
+            for (DiNode p : pred) {
+                if (((BasicBlock)p).useVarBySuccessor(var)) {
+                    // The whole block becomes live
+                    for (int i = 0; i < size(); i++) {
+                        live.get(i).add(var);
+                    }
+                    defsIn.add(var);
+                    lastUse.put(var, size() - 1);
+                    defsOut.add(var);
+                    return true;
+                }
+            }
+            cycleDetect = false;
+            defsIn.add(var);
+
+            // The whole block becomes live
+            for (int i = 0; i < size(); i++) {
+                live.get(i).add(var);
+            }
+        }
+        // Last use is at end of the block now
+        lastUse.put(var, size() - 1);
+        defsOut.add(var);
+        return false;
     }
 
     public void calcLiveness(){

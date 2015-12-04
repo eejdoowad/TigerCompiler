@@ -25,7 +25,7 @@ public class FlowGraph extends DiGraph<BasicBlock> {
             block.initLiveness();
         }
 
-        boolean changes;
+/*        boolean changes;
         do{
             changes = false;
 
@@ -48,7 +48,10 @@ public class FlowGraph extends DiGraph<BasicBlock> {
                 }
             }
 
-        } while (changes);
+        } while (changes);*/
+        for (BasicBlock block : getNodes()) {
+            block.buildLivenessGlobal();
+        }
     }
 
 
