@@ -33,15 +33,36 @@ public class tig {
         }
 
         //
-        if (args.length != 1){
-            System.out.println("Provide exactly one input tiger file for compilation");
-            System.out.println("USAGE: java tig input.tiger");
-        } else if (!Util.getFileExtension(args[0]).equals("tiger")){
+        if (args.length != 2){
+            System.out.println("ERROR; USAGE: java tig [-n or -i or -g based on allocation algorithm] input.tiger");
+            System.out.println("First arg should be -n or -i or -g based on allocation algorithm");
+            System.out.println("-n(aive) -i(ntrablock) -g(lobal)");
+            System.out.println("Example: java tig -i test.tiger");
+        } else if (!Util.getFileExtension(args[1]).equals("tiger")){
             System.out.println("Input file must have .tiger extension");
-        } else if (!Util.fileExists(args[0])) {
-            System.out.println(args[0] + " does not exist");
+        } else if (!Util.fileExists(args[1])) {
+            System.out.println(args[1] + " does not exist");
         } else {
-            compile(args[0]);
+
+            boolean selected = false;
+
+            if (args[0].equals("-n") || args[0].equals("n") || args[0].equals("-naive")){
+                Config.REG_ALLOCATOR = Config.RegAllocator.NAIVE;
+                selected = true;
+            } else if (args[0].equals("-i") || args[0].equals("i") || args[0].equals("-intrablock")){
+                Config.REG_ALLOCATOR = Config.RegAllocator.INTRABLOCK;
+                selected = true;
+            } else if (args[0].equals("-g") || args[0].equals("g") || args[0].equals("-global")){
+                Config.REG_ALLOCATOR = Config.RegAllocator.GLOBAL;
+                selected = true;
+            } else {
+                System.out.println("ERROR; USAGE: java tig [-n or -i or -g based on allocation algorithm] input.tiger");
+                System.out.println("First arg should be -n or -i or -g based on allocation algorithm");
+                System.out.println("-n(aive) -i(ntrablock) -g(lobal)");
+                System.out.println("Example: java tig -i test.tiger");
+            }
+            if (selected)
+                compile(args[1]);
         }
     }
 
