@@ -107,8 +107,8 @@ public class NaiveAllocatorVisitor implements IRVisitor {
 
     public void visit(array_load i) {
         if (i.index instanceof Var) {
-            emit(new load(new Register(i.isInt() ? Register.Reg.T0 : Register.Reg.F0), (Var)i.index, i.isInt()));
-            i.index = new Register(i.isInt() ? Register.Reg.T0 : Register.Reg.F0);
+            emit(new load(new Register(Register.Reg.T0), (Var)i.index, true));
+            i.index = new Register(Register.Reg.T0);
         }
         emit(i);
         emit(new store(new Register(i.isInt() ? Register.Reg.T2 : Register.Reg.F2), (Var)i.left, i.isInt()));
@@ -117,8 +117,8 @@ public class NaiveAllocatorVisitor implements IRVisitor {
 
     public void visit(array_store i) {
         if (i.index instanceof Var) {
-            emit(new load(new Register(i.isInt() ? Register.Reg.T0 : Register.Reg.F0), (Var)i.index, i.isInt()));
-            i.index = new Register(i.isInt() ? Register.Reg.T0 : Register.Reg.F0);
+            emit(new load(new Register(Register.Reg.T0), (Var)i.index, true));
+            i.index = new Register(Register.Reg.T0);
         }
         emit(new load(new Register(i.isInt() ? Register.Reg.T2 : Register.Reg.F2), (Var)i.right, i.isInt()));
         i.right = new Register(i.isInt() ? Register.Reg.T2 : Register.Reg.F2);

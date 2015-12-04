@@ -29,7 +29,11 @@ public abstract class Graph<T> {
     public void remove(int i){
         Node<T> n = nodes.get(i);
 
+        ArrayList<Node<T>> neighbors = new ArrayList<>();
         for (Node<T> neighbor : n.getAdj()){
+            neighbors.add(neighbor);
+        }
+        for (Node<T> neighbor : neighbors) {
             neighbor.getAdj().remove(n);
         }
         nodes.remove(i);

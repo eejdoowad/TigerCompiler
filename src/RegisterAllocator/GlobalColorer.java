@@ -148,7 +148,9 @@ public class GlobalColorer {
                     }
                 }
                 if (!colorUsed){
-                    lr.setColor(color);
+                    if (lr.getColor() == null) {
+                        lr.setColor(color);
+                    }
                     break;
                 }
             }

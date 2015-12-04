@@ -92,7 +92,7 @@ public class RegAllocator {
             flow.calcGlobalLiveness();
             GlobalLiveRanges ranges = new GlobalLiveRanges(flow);
             GlobalInterferenceGraph IG = new GlobalInterferenceGraph(ranges);
-            GlobalColorer colorer = new GlobalColorer(instructions, IG);
+            GlobalColorer colorer = new GlobalColorer(flow.instructions, IG);
             ArrayList<IR> newIR = colorer.color();
             for (IR instruction : newIR){
                 out.add(instruction);

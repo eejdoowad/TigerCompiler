@@ -84,6 +84,7 @@ public class BasicBlock extends DiNode {
         }
         builtLiveness = true;
         // Function prologue adds argument definitions
+        int argnum = 0;
         if (functionPrologue != null) {
             for (Var arg : functionPrologue.arguments) {
                 lastDef.put(arg, 0);
@@ -91,8 +92,19 @@ public class BasicBlock extends DiNode {
                 defsOut.add(arg);
                 GlobalLiveRange range = new GlobalLiveRange(arg);
                 range.addDefinitionLines(0);
+                if (argnum == 0) {
+                    range.setColor(Register.Reg.A0);
+                } else if (argnum == 1) {
+                    range.setColor(Register.Reg.A1);
+                } else if (argnum == 2) {
+                    range.setColor(Register.Reg.A2);
+                } else if (argnum == 3) {
+                    range.setColor(Register.Reg.A3);
+                }
+
                 outputRanges.put(arg, range);
                 currentRange.put(arg, range);
+                argnum++;
             }
         }
         // Set of variables that must be live the entire block

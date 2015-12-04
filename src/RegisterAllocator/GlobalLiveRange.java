@@ -79,6 +79,9 @@ public class GlobalLiveRange {
         for (Integer line : other.liveLines) {
             liveLines.add(line);
         }
+        if (color == null) {
+            color = other.color;
+        }
     }
 
     public String toString(){
