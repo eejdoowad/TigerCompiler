@@ -54,6 +54,23 @@ public class FlowGraph extends DiGraph<BasicBlock> {
         }
     }
 
+    public ArrayList<GlobalLiveRange> getGlobalLiveRanges() {
+        HashSet<GlobalLiveRange> set = new HashSet<>();
+        for (BasicBlock block : getNodes()) {
+            for (GlobalLiveRange r : block.internalLiveRanges) {
+                set.add(r);
+            }
+            for (GlobalLiveRange r : block.outputRanges.values()) {
+                set.add(r);
+            }
+        }
+        ArrayList<GlobalLiveRange> list = new ArrayList<>();
+        for (GlobalLiveRange r : set) {
+            list.add(r);
+        }
+        return list;
+    }
+
 
     public FlowGraph(ArrayList<IR> instructions){
 

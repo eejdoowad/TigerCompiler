@@ -90,6 +90,8 @@ public class RegAllocator {
         for (FlowGraph flow : flows){
 
             flow.calcGlobalLiveness();
+            ArrayList<GlobalLiveRange> ranges = flow.getGlobalLiveRanges();
+            int i = 0;
 //            GlobalLiveRanges ranges = new GlobalLiveRanges(flow, instructions);
 
 //            ArrayList<GlobalLiveRanges>

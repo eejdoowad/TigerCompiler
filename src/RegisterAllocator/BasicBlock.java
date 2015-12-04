@@ -66,6 +66,18 @@ public class BasicBlock extends DiNode {
     // live in all instructions by the end
     private boolean cycleDetect = false;
 
+    // Live ranges that exist only in the block
+    public ArrayList<GlobalLiveRange> internalLiveRanges = new ArrayList<>();
+
+    // Live ranges that enter the block
+    public HashMap<Var, GlobalLiveRange> inputRanges = new HashMap<>();
+
+    // Live ranges that exit the block
+    public HashMap<Var, GlobalLiveRange> outputRanges = new HashMap<>();
+
+    // Current range for a variable
+    private HashMap<Var, GlobalLiveRange> currentRange = new HashMap<>();
+
     public void buildLivenessGlobal() {
         if (builtLiveness) {
             return;
@@ -77,15 +89,16 @@ public class BasicBlock extends DiNode {
                 lastDef.put(arg, 0);
                 lastUse.put(arg, 0);
                 defsOut.add(arg);
-                continue;
+                GlobalLiveRange range = new GlobalLiveRange(arg);
+                range.addDefinitionLines(0);
+                outputRanges.put(arg, range);
+                currentRange.put(arg, range);
             }
         }
         // Set of variables that must be live the entire block
         // because previous iterations of the loop are referenced
         HashSet<Var> loopVars = new HashSet<>();
         for (int i = 0; i < size(); i++) {
-            if (getInstruction(i) instanceof FunctionPrologue) {
-            }
             Var def = getInstruction(i).def();
             ArrayList<Var> uses = getInstruction(i).use();
             // Start a new live range
@@ -93,12 +106,18 @@ public class BasicBlock extends DiNode {
                 lastDef.put(def, i);
                 lastUse.put(def, i);
                 live.get(i).add(def);
+                GlobalLiveRange range = new GlobalLiveRange(def);
+                range.addDefinitionLines(i + startIndex);
+                internalLiveRanges.add(range);
+                currentRange.put(def, range);
             }
             // If there is a use extend from the last use
             for (Var use : uses) {
                 int start = 0;
+                GlobalLiveRange range = null;
                 if (lastDef.containsKey(use)) {
                     start = lastDef.get(use).intValue() + 1;
+                    range = currentRange.get(use);
                 } else {
                     // No previous blocks to look for definition means an error
                     if (pred.isEmpty()) {
@@ -107,26 +126,34 @@ public class BasicBlock extends DiNode {
                     }
                     // No definition in this block so look in previous blocks
                     cycleDetect = true;
+                    range = new GlobalLiveRange(use);
                     for (DiNode p : pred) {
-                        if (((BasicBlock)p).useVarBySuccessor(use)) {
+                        if (((BasicBlock)p).useVarBySuccessor(use, range)) {
                             // The whole block becomes live
                             loopVars.add(use);
+                            outputRanges.put(use, range);
                         }
                     }
                     cycleDetect = false;
                     defsIn.add(use);
+                    inputRanges.put(use, range);
+                    internalLiveRanges.remove(range);
+                    currentRange.put(use, range);
                 }
                 for (int j = start; j <= i; j++) {
                     live.get(i).add(use);
+                    range.addUseLine(i + startIndex);
                 }
                 lastUse.put(def, i);
             }
         }
         for (Var c : loopVars) {
+            GlobalLiveRange range = inputRanges.get(c);
             defsIn.add(c);
             defsOut.add(c);
             for (int i = 0; i < size(); i++) {
                 live.get(i).add(c);
+                range.addUseLine(i + startIndex);
             }
             lastUse.put(c, size() - 1);
         }
@@ -134,7 +161,7 @@ public class BasicBlock extends DiNode {
 
     // Called when a successor uses a var
     // Returns if there is a cycle (and the var has to be marked live the entire block
-    public boolean useVarBySuccessor(Var var) {
+    public boolean useVarBySuccessor(Var var, GlobalLiveRange range) {
         // Leave if we are in a cycle
         if (cycleDetect) {
             return true;
@@ -145,9 +172,16 @@ public class BasicBlock extends DiNode {
         // Find the last use
         if (lastUse.containsKey(var)) {
             // Simply extend the liveness to the end of the block
+            GlobalLiveRange last = currentRange.get(var);
             for (int i = lastUse.get(var).intValue() + 1; i < size(); i++) {
                 live.get(i).add(var);
+                last.addDefinitionLines(i + startIndex);
             }
+            internalLiveRanges.remove(last);
+            outputRanges.remove(last);
+            range.union(last);
+            outputRanges.put(var, range);
+            currentRange.put(var, range);
         } else {
             if (pred.isEmpty()) {
                 System.out.println("Error: " + var.name + " is used without initialization");
@@ -156,28 +190,36 @@ public class BasicBlock extends DiNode {
             // No definition in this block so look in previous blocks
             cycleDetect = true;
             for (DiNode p : pred) {
-                if (((BasicBlock)p).useVarBySuccessor(var)) {
+                if (((BasicBlock)p).useVarBySuccessor(var, range)) {
                     // The whole block becomes live
                     for (int i = 0; i < size(); i++) {
                         live.get(i).add(var);
+                        range.addUseLine(i + startIndex);
                     }
                     defsIn.add(var);
                     lastUse.put(var, size() - 1);
                     defsOut.add(var);
+                    outputRanges.put(var, range);
+                    currentRange.put(var, range);
+                    inputRanges.put(var, range);
                     return true;
                 }
             }
             cycleDetect = false;
             defsIn.add(var);
+            inputRanges.put(var, range);
 
             // The whole block becomes live
             for (int i = 0; i < size(); i++) {
                 live.get(i).add(var);
+                range.addUseLine(i + startIndex);
             }
         }
         // Last use is at end of the block now
-        lastUse.put(var, size() - 1);
+        //lastUse.put(var, size() - 1);
         defsOut.add(var);
+        currentRange.put(var, range);
+        outputRanges.put(var, range);
         return false;
     }
 
@@ -213,7 +255,6 @@ public class BasicBlock extends DiNode {
 
     // the index into the original instruction stream where the BB starts
     public int startIndex;
-
 
     public Label startLabel;
 

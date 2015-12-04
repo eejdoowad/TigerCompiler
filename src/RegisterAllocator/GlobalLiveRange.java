@@ -71,6 +71,16 @@ public class GlobalLiveRange {
         return false;
     }
 
+    // merges a range with another range
+    void union(GlobalLiveRange other) {
+        for (Integer line : other.definitionLines) {
+            definitionLines.add(line);
+        }
+        for (Integer line : other.liveLines) {
+            liveLines.add(line);
+        }
+    }
+
     public String toString(){
 
         // Get Definition Lines
