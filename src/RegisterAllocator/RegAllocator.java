@@ -90,26 +90,13 @@ public class RegAllocator {
         for (FlowGraph flow : flows){
 
             flow.calcGlobalLiveness();
-            ArrayList<GlobalLiveRange> ranges = flow.getGlobalLiveRanges();
-            int i = 0;
-//            GlobalLiveRanges ranges = new GlobalLiveRanges(flow, instructions);
-
-//            ArrayList<GlobalLiveRanges>
-/*
-            for (BasicBlock block : flow.getNodes()){
-                // don't do anything for dummy entry/exit blocks
-                if (block.size() > 0){
-                    LiveRanges ranges = new LiveRanges(block);
-                    int i = 1;
-                    InterferenceGraph IG = new InterferenceGraph(ranges);
-                    Colorer colorer = new Colorer(block, IG);
-                    ArrayList<IR> newIR = colorer.color();
-
-                    out.add(block.startLabel);
-                    out.addAll(newIR);
-                }
+            GlobalLiveRanges ranges = new GlobalLiveRanges(flow);
+            GlobalInterferenceGraph IG = new GlobalInterferenceGraph(ranges);
+            GlobalColorer colorer = new GlobalColorer(instructions, IG);
+            ArrayList<IR> newIR = colorer.color();
+            for (IR instruction : newIR){
+                out.add(instruction);
             }
-          */
         }
         return out;
     }
