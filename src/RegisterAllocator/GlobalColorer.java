@@ -2,14 +2,14 @@ package RegisterAllocator;
 
 import IR.*;
 import Util.Node;
+
 import java.util.*;
 
+public class GlobalColorer {
 
-public class Colorer {
-
-    private BasicBlock block;
-    private InterferenceGraph IG;
-    private InterferenceGraph workGraph;
+    private ArrayList<IR> instructions;
+    private GlobalInterferenceGraph IG;
+    private GlobalInterferenceGraph workGraph;
 
     private ArrayList<LoadStore> loadStores = new ArrayList<>();
 
@@ -25,10 +25,10 @@ public class Colorer {
     Stack<Node<LiveRange>> stack = new Stack<>();
 
 
-    public Colorer(BasicBlock block, InterferenceGraph IG){
-        this.block = block;
+    public GlobalColorer(ArrayList<IR> instructions, GlobalInterferenceGraph IG){
+        this.instructions = instructions;
         this.IG = IG;
-        for (int i = 0; i < block.size(); i++) loadStores.add(new LoadStore());
+        for (int i = 0; i < instructions.size(); i++) loadStores.add(new LoadStore());
 
         intRegs.add(Register.Reg.T0);
         intRegs.add(Register.Reg.T1);
@@ -65,7 +65,7 @@ public class Colorer {
         ArrayList<IR> out = new ArrayList<>();
 
         // generate new IR for every instruction, include loads and stores
-        for (int i = 0; i < block.instructions().size(); i++){
+        for (int i = 0; i < instructions.size(); i++){
             LoadStore ls = loadStores.get(i);
 
             // insert loads before
@@ -73,7 +73,7 @@ public class Colorer {
                 out.add(iload);
             }
             // the actual instruction
-            out.add(block.getInstruction(i));
+            out.add(instructions.get(i));
 
             // insert stores after
             for (store istore : ls.istores){
@@ -96,10 +96,10 @@ public class Colorer {
             }
         }
 
-        InterferenceGraph workGraphOriginal = workGraph.copy();
+        GlobalInterferenceGraph workGraphOriginal = workGraph.copy();
 
         // stack of Live ranges that have to be assigned colors
-        Stack<LiveRange> colorStack = new Stack<>();
+        Stack<GlobalLiveRange> colorStack = new Stack<>();
 
         // while nodes remaining
         while (!workGraph.isEmpty()){
@@ -135,14 +135,14 @@ public class Colorer {
 
         // Now assign colors to registers
         while (!colorStack.isEmpty()){
-            LiveRange lr = colorStack.pop();
+            GlobalLiveRange lr = colorStack.pop();
 
-            Node<LiveRange> node = workGraphOriginal.getNode(lr);
+            Node<GlobalLiveRange> node = workGraphOriginal.getNode(lr);
 
             // Cycle through colors until an available one is found
             for (Register.Reg color : colorInteger ? intRegs : floatRegs ){
                 boolean colorUsed = false;
-                for (Node<LiveRange> neighbor : node.getAdj()){
+                for (Node<GlobalLiveRange> neighbor : node.getAdj()){
                     if (neighbor.val.getColor() == color){
                         colorUsed = true;
                     }
@@ -163,7 +163,7 @@ public class Colorer {
     private void allocate() {
 
         // For every live Range
-        for (LiveRange liveRange : IG.ranges.allRanges()) {
+        for (GlobalLiveRange liveRange : IG.ranges.allRanges()) {
 
             // don't reallocate spilled variables
             // that are already assigned colors.
@@ -176,42 +176,47 @@ public class Colorer {
 
             Register reg = new Register(liveRange.getColor());
             boolean isInt = var.isInt();
-            int definitionLine = liveRange.definitionLine;
+            Set<Integer> definitionLines = liveRange.getDefinitionLines();
 
             // it is not necessary for the definition line to actually contain the def
 
             // if the definition line has a definition
-            if (block.def(definitionLine) == var) {
-
-                // FOR INTRABLOCK ALLOCATION, YOU DO HAVE TO STORE TEMPORARIES AS THEY MAY BE
-                // USED IN A DIFFERENT BASIC BLOCK
-
-                // if that definition is never used, assign to reserved var then store it
-                if (liveRange.getLines().size() == 0) {
-                    Register res1 = Register.res1(var.isInt());
-                    block.getInstruction(definitionLine).replaceDef(var, res1);
-                    loadStores.get(definitionLine).addStore(res1, var);
+            for (Integer definitionLine : definitionLines){
+                if (definitionLine < 0){
+                    System.out.println("WTH DONT DO THIS TO ME GLOBALColor.allocate())");
+                    System.out.println("" + var + "has definitionLine " + definitionLine + " but there is no definition on that line");
                 }
-                // if that definition is used, assign its color and store it
-                else {
-                    block.getInstruction(definitionLine).replaceDef(var, reg);
-                    loadStores.get(definitionLine).addStore(reg, var);
+                else if (instructions.get(definitionLine).def() == var) {
+
+                    // FOR GLOBAL ALLOCATION, UNLIKE INTRABLOCK ALLOCATION,
+                    // YOU DONT HAVE TO STORE TEMPORARIES AS THEY WILL NEVER
+                    // BE USED OUTSIDE THEIR LIVE RANGE
+
+                    // if that definition is used, assign its color and store it if it's not a temp
+                    instructions.get(definitionLine).replaceDef(var, reg);
+                    if (!(var instanceof TempVar)){
+                        loadStores.get(definitionLine).addStore(reg, var);
+                    }
+                } else{
+                    System.out.println("ALSO2: WTH DONT DO THIS TO ME GLOBALColor.allocate())");
+                    System.out.println("" + var + "has definitionLine " + definitionLine + " but there is no definition on that line");
                 }
             }
-            // if the definition line has no definition, this indicates a var is used without being defined
-            // so load it from mem in next line
-            else {
-                // a variable is used on line 0 without being defined
-                // so load it on definition line
-                if (definitionLine + 1 >= block.size())
-                    System.out.println("ERROR: allocate() tried to add load past end of block");
-                else loadStores.get(definitionLine + 1).addLoad(var, reg);
-            }
+//            // if the definition line has no definition, this indicates a var is used without being defined
+//            // so load it from mem in next line
+//            else {
+//                // a variable is used on line 0 without being defined
+//                // so load it on definition line
+////                if (definitionLine + 1 >= block.size())
+////                    System.out.println("ERROR: allocate() tried to add load past end of block");
+////                else loadStores.get(definitionLine + 1).addLoad(var, reg);
+//                System.out.println("GLOBAL ALLOCATION SHOULD NEVER REACH HERE");
+//            }
 
 
             // For every line in the live range
-            for (Integer i : liveRange.getLines()){
-                block.getInstruction(i).replaceUses(var, reg);
+            for (Integer i : liveRange.getLiveLines()){
+                instructions.get(i).replaceUses(var, reg);
             }
 
         }
@@ -224,38 +229,38 @@ public class Colorer {
     //      1. insert a load to a reserved var before line
     //      2. insert a store from the same reserved var after line
     //  insert a store after the first definition, if there was one
-    private void spill(LiveRange liveRange){
+    private void spill(GlobalLiveRange liveRange){
         liveRange.spilled = true;
         Var var = liveRange.var;
         boolean isInt = var.isInt();
         Register res1 = Register.res1(var.isInt());
         Register res2 = Register.res2(var.isInt());
-        int definitionLine = liveRange.definitionLine;
+        Set<Integer> definitionLines = liveRange.getDefinitionLines();
         boolean usingRes2 = false; // only use res2 if res1 is occupied
 
         // add load and store for every use line if actually used
 
         // for every line in live range
-        for (Integer i : liveRange.getLines()){
+        for (Integer i : liveRange.getLiveLines()){
 
             // if the var is used on that line
-            boolean used = block.getInstruction(i).use().contains(var);
+            boolean used = instructions.get(i).use().contains(var);
 
-            if (block.getInstruction(i).use().contains(var)){
+            if (instructions.get(i).use().contains(var)){
 
 
-                if (!(block.getInstruction(i) instanceof callInstruction)){
+                if (!(instructions.get(i) instanceof callInstruction)){
 
                     // insert load before use, for non-function-call instructions
 
                     if (loadStores.get(i).iloads.size() == 0){
                         loadStores.get(i).addLoad(var, res1);
-                        block.getInstruction(i).replaceUses(liveRange.var, res1);
+                        instructions.get(i).replaceUses(liveRange.var, res1);
                         liveRange.setColor(res1.register);
                     }
                     else if (loadStores.get(i).iloads.size() == 1){
                         loadStores.get(i).addLoad(var, res2);
-                        block.getInstruction(i).replaceUses(liveRange.var, res2);
+                        instructions.get(i).replaceUses(liveRange.var, res2);
                         liveRange.setColor(res2.register);
                         usingRes2 = true;
                     }
@@ -278,14 +283,14 @@ public class Colorer {
 
         }
 
-        // add store for definition line
-        // if there is in fact a definition (recall there may be no definiton)
-        if (block.def(definitionLine) == var){
-            block.getInstruction(definitionLine).replaceDef(var, res1);
-            loadStores.get(definitionLine).addStore(res1, var);
+        for (Integer definitionLine : definitionLines){
+            if (definitionLine >= 0){
+                if (instructions.get(definitionLine).def() == var){
+                    instructions.get(definitionLine).replaceDef(var, res1);
+                    loadStores.get(definitionLine).addStore(res1, var);
+                }
+            }
         }
-
-
     }
 
 
