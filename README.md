@@ -1,14 +1,29 @@
-# TigerCompiler
+# Tiger Compiler
 
-# Let's keep this repository organized.
+A compiler for a C-like language, written in Java by a team of three for CS 4240.
 
-There are already projects for JCreator and Eclipse in the build directory. 
-There's also a placeholder for a makefile.
+Built from scratch from the ground up
 
-All java files go in src
+Components include:
 
-Output files are in out
+* Table-driven scanner
 
-Keep things organized.
+* LL(1) top-down parser
 
-hallabaloo
+* Semantic Analyzer
+
+* IR code Generator
+
+* Register Allocation Code for:
+
+** Naive register allocation
+
+** Intra-BasicBlock register allocation
+
+** Global register allocation
+
+* MIPs code generator (output runs on SPIM simulator)
+
+There are many things we would do differently in retrospect... but won't. Because it works. And because, as one partner put it, "I've never spent so much time on something so useless." 
+
+The take away is knoweldge and experience. Applying theory to practice.
