@@ -22,7 +22,7 @@ Components include:
 
   * Global register allocation
 
-* MIPs code generator (output runs on SPIM simulator)
+* MIPS assembly generator (output runs on SPIM simulator)
 
 ---
 
