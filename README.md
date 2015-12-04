@@ -24,6 +24,8 @@ Components include:
 
 * MIPs code generator (output runs on SPIM simulator)
 
+---
+
 There are many things we would do differently in retrospect... but won't. Because it works. And because, as one partner put it, "I've never spent so much time on something so useless." 
 
 The take away is knoweldge and experience. Applying theory to practice.
