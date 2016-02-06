@@ -51,7 +51,6 @@ public class tig {
 
     public static void printHelp(){
         System.out.println("Tiger Compiler by Sufyan Dawoodjee, Ian Ewell and Anastasia Cotton.");
-        System.out.println("Typical use: java tig code.tiger");
         System.out.println("HELP");
         System.out.println("    -h :    print help message");
         System.out.println("GENERATE FILES (defaults to mips only)");
@@ -64,10 +63,10 @@ public class tig {
         System.out.println("    -p=ir   :   print IR");
         System.out.println("    -p=mips :   print MIPS");
         System.out.println("    -p=mips :   print MIPS");
-        System.out.println("AST PRINT OPTIONS (for both gen-file and stdout, S-Expression default");
+        System.out.println("AST PRINT OPTIONS (for both gen-file and stdout, S-Expression default)");
         System.out.println("    -ast=sexp :   prints AST as S-Expression");
         System.out.println("    -ast=easy :   print AST in a more readable format");
-        System.out.println("REGISTER ALLOCATION ALGORITHMS (defaults to intrablock, exclusive so last will be used)");
+        System.out.println("REGISTER ALLOCATION ALGORITHMS (defaults to intrablock, exclusive)");
         System.out.println("    -a=n    :   naive");
         System.out.println("    -a=i    :   intrablock");
         System.out.println("    -a=g    :   global");
@@ -161,7 +160,7 @@ public class tig {
             System.out.println("-----AST END--------");
         }
         if (genAST){
-            Util.writeFile(ast.toString(), source.replace(".tiger", ".ast"));
+            Util.writeFile(ASTToString.getTreeString(ast, ASTAsSEXP), source.replace(".tiger", ".ast"));
         }
 
         // Walk AST to generate IR code

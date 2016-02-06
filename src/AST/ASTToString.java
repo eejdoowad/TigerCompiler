@@ -25,6 +25,9 @@ public class ASTToString {
     }
 
     private static String getTreeStringReadableHelper(Node n, int level){
+        if (n == null){
+            int x = 1;
+        }
         String out =  n.type();
         for (String attr : n.attr()){
             out += " " + attr;

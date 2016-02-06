@@ -14,7 +14,8 @@ public class IfStat extends Stat {
         ArrayList<Node> children = new ArrayList<>();
         children.add(cond);
         children.addAll(trueStats);
-        children.addAll(falseStats);
+        if (falseStats != null)
+            children.addAll(falseStats);
         return children;
     }
     public ArrayList<String> attr(){

@@ -16,7 +16,8 @@ public class VarDec extends Node {
         ArrayList<Node> children = new ArrayList<>();
         children.addAll(vars);
         children.add(type);
-        children.add(init);
+        if (init != null)
+            children.add(init);
         return children;
     }
     public ArrayList<String> attr(){

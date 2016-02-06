@@ -29,10 +29,10 @@ public class movfi extends instruction {
     // TODO: DOUBLE CHECK THESE IMPLEMENTATIONS
     public void replaceDef(Var old, Register n){
         if (dst == old) dst = n;
-        else System.out.println("ERROR movfi.replaceDef()");
+//        else System.out.println("ERROR movfi.replaceDef()");
     }
     public void replaceUses(Var old, Register n){
-        System.out.println("ERROR movfi.replaceDef()");
+//        System.out.println("ERROR movfi.replaceUses()");
     }
 
 
