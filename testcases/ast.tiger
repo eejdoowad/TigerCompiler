@@ -1,0 +1,14 @@
+let
+	var temp, r : int := 5;
+	function nada( n : int ) begin
+		printi(n);
+	end;
+	function times( n : int, m : int) : int begin
+	    temp := n * m;
+	    return temp;
+	end;
+in
+    r := times(7, r);
+    times(4, 2);
+	nada(r);
+end

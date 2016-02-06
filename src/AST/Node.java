@@ -50,12 +50,16 @@ package AST;
 
 // Debate... where do you insert Types, leaning to in var and expr nodes
 
+import java.util.ArrayList;
+
 public abstract class Node {
     public int lineNumber = 1; // line number associated with node
 
     public Node(){
 
     }
-
+    public abstract ArrayList<Node> children();
+    public abstract ArrayList<String> attr();
+    public abstract String type();
     public abstract void accept(Visitor v);
 }

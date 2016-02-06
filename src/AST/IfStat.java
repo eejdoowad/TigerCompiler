@@ -8,5 +8,17 @@ public class IfStat extends Stat {
     public ArrayList<Stat> falseStats = null; // must explicitly init for IF-ELSE
     public boolean finalized = false; // Set to true when analysis on it is done
 
+    public String type(){return "IfStat";}
     public void accept(Visitor v) { v.visit(this); }
+    public ArrayList<Node> children(){
+        ArrayList<Node> children = new ArrayList<>();
+        children.add(cond);
+        children.addAll(trueStats);
+        children.addAll(falseStats);
+        return children;
+    }
+    public ArrayList<String> attr(){
+        ArrayList<String> attr = new ArrayList<>();
+        return attr;
+    }
 }

@@ -1,9 +1,9 @@
 package Util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 // Contains helper methods that don't really belong anywhere else
@@ -40,6 +40,31 @@ public class Util {
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
             return fileName.substring(fileName.lastIndexOf(".")+1);
         else return "";
+    }
+
+    public static void writeFile(String content, String filename){
+        try {
+            PrintWriter writer = new PrintWriter(filename, "UTF-8");
+            writer.print(content);
+            writer.close();
+        }
+        catch (Exception e){
+            System.out.println("Error generating " + filename);
+            System.out.println(e);
+        }
+    }
+
+    public static String readFile(String path)
+    {
+        try{
+            byte[] encoded = Files.readAllBytes(Paths.get(path));
+            return new String(encoded, Charset.defaultCharset());
+        }
+        catch (IOException e){
+            System.out.println("Aborting. Failed to read \"" + path + "\": " + e);
+            System.exit(1);
+            return "";
+        }
     }
 
 

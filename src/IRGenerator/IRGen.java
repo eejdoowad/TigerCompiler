@@ -21,9 +21,7 @@ public class IRGen {
         IR2GenVisitor generator = new IR2GenVisitor(ast);
         instructions = generator.generateIR();
 
-        //System.out.println(this.toString());
         removeRedundantLabels();
-        System.out.println(this.toString());
 
         return instructions;
     }

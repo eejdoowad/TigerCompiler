@@ -1,5 +1,7 @@
 package AST;
 
+import SemanticAnalyzer.SemanticSymbol;
+
 public interface Visitor {
     public void visit(ASTRoot n);
     public void visit(TypeDec n);
@@ -39,4 +41,7 @@ public interface Visitor {
     public void visit(GreaterEq n);
     public void visit(Lesser n);
     public void visit(LesserEq n);
+
+    public void visit(SemanticSymbol n);
+    public void visit(StupidNode n);
 }

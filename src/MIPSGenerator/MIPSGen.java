@@ -10,8 +10,6 @@ public class MIPSGen {
 
     public static String generate(ArrayList<IR> instructions){
 
-        System.out.println("\nGENERATING MIPS CODE:\n");
-
         FunctionSetupVisitor setup = new FunctionSetupVisitor();
         MIPSGenVisitor v = new MIPSGenVisitor();
 
@@ -71,8 +69,6 @@ public class MIPSGen {
                 assembly.append(entry);
             }
         }
-        System.out.print(assembly.toString());
-
         return assembly.toString();
     }
 

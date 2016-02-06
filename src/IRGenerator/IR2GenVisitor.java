@@ -484,5 +484,12 @@ public class IR2GenVisitor implements Visitor {
 
         emit(new brgt(left[0], right[0], new LabelOp(falseLabel), intResult(left[0], right[0])));
     }
+
+    public void visit(SemanticSymbol n){
+
+    }
+    public void visit(StupidNode n){
+
+    }
 }
 

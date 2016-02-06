@@ -15,21 +15,13 @@ public class RegAllocator {
     // and loads and stores inserted
     public static ArrayList<IR> allocate(ArrayList<IR> instructions){
         if (Config.REG_ALLOCATOR == Config.RegAllocator.NAIVE){
-            System.out.println("DOING NAIVE ALLOCATION\n");
             return naiveAllocator(instructions);
         }
         else if (Config.REG_ALLOCATOR == Config.RegAllocator.INTRABLOCK){
-            System.out.println("DOING INTRABLOCK ALLOCATION\n");
             return intraBlockAllocator(instructions);
         }
-        else if (Config.REG_ALLOCATOR == Config.RegAllocator.GLOBAL){
-            System.out.println("DOING GLOBAL ALLOCATION\n");
+        else { // GLOBAL
             return globalAllocator(instructions);
-        }
-        else{
-            System.out.println("WTH SORT OF ALLOCATION YOU DOING\n");
-            System.exit(1);
-            return null;
         }
     }
 

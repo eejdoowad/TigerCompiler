@@ -1,12 +1,15 @@
 package SemanticAnalyzer;
 
+import AST.Node;
+import AST.Visitor;
+
 import java.util.ArrayList;
 
 //  Base class for a semantic symbol that can be entered into the
 //  symbol table
 //  ALSO used in AST as substitute for nodes =(
 
-public class SemanticSymbol {
+public class SemanticSymbol extends Node {
     // enum of symbol classes
     public enum SymbolClass {
         TypeDecleration ("Type"),
@@ -186,4 +189,19 @@ public class SemanticSymbol {
         }
         return ret;
     }
+
+    public String type(){
+        return getSymbolClass().toString();
+    }
+    public ArrayList<Node> children(){
+        ArrayList<Node> children = new ArrayList<>();
+
+        return children;
+    }
+    public ArrayList<String> attr(){
+        ArrayList<String> attr = new ArrayList<>();
+        attr.add(getName());
+        return attr;
+    }
+    public void accept(Visitor v) { v.visit(this); }
 }
