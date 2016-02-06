@@ -17,15 +17,9 @@ public class TypeDec extends Node {
             StupidNode arrSize = new StupidNode("IntLit", "" + newType.getArraySize());
             children.add(arrSize);
         }
-        String typestr;
-        if (newType == SemanticSymbol.SymbolType.SymbolCustom) {
-            typestr = typeSymbol.getName();
-        } else {
-            ret += type;
-        }
-//        newType.getFunctionReturnType().toString();
-//        StupidNode ttype = new StupidNode("Type", newType.getFunctionReturnType().toString());
-//        children.add(ttype);
+
+        StupidNode ttype = new StupidNode("Type", newType.getPrintedType());
+        children.add(ttype);
         return children;
     }
     public ArrayList<String> attr(){

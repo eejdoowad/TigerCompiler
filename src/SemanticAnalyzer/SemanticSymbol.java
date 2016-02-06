@@ -112,6 +112,14 @@ public class SemanticSymbol extends Node {
         return iter.type;
     }
 
+    public String getPrintedType(){
+        if (type == SymbolType.SymbolCustom) {
+            return typeSymbol.getName();
+        } else {
+            return "" + type;
+        }
+    }
+
     public SemanticSymbol getSymbolTypeReference() {
         return typeSymbol;
     }

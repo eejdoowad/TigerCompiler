@@ -67,7 +67,7 @@ public class tig {
         System.out.println("AST PRINT OPTIONS (for both gen-file and stdout, S-Expression default");
         System.out.println("    -ast=sexp :   prints AST as S-Expression");
         System.out.println("    -ast=easy :   print AST in a more readable format");
-        System.out.println("REGISTER ALLOCATION ALGORITHMS (defaults to naive, exclusive so last will be used)");
+        System.out.println("REGISTER ALLOCATION ALGORITHMS (defaults to intrablock, exclusive so last will be used)");
         System.out.println("    -a=n    :   naive");
         System.out.println("    -a=i    :   intrablock");
         System.out.println("    -a=g    :   global");
@@ -119,13 +119,13 @@ public class tig {
                 }
                 // Register allocation options
                 if (args[i].equals("-a=n")){
-                    printMIPS = true;
+                    Config.REG_ALLOCATOR = Config.RegAllocator.NAIVE;
                 }
                 if (args[i].equals("-a=i")){
-                    printIR = true;
+                    Config.REG_ALLOCATOR = Config.RegAllocator.INTRABLOCK;
                 }
                 if (args[i].equals("-a=g")){
-                    printAST = true;
+                    Config.REG_ALLOCATOR = Config.RegAllocator.GLOBAL;
                 }
             }
             else {
